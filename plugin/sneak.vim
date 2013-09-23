@@ -1,8 +1,10 @@
 " sneak.vim - Vertical motion for Vim
 " Author:       Justin M. Keyes
 " Version:      1.0
+" http://www.reddit.com/r/vim/comments/1io1bs/how_do_you_move_around_vertically/
+" http://www.reddit.com/r/vim/comments/1j9gm1/serious_question_what_do_you_all_think_is_a/
 
-if exists('g:loaded_sneak_plugin') || &compatible
+if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
   finish
 endif
 let g:loaded_sneak_plugin = 1
@@ -56,7 +58,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   if max(l:bounds) > 0
     "adjust logical left-bound for the _match_ pattern by -len(s) so that if _any_
     "char is within the logical bounds, it is considered a match.
-    let l:leftbound = max([0, (bounds[0] - len(a:s))])
+    let l:leftbound = max([0, (bounds[0] - len(a:s)) + 1])
     let l:match_pattern .= '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
   endif
 
@@ -76,7 +78,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     let l:matchpos = searchpos('\C\V'.l:match_pattern.'\zs'.l:search, l:searchoptions)
     if 0 == max(l:matchpos)
       if max(l:bounds) > 0
-        redraw | echo printf('not found (between columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) | return
+        redraw | echo printf('not found (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) | return
       else
         redraw | echo 'not found: '.a:s | return
       endif
@@ -113,8 +115,8 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     "this is a new search; set up the repeat mappings.
     call <sid>map('n', ';', "",   l:search, l:count,  a:isreverse, l:bounds)
     call <sid>map('n', '\', "",   l:search, l:count, !a:isreverse, l:bounds)
-    call <sid>xmap('x', ';', a:op, l:search, l:count,  a:isreverse, l:bounds)
-    call <sid>xmap('x', '\', a:op, l:search, l:count, !a:isreverse, l:bounds)
+    call <sid>xmap('x', ';', l:search, l:count,  a:isreverse, l:bounds)
+    call <sid>xmap('x', '\', l:search, l:count, !a:isreverse, l:bounds)
 
     "if f/F/t/T is invoked, unmap the temporary repeat mappings
     if empty(maparg("f", "n").maparg("F", "n").maparg("t", "n").maparg("T", "n"))
@@ -149,9 +151,9 @@ func! s:map(mode, keyseq, op, search, count, isreverse, bounds)
   exec printf('%snoremap <silent> %s :<c-u>call SneakToString("%s", "%s", %d, 1, %d, [%d, %d])'."\<cr>",
         \ a:mode, a:keyseq, a:op, a:search, a:count, a:isreverse, a:bounds[0], a:bounds[1])
 endf
-func! s:xmap(mode, keyseq, op, search, count, isreverse, bounds)
-  exec printf('%snoremap <silent> %s <esc>:<c-u>call SneakToString("%s", "%s", %d, 1, %d, [%d, %d])'."\<cr>",
-        \ a:mode, a:keyseq, a:op, a:search, a:count, a:isreverse, a:bounds[0], a:bounds[1])
+func! s:xmap(mode, keyseq, search, count, isreverse, bounds)
+  exec printf('%snoremap <silent> %s <esc>:<c-u>call SneakToString(visualmode(), "%s", %d, 1, %d, [%d, %d])'."\<cr>",
+        \ a:mode, a:keyseq, a:search, a:count, a:isreverse, a:bounds[0], a:bounds[1])
 endf
 func! s:isvisualop(op)
   return -1 != index(["V", "v", "\<c-v>"], a:op)
@@ -172,18 +174,28 @@ func! s:getNextNChars(n)
   endfor
   return l:s
 endf
+func! SneakDebugReport()
+  redir => l:s
+    silent echo 'buftype='.&buftype
+    silent echo 'virtualedit='.&virtualedit
+    silent exec 'verbose map s | map S | map z | map Z'
+  redir END
+  enew
+  silent put=l:s
+  "set nomodified
+endf
 
 augroup SneakPluginInit
   autocmd!
-  highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
-  autocmd ColorScheme * highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
+  highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+  autocmd ColorScheme * highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
 
   if &background ==# 'dark'
-    highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-    autocmd ColorScheme * highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+    highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
+    autocmd ColorScheme * highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
   else
-    highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-    autocmd ColorScheme * highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+    highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
+    autocmd ColorScheme * highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
   endif
 augroup END
 
@@ -194,7 +206,7 @@ nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getNextNCha
 nnoremap <silent> yZ     :<c-u>call SneakToString('y',          <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
 onoremap <silent> z      :<c-u>call SneakToString(v:operator,   <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
 onoremap <silent> Z      :<c-u>call SneakToString(v:operator,   <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
-xnoremap <silent> z <esc>:<c-u>call SneakToString(visualmode(), <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
+xnoremap <silent> s <esc>:<c-u>call SneakToString(visualmode(), <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
 xnoremap <silent> Z <esc>:<c-u>call SneakToString(visualmode(), <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
 
 

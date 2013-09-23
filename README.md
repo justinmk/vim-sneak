@@ -14,6 +14,10 @@ minimalist, well-behaved plugin that provides:
   - always literal: `s\*` jumps to the literal `\*`
   - tested with Vim 7.2.330+
 
+## Installation
+
+Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repeat operations via `.`
+
 ## Related
 * easymotion
 * seek.vim
@@ -21,11 +25,15 @@ minimalist, well-behaved plugin that provides:
 * https://github.com/svermeulen/vim-extended-ft
 
 ## TODO
+* support surround.vim motion: `ysz`
 * provide case-insensitive option
 * `n;` should skip to *nth* occurrence
 * vertical scope for built-in `/`
+* provide command to allow arbitrary-length search string?
 * use `strwidth()` instead of `len()` to support non-ascii (vim-7.3 only) 
 * `s` should prefer the closest match *within the viewport* (regardless of 
   direction), that is, prefer a match that does not move the screen to one that is off-screen.
 * operator-pending mode should accept registers
+* known issue: if a new `s` search does not find matches, repeating (with ; or \\) 
+  in the opposite direction repeats the last successful search
 
