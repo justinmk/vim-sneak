@@ -43,7 +43,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
 
   if l:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
     if !empty(a:op)
-      redraw | echo 'sneak: range not supported in visual mode or operator-pending mode' | return
+      echo 'sneak: range not supported in visual mode or operator-pending mode' | return
     endif
     " use provided bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
@@ -67,10 +67,10 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     let l:histreg = @/
     try
       "until we can find a better way, just invoke / and restore the history immediately after
-      let s:sneak_last_op = 'norm! '.a:op.(a:isreverse ? '?' : '/').'\C\V'.l:search."\<cr>"
+      let s:last_op = 'norm! '.a:op.(a:isreverse ? '?' : '/').'\C\V'.l:search."\<cr>"
       call <sid>sneak_perform_last_operation()
     catch E486
-      redraw | echo 'not found: '.a:s | return
+      echo 'not found: '.a:s | return
     finally
       call histdel("/", histnr("/")) "delete the last search from the history
       let @/ = l:histreg
@@ -79,9 +79,9 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     let l:matchpos = searchpos('\C\V'.l:match_pattern.'\zs'.l:search, l:searchoptions)
     if 0 == max(l:matchpos)
       if max(l:bounds) > 0
-        redraw | echo printf('not found (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) | return
+        echo printf('not found (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) | return
       else
-        redraw | echo 'not found: '.a:s | return
+        echo 'not found: '.a:s | return
       endif
     endif
   endif
@@ -143,8 +143,8 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
 endf
 
 func! s:sneak_perform_last_operation()
-  if !exists('s:sneak_last_op') | return | endif
-  exec s:sneak_last_op
+  if !exists('s:last_op') | return | endif
+  exec s:last_op
   silent! call repeat#set("\<Plug>SneakRepeat")
 endf
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>sneak_perform_last_operation()<cr>

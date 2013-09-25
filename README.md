@@ -15,6 +15,12 @@ minimalist, well-behaved plugin that provides:
   - always literal: `s\*` jumps to the literal `\*`
   - tested with Vim 7.2.330+
 
+If you, or one of your plugins, already maps `s` and `S` to some feature, sneak.vim 
+fully supports alternative mappings. However, consider that *motion* mappings 
+in Vim should absolutely be the *least friction* commands: mapping to something 
+like `<leader>s` is really not recommended. Consider moving your existing `s` 
+and `S` mappings to some other corner of your keyboard. 
+
 ## Installation
 
 Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repeat operations via `.`
