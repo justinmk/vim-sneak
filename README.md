@@ -1,6 +1,7 @@
 # sneak.vim: Vertical Motion for Vim
 
 minimalist, well-behaved plugin that provides:
+  - written from scratch, inspired by EasyMotion and seek.vim
   - move to any location with `s` followed by exactly two characters
   - repeat the motion with ; or ,
   - does not break f t ; ,
@@ -36,4 +37,5 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * operator-pending mode should accept registers
 * known issue: if a new `s` search does not find matches, repeating (with ; or \\) 
   in the opposite direction repeats the last successful search
+* ~~implement `gs` (like `gn`): `cgs`~~ (probably overreach/misfeature)
 

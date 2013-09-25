@@ -3,6 +3,7 @@
 " Version:      1.0
 " http://www.reddit.com/r/vim/comments/1io1bs/how_do_you_move_around_vertically/
 " http://www.reddit.com/r/vim/comments/1j9gm1/serious_question_what_do_you_all_think_is_a/
+" TODO: add to VAM pool https://github.com/MarcWeber/vim-addon-manager
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
   finish
