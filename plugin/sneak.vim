@@ -63,6 +63,20 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     let l:match_pattern .= '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
   endif
 
+  if !a:isrepeat
+    "this is a new search; set up the repeat mappings.
+    "do this even if the search fails, because the direction might be reversed after the initial failure.
+    call <sid>map('n', ';', "",   l:search, l:count,  a:isreverse, l:bounds)
+    call <sid>map('n', '\', "",   l:search, l:count, !a:isreverse, l:bounds)
+    call <sid>xmap('x', ';', l:search, l:count,  a:isreverse, l:bounds)
+    call <sid>xmap('x', '\', l:search, l:count, !a:isreverse, l:bounds)
+
+    "if f/F/t/T is invoked, unmap the temporary repeat mappings
+    if empty(maparg("f", "n").maparg("F", "n").maparg("t", "n").maparg("T", "n"))
+      nmap <silent> f <F10>f|nmap <silent> F <F10>F|nmap <silent> t <F10>t|nmap <silent> T <F10>T
+    endif
+  endif
+
   if !empty(a:op) && !<sid>isvisualop(a:op) "operator-pending invocation
     let l:histreg = @/
     try
@@ -110,19 +124,6 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   if l:count > 0
     "perform the scoped highlight...
     let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern, 1, get(w:, 'sneak_sc_hl', -1))
-  endif
-
-  if !a:isrepeat
-    "this is a new search; set up the repeat mappings.
-    call <sid>map('n', ';', "",   l:search, l:count,  a:isreverse, l:bounds)
-    call <sid>map('n', '\', "",   l:search, l:count, !a:isreverse, l:bounds)
-    call <sid>xmap('x', ';', l:search, l:count,  a:isreverse, l:bounds)
-    call <sid>xmap('x', '\', l:search, l:count, !a:isreverse, l:bounds)
-
-    "if f/F/t/T is invoked, unmap the temporary repeat mappings
-    if empty(maparg("f", "n").maparg("F", "n").maparg("t", "n").maparg("T", "n"))
-      nmap <silent> f <F10>f|nmap <silent> F <F10>F|nmap <silent> t <F10>t|nmap <silent> T <F10>T
-    endif
   endif
 
   augroup SneakPlugin
