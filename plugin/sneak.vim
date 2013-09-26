@@ -70,8 +70,8 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   if !a:isrepeat
     "this is a new search; set up the repeat mappings.
     "do this even if the search fails, because the direction might be reversed after the initial failure.
-    call <sid>map('n', ';', "",   l:search, l:count,  a:isreverse, l:bounds)
-    call <sid>map('n', '\', "",   l:search, l:count, !a:isreverse, l:bounds)
+    call <sid>map('n', ';',  l:search, l:count,  a:isreverse, l:bounds)
+    call <sid>map('n', '\',  l:search, l:count, !a:isreverse, l:bounds)
     call <sid>xmap('x', ';', l:search, l:count,  a:isreverse, l:bounds)
     call <sid>xmap('x', '\', l:search, l:count, !a:isreverse, l:bounds)
 
@@ -139,8 +139,9 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
 
   augroup SneakPlugin
     autocmd!
-    autocmd InsertEnter <buffer> call <sid>removehl() | autocmd! SneakPlugin
-    autocmd CursorMoved <buffer> call <sid>on_cursormoved()
+    autocmd InsertEnter,WinLeave,BufLeave <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
+    "set up *nested* CursorMoved autocmd to avoid the _first_ CursorMoved event.
+    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
   augroup END
 
   "perform the match highlight...
@@ -151,17 +152,6 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
         \ 2, get(w:, 'sneak_hl_id', -1))
 endf
 
-let s:cursormoved = 0
-func! s:on_cursormoved()
-  if !s:cursormoved "first tick
-    let s:cursormoved = 1
-  else
-    let s:cursormoved = 0 "reset
-    call s:removehl()
-    " tear down event handlers
-    autocmd! SneakPlugin
-  endif
-endf
 func! s:removehl() "remove highlighting
   silent! call matchdelete(w:sneak_hl_id)
   silent! call matchdelete(w:sneak_sc_hl)
@@ -225,7 +215,7 @@ augroup SneakPluginInit
   endif
 augroup END
 
-nnoremap <F10> :<c-u>unmap f<bar>unmap F<bar>unmap t<bar>unmap T<bar>unmap ;<bar>exe 'unmap \'<bar>call <sid>on_cursormoved()<cr>
+nnoremap <F10> :<c-u>unmap f<bar>unmap F<bar>unmap t<bar>unmap T<bar>unmap ;<bar>exe 'unmap \'<cr>
 nnoremap <silent> s      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
 nnoremap <silent> S      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>

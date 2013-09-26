@@ -41,9 +41,11 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * `s` should prefer the closest match *within the viewport* (regardless of 
   direction), that is, prefer a match that does not move the screen to one that is off-screen.
 * operator-pending mode should accept registers
-* known issue: if a new `s` search does not find matches, repeating (with ; or \\) 
   in the opposite direction repeats the last successful search
 * ~~implement `gs` (like `gn`): `cgs`~~ (probably overreach/misfeature)
 * `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
-* trying to repeat a failed search does not work
+
+## Known Issues
+* if a new `s` search does not find matches, repeating (with ; or \\) 
+* cannot repeat an operation that did not find a match
 
