@@ -116,8 +116,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     call cursor(l:matchpos[0], l:matchpos[1])
   endif
 
-  silent! call matchdelete(w:sneak_hl_id)
-  silent! call matchdelete(w:sneak_sc_hl)
+  call s:removehl()
 
   "position _after_ completed search
   let l:start_lin_str = string(line('.') + (a:isreverse ? 1 : -1))
@@ -137,9 +136,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
 
   augroup SneakPlugin
     autocmd!
-    autocmd InsertEnter <buffer> silent! call matchdelete(w:sneak_hl_id) | 
-          \ silent! call matchdelete(w:sneak_sc_hl) |
-          \ autocmd! SneakPlugin
+    autocmd InsertEnter <buffer> call <sid>removehl() | autocmd! SneakPlugin
     autocmd CursorMoved <buffer> call <sid>on_cursormoved()
   augroup END
 
@@ -155,11 +152,14 @@ func! s:on_cursormoved()
     let s:cursormoved = 1
   else
     let s:cursormoved = 0 "reset
-    silent! call matchdelete(w:sneak_hl_id)
-    silent! call matchdelete(w:sneak_sc_hl)
+    call s:removehl()
     " tear down event handlers
     autocmd! SneakPlugin
   endif
+endf
+func! s:removehl() "remove highlighting
+  silent! call matchdelete(w:sneak_hl_id)
+  silent! call matchdelete(w:sneak_sc_hl)
 endf
 
 func! s:sneak_perform_last_operation()
@@ -220,7 +220,7 @@ augroup SneakPluginInit
   endif
 augroup END
 
-nnoremap <F10> :<c-u>unmap f<bar>unmap F<bar>unmap t<bar>unmap T<bar>unmap ;<bar>exe 'unmap \'<bar>silent! call matchdelete(w:sneak_hl_id)<cr>
+nnoremap <F10> :<c-u>unmap f<bar>unmap F<bar>unmap t<bar>unmap T<bar>unmap ;<bar>exe 'unmap \'<bar>call <sid>on_cursormoved()<cr>
 nnoremap <silent> s      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
 nnoremap <silent> S      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
