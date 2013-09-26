@@ -86,7 +86,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     try
       "until we can find a better way, just invoke / and restore the history immediately after
       let s:last_op = 'norm! '.a:op.(a:isreverse ? '?' : '/').'\C\V'.l:search."\<cr>"
-      call <sid>sneak_perform_last_operation()
+      call <sid>perform_last_operation()
     catch E486
       let s:notfound = 1
       echo 'not found: '.a:s | return
@@ -167,15 +167,15 @@ func! s:removehl() "remove highlighting
   silent! call matchdelete(w:sneak_sc_hl)
 endf
 
-func! s:sneak_perform_last_operation()
-  if !exists('s:last_op') | return | endif
+func! s:perform_last_operation()
   exec s:last_op
   silent! call repeat#set("\<Plug>SneakRepeat")
 endf
-nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>sneak_perform_last_operation()<cr>
-func! s:map(mode, keyseq, op, search, count, isreverse, bounds)
-  exec printf('%snoremap <silent> %s :<c-u>call SneakToString("%s", "%s", %d, 1, %d, [%d, %d])'."\<cr>",
-        \ a:mode, a:keyseq, a:op, a:search, a:count, a:isreverse, a:bounds[0], a:bounds[1])
+nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>perform_last_operation()<cr>
+
+func! s:map(mode, keyseq, search, count, isreverse, bounds)
+  exec printf('%snoremap <silent> %s :<c-u>call SneakToString("", "%s", %d, 1, %d, [%d, %d])'."\<cr>",
+        \ a:mode, a:keyseq, a:search, a:count, a:isreverse, a:bounds[0], a:bounds[1])
 endf
 func! s:xmap(mode, keyseq, search, count, isreverse, bounds)
   exec printf('%snoremap <silent> %s <esc>:<c-u>call SneakToString(visualmode(), "%s", %d, 1, %d, [%d, %d])'."\<cr>",
