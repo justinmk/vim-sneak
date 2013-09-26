@@ -140,16 +140,26 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     autocmd InsertEnter <buffer> silent! call matchdelete(w:sneak_hl_id) | 
           \ silent! call matchdelete(w:sneak_sc_hl) |
           \ autocmd! SneakPlugin
-    "set up *nested* CursorMoved autocmd to avoid the _first_ CursorMoved event.
-    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> silent! call matchdelete(w:sneak_hl_id) |
-          \ silent! call matchdelete(w:sneak_sc_hl) |
-          \ autocmd! SneakPlugin
+    autocmd CursorMoved <buffer> call <sid>on_cursormoved()
   augroup END
 
   "perform the match highlight...
   "  - scope to window because matchadd() highlight is per-window.
   "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
   let w:sneak_hl_id = matchadd('SneakPluginMatch', '\C\V'.l:match_pattern.'\zs'.l:search, 2, get(w:, 'sneak_hl_id', -1))
+endf
+
+let s:cursormoved = 0
+func! s:on_cursormoved()
+  if !s:cursormoved "first tick
+    let s:cursormoved = 1
+  else
+    let s:cursormoved = 0 "reset
+    silent! call matchdelete(w:sneak_hl_id)
+    silent! call matchdelete(w:sneak_sc_hl)
+    " tear down event handlers
+    autocmd! SneakPlugin
+  endif
 endf
 
 func! s:sneak_perform_last_operation()
