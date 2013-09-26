@@ -169,14 +169,14 @@ endf
 func! s:isvisualop(op)
   return -1 != index(["V", "v", "\<c-v>"], a:op)
 endf
-func! s:getInputChar()
+func! s:getinputchar()
   let l:c = getchar()
   return type(l:c) == type(0) ? nr2char(l:c) : l:c
 endf
-func! s:getNextNChars(n)
+func! s:getnextNchars(n)
   let l:s = ''
   for i in range(1, a:n)
-    let l:c = <sid>getInputChar()
+    let l:c = <sid>getinputchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], l:c)
       return ""
     endif
@@ -185,7 +185,7 @@ func! s:getNextNChars(n)
   endfor
   return l:s
 endf
-func! SneakDebugReport()
+func! sneak#debugreport()
   redir => l:s
     silent echo 'buftype='.&buftype
     silent echo 'virtualedit='.&virtualedit
@@ -211,14 +211,14 @@ augroup SneakPluginInit
 augroup END
 
 nnoremap <F10> :<c-u>unmap f<bar>unmap F<bar>unmap t<bar>unmap T<bar>unmap ;<bar>exe 'unmap \'<bar>silent! call matchdelete(w:sneak_hl_id)<cr>
-nnoremap <silent> s      :<c-u>call SneakToString('',           <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> S      :<c-u>call SneakToString('',           <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
-nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> yZ     :<c-u>call SneakToString('y',          <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
-onoremap <silent> z      :<c-u>call SneakToString(v:operator,   <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
-onoremap <silent> Z      :<c-u>call SneakToString(v:operator,   <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
-xnoremap <silent> s <esc>:<c-u>call SneakToString(visualmode(), <sid>getNextNChars(2), v:count, 0, 0, [0,0])<cr>
-xnoremap <silent> Z <esc>:<c-u>call SneakToString(visualmode(), <sid>getNextNChars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> s      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> S      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> yZ     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+onoremap <silent> z      :<c-u>call SneakToString(v:operator,   <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+onoremap <silent> Z      :<c-u>call SneakToString(v:operator,   <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+xnoremap <silent> s <esc>:<c-u>call SneakToString(visualmode(), <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+xnoremap <silent> Z <esc>:<c-u>call SneakToString(visualmode(), <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
 
 
 let &cpo = s:cpo_save
