@@ -45,4 +45,5 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
   in the opposite direction repeats the last successful search
 * ~~implement `gs` (like `gn`): `cgs`~~ (probably overreach/misfeature)
 * `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
+* trying to repeat a failed search does not work
 

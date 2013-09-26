@@ -36,6 +36,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   let l:match_pattern = ''
   " pattern used to highlight the vertical 'scope'
   let l:scope_pattern = ''
+  let l:match_bounds  = ''
   " do not wrap
   let l:searchoptions = 'W'
   " search backwards
@@ -62,7 +63,8 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     "adjust logical left-bound for the _match_ pattern by -len(s) so that if _any_
     "char is within the logical bounds, it is considered a match.
     let l:leftbound = max([0, (bounds[0] - len(a:s)) + 1])
-    let l:match_pattern .= '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
+    let l:match_bounds   = '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
+    let l:match_pattern .= l:match_bounds
   endif
 
   if !a:isrepeat
@@ -119,15 +121,16 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   call s:removehl()
 
   "position _after_ completed search
-  let l:start_lin_str = string(line('.') + (a:isreverse ? 1 : -1))
+  let l:curlin = string(line('.'))
+  let l:curcol = string(virtcol('.'))
 
   "Might as well scope to window height (+/- 40). TODO: profile this
   let l:top = max([0, line('w0')-40])
   let l:bot = min([line('$'), line('w$')+40])
-  let l:restrict_top_bot = '\%'.l:gt_lt.l:start_lin_str.'l\%>'.l:top.'l\%<'.l:bot.'l'
+  let l:restrict_top_bot = '\%'.l:gt_lt.l:curlin.'l\%>'.l:top.'l\%<'.l:bot.'l'
   let l:scope_pattern .= l:restrict_top_bot
   let l:match_pattern .= l:restrict_top_bot
-  let l:curln_pattern  = l:restrict_top_bot
+  let l:curln_pattern  = l:match_bounds.'\%'.l:curlin.'l\%'.l:gt_lt.l:curcol.'v'
 
   if l:count > 0
     "perform the scoped highlight...
@@ -143,7 +146,9 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   "perform the match highlight...
   "  - scope to window because matchadd() highlight is per-window.
   "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
-  let w:sneak_hl_id = matchadd('SneakPluginMatch', '\C\V'.l:match_pattern.'\zs'.l:search, 2, get(w:, 'sneak_hl_id', -1))
+  let w:sneak_hl_id = matchadd('SneakPluginMatch',
+        \ '\C\V'.l:match_pattern.'\zs'.l:search.'\|'.l:curln_pattern.l:search,
+        \ 2, get(w:, 'sneak_hl_id', -1))
 endf
 
 let s:cursormoved = 0
