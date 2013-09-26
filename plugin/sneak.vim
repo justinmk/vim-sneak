@@ -13,6 +13,8 @@ let g:loaded_sneak_plugin = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
+let s:notfound = 0
+
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
 " TODO: map something other than F10
 func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
@@ -32,14 +34,14 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   " example: highlight string "ab" after line 42, column 5 
   "          matchadd('foo', 'ab\%>42l\%5c', 1)
   let l:match_pattern = ''
-  " pattern used to highlight the vertical "scope"
+  " pattern used to highlight the vertical 'scope'
   let l:scope_pattern = ''
   " do not wrap
   let l:searchoptions = 'W'
   " search backwards
   if a:isreverse | let l:searchoptions .= 'b' | endif
   " save the jump on the initial invocation, _not_ repeats.
-  if !a:isrepeat | let l:searchoptions .= 's' | endif
+  if !a:isrepeat || s:notfound | let l:searchoptions .= 's' | endif
 
   if l:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
     if !empty(a:op)
@@ -84,6 +86,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
       let s:last_op = 'norm! '.a:op.(a:isreverse ? '?' : '/').'\C\V'.l:search."\<cr>"
       call <sid>sneak_perform_last_operation()
     catch E486
+      let s:notfound = 1
       echo 'not found: '.a:s | return
     finally
       call histdel("/", histnr("/")) "delete the last search from the history
@@ -92,6 +95,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   else "jump to the first match, or exit
     let l:matchpos = searchpos('\C\V'.l:match_pattern.'\zs'.l:search, l:searchoptions)
     if 0 == max(l:matchpos)
+      let s:notfound = 1
       if max(l:bounds) > 0
         echo printf('not found (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) | return
       else
@@ -100,6 +104,11 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     endif
   endif
   "search succeeded
+
+  if s:notfound "search succeeded; clear previous 'not found' message (if any).
+    let s:notfound = 0
+    redraw! | echo a:s
+  endif
 
   "if the user was in visual mode, extend the selection.
   if <sid>isvisualop(a:op)
