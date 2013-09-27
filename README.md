@@ -38,14 +38,11 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * vertical scope for built-in `/`
 * provide command to allow arbitrary-length search string?
 * use `strwidth()` instead of `len()` to support non-ascii (vim-7.3 only) 
-* `s` should prefer the closest match *within the viewport* (regardless of 
-  direction), that is, prefer a match that does not move the screen to one that is off-screen.
 * operator-pending mode should accept registers
-  in the opposite direction repeats the last successful search
 * ~~implement `gs` (like `gn`): `cgs`~~ (probably overreach/misfeature)
 * `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
 
 ## Known Issues
-* if a new `s` search does not find matches, repeating (with ; or \\) 
+* if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search
 * cannot repeat an operation that did not find a match
 
