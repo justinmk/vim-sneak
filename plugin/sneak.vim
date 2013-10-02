@@ -15,6 +15,33 @@ set cpo&vim
 
 let s:notfound = 0
 
+"TODO: put this in autoload/
+"TODO: document:
+"        g:sneak#keys.searchfw
+"        g:sneak#keys.searchbw
+"        g:sneak#keys.next
+"        g:sneak#keys.prev
+let s:keys = get(g:, 'sneak#keys', {})
+
+" default key map for 'search forwards'
+let s:keys.searchfw = get(g:, 'sneak#keys', 's')
+" default key map for 'search backwards'
+let s:keys.searchbw = get(g:, 'sneak#keys', 'S')
+
+" default key map for 'go to next match'
+if !exists('s:keys.next')
+  let s:keys.next = ';'
+endif "else, just disable the 'go to next' feature
+
+" default key map for 'go to next match'
+if !exists('s:keys.prev')
+  if mapleader ==# ','
+    let s:keys.prev = '\'
+  else
+    let s:keys.prev = ','
+  endif "else, just disable the 'go to previous' feature
+endif
+
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
 " TODO: map something other than F10
 func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
@@ -70,10 +97,10 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   if !a:isrepeat
     "this is a new search; set up the repeat mappings.
     "do this even if the search fails, because the direction might be reversed after the initial failure.
-    call <sid>map('n', ';',  l:search, l:count,  a:isreverse, l:bounds)
-    call <sid>map('n', '\',  l:search, l:count, !a:isreverse, l:bounds)
-    call <sid>xmap('x', ';', l:search, l:count,  a:isreverse, l:bounds)
-    call <sid>xmap('x', '\', l:search, l:count, !a:isreverse, l:bounds)
+    call <sid>map ('n', s:keys.next, l:search, l:count,  a:isreverse, l:bounds)
+    call <sid>map ('n', s:keys.prev, l:search, l:count, !a:isreverse, l:bounds)
+    call <sid>xmap('x', s:keys.next, l:search, l:count,  a:isreverse, l:bounds)
+    call <sid>xmap('x', s:keys.prev, l:search, l:count, !a:isreverse, l:bounds)
 
     "if f/F/t/T is invoked, unmap the temporary repeat mappings
     if empty(maparg("f", "n").maparg("F", "n").maparg("t", "n").maparg("T", "n"))
@@ -191,13 +218,15 @@ func! s:getnextNchars(n)
   return l:s
 endf
 func! sneak#debugreport()
-  redir => l:s
+  redir => output
+    " silent echo  'g:sneak#keys' string(g:sneak#keys)
+    silent echo 's:keys='.string(s:keys)
     silent echo 'buftype='.&buftype
     silent echo 'virtualedit='.&virtualedit
     silent exec 'verbose map s | map S | map z | map Z'
   redir END
   enew
-  silent put=l:s
+  silent put=output
   "set nomodified
 endf
 
@@ -216,8 +245,8 @@ augroup SneakPluginInit
 augroup END
 
 nnoremap <F10> :<c-u>unmap f<bar>unmap F<bar>unmap t<bar>unmap T<bar>unmap ;<bar>exe 'unmap \'<cr>
-nnoremap <silent> s      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> S      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+exec "nnoremap <silent> ".s:keys.searchfw."      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 0, [0,0])\<cr>"
+exec "nnoremap <silent> ".s:keys.searchbw."      :<c-u>call SneakToString('',           <sid>getnextNchars(2), v:count, 0, 1, [0,0])\<cr>"
 nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
 nnoremap <silent> yZ     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
 onoremap <silent> z      :<c-u>call SneakToString(v:operator,   <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
