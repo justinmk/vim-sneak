@@ -128,7 +128,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
 
   "position _after_ completed search
   let l:curlin = string(line('.'))
-  let l:curcol = string(virtcol('.'))
+  let l:curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
 
   "Might as well scope to window height (+/- 40). TODO: profile this
   let l:top = max([0, line('w0')-40])

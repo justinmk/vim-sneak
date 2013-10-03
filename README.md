@@ -51,5 +51,4 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 ## Known Issues
 * if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search
 * cannot repeat an operation that did not find a match
-* 3 chars in a sequence show highlight for all 3, eg 'www'
 
