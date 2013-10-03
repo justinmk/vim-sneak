@@ -28,7 +28,7 @@ let s:notfound = 0
 let g:sneak#state = {}
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
-func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
+func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
   if empty(a:s) "user canceled
     redraw | echo '' | return
   endif
@@ -38,7 +38,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   "  - highlight the vertical "tunnel" that the search is scoped-to
 
   let l:search = escape(a:s, '"\')
-  let l:gt_lt = a:isreverse ? '<' : '>'
+  let l:gt_lt = a:reverse ? '<' : '>'
   " [left_bound, right_bound] 
   let l:bounds = deepcopy(a:bounds)
   let l:count = a:count
@@ -51,7 +51,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   " do not wrap
   let l:searchoptions = 'W'
   " search backwards
-  if a:isreverse | let l:searchoptions .= 'b' | endif
+  if a:reverse | let l:searchoptions .= 'b' | endif
   " save the jump on the initial invocation, _not_ repeats.
   if !a:isrepeat || s:notfound | let l:searchoptions .= 's' | endif
 
@@ -81,7 +81,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
   if !a:isrepeat
     "this is a new search; set up the repeat mappings.
     "do this even if the search fails, because the _reverse_ direction might have a match.
-    let g:sneak#state.reverse = a:isreverse
+    let g:sneak#state.reverse = a:reverse
     let g:sneak#state.count  = l:count
     let g:sneak#state.bounds = l:bounds
     let g:sneak#state.search = l:search
@@ -91,7 +91,7 @@ func! SneakToString(op, s, count, isrepeat, isreverse, bounds) range abort
     let l:histreg = @/
     try
       "until we can find a better way, just invoke / and restore the history immediately after
-      let s:last_op = 'norm! '.a:op.(a:isreverse ? '?' : '/').'\C\V'.l:search."\<cr>"
+      let s:last_op = 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
       call <sid>perform_last_operation()
     catch E486
       let s:notfound = 1
@@ -196,10 +196,19 @@ func! s:getnextNchars(n)
   endfor
   return l:s
 endf
+func! s:dbgflag(settingname)
+  exec 'let value='.a:settingname
+  silent echo a:settingname.'='.value
+endf
+func! s:dbgfeat(featurename)
+  exec 'let value=has("'.a:featurename.'")'
+  silent echo 'has("'.a:featurename.'")='.value
+endf
 func! sneak#debugreport()
   redir => output
-    silent echo 'buftype='.&buftype
-    silent echo 'virtualedit='.&virtualedit
+    call s:dbgfeat('autocmd')
+    call s:dbgflag('&buftype')
+    call s:dbgflag('&virtualedit')
     silent exec 'verbose map s | map S | map z | map Z'
   redir END
   enew
