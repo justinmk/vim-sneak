@@ -21,6 +21,12 @@ in Vim should absolutely be the *least friction* commands: mapping to something
 like `<leader>s` is really not recommended. Consider moving your existing `s` 
 and `S` mappings to some other corner of your keyboard. 
 
+Filling the gap: 
+- sneak highlights are not as long-lived as `/` highlights; they don't persist 
+  across windows or buffers, and they go away as soon as you do anything other 
+  than interact with sneak. 
+
+
 ## Installation
 
 Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repeat operations via `.`
@@ -45,4 +51,5 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 ## Known Issues
 * if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search
 * cannot repeat an operation that did not find a match
+* 3 chars in a sequence show highlight for all 3, eg 'www'
 
