@@ -47,6 +47,7 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * operator-pending mode should accept registers
 * ~~implement `gs` (like `gn`): `cgs`~~ (probably overreach/misfeature)
 * `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
+* `gs` (or something) should visual select the scoped area
 
 ## Known Issues
 * if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search

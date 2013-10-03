@@ -24,12 +24,11 @@ let s:notfound = 0
 "      <Plug>SneakBackward
 "      SneakPluginMatch
 "      SneakPluginScope
-"      g:sneak#options.next_prev_for_f_t_also
+"      g:sneak#options.nextprev_f
+"      g:sneak#options.nextprev_t
 
 let g:sneak#state = {}
-let g:sneak#options = {
-      \ "next_prev_for_f_t_also" : 1
-      \ }
+let g:sneak#options = { "nextprev_f":1, "nextprev_t":1 }
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
 func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
@@ -172,7 +171,7 @@ func! sneak#reset()
   let g:sneak#state.reset = 1
 endf
 
-if g:sneak#options.next_prev_for_f_t_also
+if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
   func! s:map_reset_key(key)
     "preserve existing mapping
     let maparg = maparg(a:key, "n")
@@ -183,10 +182,14 @@ if g:sneak#options.next_prev_for_f_t_also
   endf
 
   "if f/F/t/T are invoked, we want ; and , to work for them instead of sneak.
-  call s:map_reset_key("f")
-  call s:map_reset_key("F")
-  call s:map_reset_key("t")
-  call s:map_reset_key("T")
+  if g:sneak#options.nextprev_f
+    call s:map_reset_key("f")
+    call s:map_reset_key("F")
+  endif
+  if g:sneak#options.nextprev_t
+    call s:map_reset_key("t")
+    call s:map_reset_key("T")
+  endif
 endif
 
 func! s:removehl() "remove highlighting
