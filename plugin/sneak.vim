@@ -24,13 +24,22 @@ let s:notfound = 0
 "      <Plug>SneakBackward
 "      SneakPluginMatch
 "      SneakPluginScope
+"      g:sneak#options.next_prev_for_f_t_also
 
 let g:sneak#state = {}
+let g:sneak#options = {
+      \ "next_prev_for_f_t_also" : 1
+      \ }
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
 func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
   if empty(a:s) "user canceled
     redraw | echo '' | return
+  endif
+
+  if a:isrepeat && g:sneak#state.reset
+    exec "norm! ".(a:reverse ? "," : ";")
+    return
   endif
 
   "highlight tasks:
@@ -81,6 +90,7 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
   if !a:isrepeat
     "this is a new search; set up the repeat mappings.
     "do this even if the search fails, because the _reverse_ direction might have a match.
+    let g:sneak#state.reset = 0
     let g:sneak#state.reverse = a:reverse
     let g:sneak#state.count  = l:count
     let g:sneak#state.bounds = l:bounds
@@ -158,12 +168,26 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
         \ 2, get(w:, 'sneak_hl_id', -1))
 endf
 
-func! s:reset()
-  "TODO
-  " silent! unmap ;
-  " silent! unmap \
-  " nnoremap \ ,
+func! sneak#reset()
+  let g:sneak#state.reset = 1
 endf
+
+if g:sneak#options.next_prev_for_f_t_also
+  func! s:map_reset_key(key)
+    "preserve existing mapping
+    let maparg = maparg(a:key, "n")
+    if empty(maparg) "else, preserve the Vim default behavior
+      let maparg = a:key
+    endif
+    exec "nnoremap <silent> ".a:key." :<c-u>call sneak#reset()\<cr>".maparg
+  endf
+
+  "if f/F/t/T are invoked, we want ; and , to work for them instead of sneak.
+  call s:map_reset_key("f")
+  call s:map_reset_key("F")
+  call s:map_reset_key("t")
+  call s:map_reset_key("T")
+endif
 
 func! s:removehl() "remove highlighting
   silent! call matchdelete(w:sneak_hl_id)
@@ -229,12 +253,6 @@ augroup SneakPluginInit
     autocmd ColorScheme * highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
   endif
 augroup END
-
-"if f/F/t/T are invoked, we want ; and , to work for them instead of sneak.
-nnoremap <silent> f :<c-u>call <sid>reset()<cr>f
-nnoremap <silent> F :<c-u>call <sid>reset()<cr>F
-nnoremap <silent> t :<c-u>call <sid>reset()<cr>t
-nnoremap <silent> T :<c-u>call <sid>reset()<cr>T
 
 nnoremap <silent> <Plug>SneakForward   :<c-u>call SneakToString('', <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
 nnoremap <silent> <Plug>SneakBackward  :<c-u>call SneakToString('', <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
