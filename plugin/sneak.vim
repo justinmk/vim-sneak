@@ -18,10 +18,12 @@ let s:notfound = 0
 "TODO: put this in autoload/
 "      http://learnvimscriptthehardway.stevelosh.com/chapters/53.html
 "TODO: document:
-"      g:sneak#keys.next
-"      g:sneak#keys.prev
 "      <Plug>SneakForward
 "      <Plug>SneakBackward
+"      <Plug>SneakNext
+"      <Plug>SneakPrevious
+"      <Plug>VSneakNext
+"      <Plug>VSneakPrevious
 "      SneakPluginTarget
 "      SneakPluginScope
 "      g:sneak#options.nextprev_f
@@ -152,12 +154,7 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
     let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern, 1, get(w:, 'sneak_sc_hl', -1))
   endif
 
-  augroup SneakPlugin
-    autocmd!
-    autocmd InsertEnter,WinLeave,BufLeave <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
-    "set up *nested* CursorMoved autocmd to avoid the _first_ CursorMoved event.
-    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
-  augroup END
+  call s:attach_autocmds()
 
   "perform the match highlight...
   "  - scope to window because matchadd() highlight is per-window.
@@ -167,11 +164,20 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
         \ 2, get(w:, 'sneak_hl_id', -1))
 endf
 
-func! sneak#reset()
-  let g:sneak#state.reset = 1
+func! s:attach_autocmds()
+  augroup SneakPlugin
+    autocmd!
+    autocmd InsertEnter,WinLeave,BufLeave <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
+    "set up *nested* CursorMoved autocmd to avoid the _first_ CursorMoved event.
+    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
+  augroup END
 endf
 
 if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
+  func! sneak#reset()
+    let g:sneak#state.reset = 1
+  endf
+
   func! s:map_reset_key(key)
     "preserve existing mapping
     let maparg = maparg(a:key, "n")
@@ -201,7 +207,6 @@ func! s:perform_last_operation()
   exec s:last_op
   silent! call repeat#set("\<Plug>SneakRepeat")
 endf
-nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>perform_last_operation()<cr>
 
 func! s:isvisualop(op)
   return -1 != index(["V", "v", "\<c-v>"], a:op)
@@ -269,6 +274,7 @@ onoremap <silent> z      :<c-u>call SneakToString(v:operator,   <sid>getnextNcha
 onoremap <silent> Z      :<c-u>call SneakToString(v:operator,   <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
 xnoremap <silent> s <esc>:<c-u>call SneakToString(visualmode(), <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
 xnoremap <silent> Z <esc>:<c-u>call SneakToString(visualmode(), <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>perform_last_operation()<cr>
 
 if !hasmapto('<Plug>SneakForward')
   nmap s <Plug>SneakForward

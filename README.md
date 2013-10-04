@@ -1,10 +1,13 @@
 # sneak.vim: Vertical Motion for Vim
 
 minimalist, well-behaved plugin that provides:
-  - written from scratch, inspired by EasyMotion and seek.vim
   - move to any location with `s` followed by exactly two characters
+  - written from scratch, inspired by EasyMotion and seek.vim
+  - jumps immediately to first match, unlike EasyMotion
+  - gets out of your way as soon as you move the cursor
+  - common case requires 3-char key sequence (EasyMotion requires 5: ,,fab)
   - repeat the motion with ; or ,
-  - does not break f t ; ,
+  - does not break f t F T ; ,
   - preserves the / register; does not add noise to `/` history
   - does not triggering search results highlighting
   - only shows highlights in current window
@@ -13,6 +16,7 @@ minimalist, well-behaved plugin that provides:
   - highlights additional matches until a key other than ; or , is pressed
   - range => restrict search column to +/- range size
   - always literal: `s\*` jumps to the literal `\*`
+  - tested on massive 100k+ LOC syntax-highlighted file
   - tested with Vim 7.2.330+
 
 If you, or one of your plugins, already maps `s` and `S` to some feature, sneak.vim 
@@ -51,5 +55,5 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 
 ## Known Issues
 * if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search
-* cannot repeat an operation that did not find a match
+* repeat-next does not work in visual-mode
 
