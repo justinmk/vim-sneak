@@ -1,0 +1,137 @@
+*sneak.txt*	Version 1.0.
+
+            sneak - the missing Vim motion
+
+==============================================================================
+1. Introduction                              *sneak* *sneak-introduction*
+
+sneak provides a way to move quickly to specific locations that would otherwise
+be awkward. Press `saa` whera "aa" is any two characters.
+
+When sneak is invoked, the cursor immediately moves to the first match; 
+    - additional matches, if any, are highlighted in hideous magenta
+    - the motion can be repeated forwards or backwards with ; or , respectively
+sneak has a few other features, but above all, sneak tries to get out of your
+way, by 
+    disposing itself as soon as the cursor moves
+    providing sane defaults, 
+    avoiding conflicts with other plugins, and 
+    avoiding required configuration.
+
+==============================================================================
+2. Usage                                                    *sneak-usage*
+
+sneak is triggered by one of the provided mappings |sneak-default-mappings|
+
+Example: >
+
+    <cursor>Lorem ipsum dolor sit amet.
+
+Type 'ssi' to jump to the beginning of the word "sit": >
+
+    Lorem ipsum dolor <cursor>sit amet.
+
+And that's it!
+
+------------------------------------------------------------------------------
+2.1 Default mappings                             *sneak-default-mappings*
+
+The default configuration defines the following mappings in normal,
+visual and operator-pending mode:
+
+    Mapping           | Details
+    ------------------|----------------------------------------------
+    s{char}{char}     | Jump to the next occurence of {char}{char}
+    S{char}{char}     | Jump to the previous occurence of {char}{char}
+    {range}s{char}{char}     | Invoke sneak in "scope" mode
+    {range}S{char}{char}     | 
+    {operator}z
+    {operator}Z
+    ;
+    , or \
+
+See |sneak-custom-mappings| to change these mappings.
+
+==============================================================================
+3. Requirements                                      *sneak-requirements*
+
+sneak has been tested on 7.2+. Vi-compatible mode must be disabled.
+
+==============================================================================
+4. Configuration                                    *sneak-configuration*
+
+sneak will work fine without any configuration, but you can override the
+default behavior by setting configuration variables globally in your |vimrc|
+file.
+
+
+g:sneak#options.nextprev_f = 1
+g:sneak#options.nextprev_t = 1
+
+------------------------------------------------------------------------------
+4.5 Custom highlighting                                 *sneak-custom-hl*
+
+The default sneak configuration uses two highlighting groups for highlighting
+matches and "scope" mode.
+
+    * SneakPluginTarget
+
+      Highlights matches, the default value is hideous magenta :)
+
+    * SneakPluginScope
+
+      Highlights the search scope; default value is white (black if background=light)
+
+There are two ways to override the default colors:
+
+   1. Set the highlighting in your color scheme
+
+      Example: >
+
+          hi SneakPluginTarget ctermbg=none ctermfg=green
+          hi SneakPluginScope  ctermbg=none ctermfg=blue
+<
+   2. Set the highlighting in your vimrc
+
+      This is ideal if you want to link the colors to highlighting groups that
+      are available in almost every color scheme, e.g. |ErrorMsg| (usually
+      bright red) and Comment (usually faded). You can be sure that the
+      color scheme's colors will be used instead of the default red/gray
+      if you choose this option.
+
+      Example: >
+
+          hi link SneakPluginTarget ErrorMsg
+          hi link SneakPluginScope  Comment
+<
+------------------------------------------------------------------------------
+4.6 Custom mappings                               *sneak-custom-mappings*
+
+sneak allows you to customize most of the default mappings to avoid conflicts
+with existing mappings.
+
+==============================================================================
+5. License                                                *sneak-license*
+
+MIT
+
+==============================================================================
+6. Known bugs                                          *sneak-known-bugs*
+
+
+==============================================================================
+7. Contributing                                      *sneak-contributing*
+
+Report bugs or request features, on GitHub. If you have any code improvements,
+fork the source repository on GitHub and send a pull request.
+
+Author: Justin M. Keyes <justinkz+vim@gmail.com>
+Source repository: https://github.com/justinmk/vim-sneak
+
+==============================================================================
+8. Credits                                                *sneak-credits*
+
+EasyMotion for initial doc layout and some verbiage
+
+==============================================================================
+vim:tw=78:sw=4:ts=8:ft=help:norl:
