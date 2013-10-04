@@ -173,6 +173,10 @@ if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
   func! s:map_reset_key(key)
     "preserve existing mapping
     let maparg = maparg(a:key, "n")
+    if -1 != stridx(maparg, 'sneak#reset') "avoid redundant mapping, 
+      " in case this file is sourced more than once (eg during debugging)
+      return
+    endif
     if empty(maparg) "else, preserve the Vim default behavior
       let maparg = a:key
     endif
