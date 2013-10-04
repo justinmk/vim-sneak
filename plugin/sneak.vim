@@ -22,7 +22,7 @@ let s:notfound = 0
 "      g:sneak#keys.prev
 "      <Plug>SneakForward
 "      <Plug>SneakBackward
-"      SneakPluginMatch
+"      SneakPluginTarget
 "      SneakPluginScope
 "      g:sneak#options.nextprev_f
 "      g:sneak#options.nextprev_t
@@ -162,7 +162,7 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
   "perform the match highlight...
   "  - scope to window because matchadd() highlight is per-window.
   "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
-  let w:sneak_hl_id = matchadd('SneakPluginMatch',
+  let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ '\C\V'.l:match_pattern.'\zs'.l:search.'\|'.l:curln_pattern.l:search,
         \ 2, get(w:, 'sneak_hl_id', -1))
 endf
@@ -245,8 +245,8 @@ endf
 
 augroup SneakPluginInit
   autocmd!
-  highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-  autocmd ColorScheme * highlight SneakPluginMatch guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+  highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+  autocmd ColorScheme * highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
 
   if &background ==# 'dark'
     highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
