@@ -29,23 +29,19 @@ let s:notfound = 0
 "      g:sneak#options.nextprev_f
 "      g:sneak#options.nextprev_t
 
-let g:sneak#state = {}
-let g:sneak#options = { "nextprev_f":1, "nextprev_t":1 }
+let g:sneak#state = get(g:, 'sneak#state', { 'search':'', 'reverse':0, 'count':0, 'bounds':[0,0] })
+let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1 }
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
-func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
-  if empty(a:s) "user canceled
-    redraw | echo '' | return
-  endif
-
-  if a:isrepeat && g:sneak#state.reset
-    exec "norm! ".(a:reverse ? "," : ";")
+func! sneak#to(op, s, count, isrepeat, reverse, bounds) range abort
+  if empty(a:s) "user canceled, or state was reset by f/F/t/T
+    if a:isrepeat | exec "norm! ".(a:reverse ? "," : ";") | else | redraw | echo '' | endif
     return
   endif
 
   "highlight tasks:
   "  - highlight actual matches at or below (above) the cursor position
-  "  - highlight the vertical "tunnel" that the search is scoped-to
+  "  - highlight the vertical 'tunnel' that the search is scoped-to
 
   let l:search = escape(a:s, '"\')
   let l:gt_lt = a:reverse ? '<' : '>'
@@ -88,22 +84,18 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
     let l:match_pattern .= l:match_bounds
   endif
 
-  if !a:isrepeat
-    "this is a new search; set up the repeat mappings.
-    "do this even if the search fails, because the _reverse_ direction might have a match.
-    let g:sneak#state.reset = 0
-    let g:sneak#state.reverse = a:reverse
-    let g:sneak#state.count  = l:count
-    let g:sneak#state.bounds = l:bounds
-    let g:sneak#state.search = l:search
+  if !a:isrepeat "this is a new search; set up the repeat mappings.
+    "persist even if the search fails, because the _reverse_ direction might have a match.
+    let st = g:sneak#state
+    let st.search = l:search | let st.count = l:count | let st.bound = l:bounds | let st.reverse = a:reverse
   endif
 
-  if !empty(a:op) && !<sid>isvisualop(a:op) "operator-pending invocation
+  if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
     let l:histreg = @/
     try
       "until we can find a better way, just invoke / and restore the history immediately after
       let s:last_op = 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
-      call <sid>perform_last_operation()
+      call s:perform_last_operation()
     catch E486
       let s:notfound = 1
       echo 'not found: '.a:s | return
@@ -130,7 +122,7 @@ func! SneakToString(op, s, count, isrepeat, reverse, bounds) range abort
   endif
 
   "if the user was in visual mode, extend the selection.
-  if <sid>isvisualop(a:op)
+  if s:isvisualop(a:op)
     norm! gv
     call cursor(l:matchpos[0], l:matchpos[1])
   endif
@@ -175,7 +167,7 @@ endf
 
 if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
   func! sneak#reset()
-    let g:sneak#state.reset = 1
+    let g:sneak#state.search = ""
   endf
 
   func! s:map_reset_key(key)
@@ -219,7 +211,7 @@ func! s:getnextNchars(n)
   let l:s = ''
   redraw | echo '/'
   for i in range(1, a:n)
-    let l:c = <sid>getinputchar()
+    let l:c = s:getinputchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], l:c)
       return ""
     endif
@@ -262,18 +254,18 @@ augroup SneakPluginInit
   endif
 augroup END
 
-nnoremap <silent> <Plug>SneakForward   :<c-u>call SneakToString('', <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> <Plug>SneakBackward  :<c-u>call SneakToString('', <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
-nnoremap <silent> <Plug>SneakNext      :<c-u>call SneakToString('', g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
-nnoremap <silent> <Plug>SneakPrevious  :<c-u>call SneakToString('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
-xnoremap <silent> <Plug>VSneakNext     :<c-u>call SneakToString(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
-xnoremap <silent> <Plug>VSneakPrevious :<c-u>call SneakToString(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
-nnoremap <silent> yz     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> yZ     :<c-u>call SneakToString('y',          <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
-onoremap <silent> z      :<c-u>call SneakToString(v:operator,   <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-onoremap <silent> Z      :<c-u>call SneakToString(v:operator,   <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
-xnoremap <silent> s <esc>:<c-u>call SneakToString(visualmode(), <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-xnoremap <silent> Z <esc>:<c-u>call SneakToString(visualmode(), <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
+nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
+xnoremap <silent> <Plug>VSneakNext     :<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
+xnoremap <silent> <Plug>VSneakPrevious :<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
+nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+xnoremap <silent> s <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
+xnoremap <silent> Z <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>perform_last_operation()<cr>
 
 if !hasmapto('<Plug>SneakForward')
