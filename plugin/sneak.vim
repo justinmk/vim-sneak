@@ -109,7 +109,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   "if the user was in visual mode, extend the selection.
   if s:isvisualop(a:op)
     norm! gv
-    call cursor(l:matchpos[0], l:matchpos[1])
+    call cursor(matchpos)
   endif
 
   call s:removehl()
@@ -196,6 +196,7 @@ func! s:getinputchar()
   let l:c = getchar()
   return type(l:c) == type(0) ? nr2char(l:c) : l:c
 endf
+
 func! s:getnextNchars(n, mode)
   let l:s = ''
   echo '>'
@@ -211,13 +212,13 @@ func! s:getnextNchars(n, mode)
   endfor
   return l:s
 endf
+
 func! s:dbgflag(settingname)
   exec 'let value='.a:settingname
   silent echo a:settingname.'='.value
 endf
 func! s:dbgfeat(featurename)
-  exec 'let value=has("'.a:featurename.'")'
-  silent echo 'has("'.a:featurename.'")='.value
+  silent echo 'has("'.a:featurename.'")='.has(a:featurename)
 endf
 func! sneak#debugreport()
   redir => output
@@ -249,8 +250,8 @@ nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnextNchar
 nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
-xnoremap <silent> <Plug>VSneakNext     :<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
-xnoremap <silent> <Plug>VSneakPrevious :<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
+xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
+xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 0, [0,0])<cr>
 nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 1, [0,0])<cr>
 onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 0, [0,0])<cr>

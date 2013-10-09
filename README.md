@@ -59,7 +59,7 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * move to autoload/
 
 ## Known Issues
-* repeat-next does not work in visual-mode
+* after repeat with `.` additional matches are not highlighted
 
 
 
