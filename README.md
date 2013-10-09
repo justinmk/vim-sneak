@@ -57,3 +57,7 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search
 * repeat-next does not work in visual-mode
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/justinmk/vim-sneak/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
