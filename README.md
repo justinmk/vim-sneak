@@ -2,6 +2,9 @@
 
 minimalist, well-behaved plugin that provides:
   - move to any location with `s` followed by exactly two characters
+  - move anywhere, even offscreen (unlike EasyMotion)
+  - jump back to the point of `s` invocation--repeated motion (;,) does not 
+    add to the jump list
   - written from scratch, inspired by EasyMotion and seek.vim
   - jumps immediately to first match, unlike EasyMotion
   - gets out of your way as soon as you move the cursor
@@ -46,15 +49,16 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * provide case-insensitive option
 * `n;` should skip to *nth* occurrence
 * vertical scope for built-in `/`
-* provide command to allow arbitrary-length search string?
+* provide "precision" option? (eg, 3 instead of the default 2)
 * use `strwidth()` instead of `len()` to support non-ascii (vim-7.3 only) 
 * operator-pending mode should accept registers
-* ~~implement `gs` (like `gn`): `cgs`~~ (probably overreach/misfeature)
 * `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
 * `gs` (or something) should visual select the scoped area
+* netrw mapping
+* add to VAM pool https://github.com/MarcWeber/vim-addon-manager
+* move to autoload/
 
 ## Known Issues
-* if a new `s` search does not find matches, repeating (with `;` or `\`) in the opposite direction repeats the last successful search
 * repeat-next does not work in visual-mode
 
 

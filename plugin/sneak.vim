@@ -3,7 +3,6 @@
 " Version:      1.0
 " http://www.reddit.com/r/vim/comments/1io1bs/how_do_you_move_around_vertically/
 " http://www.reddit.com/r/vim/comments/1j9gm1/serious_question_what_do_you_all_think_is_a/
-" TODO: add to VAM pool https://github.com/MarcWeber/vim-addon-manager
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
   finish
@@ -15,27 +14,13 @@ set cpo&vim
 
 let s:notfound = 0
 
-"TODO: put this in autoload/
-"      http://learnvimscriptthehardway.stevelosh.com/chapters/53.html
-"TODO: document:
-"      <Plug>SneakForward
-"      <Plug>SneakBackward
-"      <Plug>SneakNext
-"      <Plug>SneakPrevious
-"      <Plug>VSneakNext
-"      <Plug>VSneakPrevious
-"      SneakPluginTarget
-"      SneakPluginScope
-"      g:sneak#options.nextprev_f
-"      g:sneak#options.nextprev_t
-
 let g:sneak#state = get(g:, 'sneak#state', { 'search':'', 'reverse':0, 'count':0, 'bounds':[0,0] })
 let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1 }
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
-func! sneak#to(op, s, count, isrepeat, reverse, bounds) range abort
+func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if empty(a:s) "user canceled, or state was reset by f/F/t/T
-    if a:isrepeat | exec "norm! ".(a:reverse ? "," : ";") | else | redraw | echo '' | endif
+    if a:repeatmotion | exec "norm! ".(a:reverse ? "," : ";") | else | redraw | echo '' | endif
     return
   endif
 
@@ -59,7 +44,7 @@ func! sneak#to(op, s, count, isrepeat, reverse, bounds) range abort
   " search backwards
   if a:reverse | let l:searchoptions .= 'b' | endif
   " save the jump on the initial invocation, _not_ repeats.
-  if !a:isrepeat || s:notfound | let l:searchoptions .= 's' | endif
+  if !a:repeatmotion || s:notfound | let l:searchoptions .= 's' | endif
 
   if l:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
     if !empty(a:op)
@@ -84,7 +69,7 @@ func! sneak#to(op, s, count, isrepeat, reverse, bounds) range abort
     let l:match_pattern .= l:match_bounds
   endif
 
-  if !a:isrepeat "this is a new search; set up the repeat mappings.
+  if !a:repeatmotion "this is a new search; set up the repeat mappings.
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let st = g:sneak#state
     let st.search = l:search | let st.count = l:count | let st.bound = l:bounds | let st.reverse = a:reverse
@@ -205,22 +190,24 @@ func! s:perform_last_operation()
 endf
 
 func! s:isvisualop(op)
-  return -1 != index(["V", "v", "\<c-v>"], a:op)
+  return a:op =~# "^[vV\<C-v>]"
 endf
 func! s:getinputchar()
   let l:c = getchar()
   return type(l:c) == type(0) ? nr2char(l:c) : l:c
 endf
-func! s:getnextNchars(n)
+func! s:getnextNchars(n, mode)
   let l:s = ''
-  redraw | echo '/'
+  echo '>'
   for i in range(1, a:n)
+    "preserve existing selection
+    if s:isvisualop(a:mode) | exe 'norm! gv' | endif
     let l:c = s:getinputchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], l:c)
       return ""
     endif
     let l:s .= l:c
-    redraw | echo '/'.l:s
+    redraw | echo '>'.l:s
   endfor
   return l:s
 endf
@@ -258,18 +245,18 @@ augroup SneakPluginInit
   endif
 augroup END
 
-nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
 xnoremap <silent> <Plug>VSneakNext     :<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 xnoremap <silent> <Plug>VSneakPrevious :<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
-nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
-onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
-xnoremap <silent> s <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2), v:count, 0, 0, [0,0])<cr>
-xnoremap <silent> Z <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 1, [0,0])<cr>
+onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 0, [0,0])<cr>
+onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 1, [0,0])<cr>
+xnoremap <silent> s <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 0, [0,0])<cr>
+xnoremap <silent> Z <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>perform_last_operation()<cr>
 
 if !hasmapto('<Plug>SneakForward')

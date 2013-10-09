@@ -18,6 +18,19 @@ way, by
     avoiding conflicts with other plugins, and 
     avoiding required configuration.
 
+
+documentation TODO:
+      <Plug>SneakForward
+      <Plug>SneakBackward
+      <Plug>SneakNext
+      <Plug>SneakPrevious
+      <Plug>VSneakNext
+      <Plug>VSneakPrevious
+      SneakPluginTarget
+      SneakPluginScope
+      g:sneak#options.nextprev_f
+      g:sneak#options.nextprev_t
+
 ==============================================================================
 2. Usage                                                    *sneak-usage*
 
