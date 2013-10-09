@@ -14,7 +14,7 @@ set cpo&vim
 
 let s:notfound = 0
 
-let g:sneak#state = get(g:, 'sneak#state', { 'search':'', 'reverse':0, 'count':0, 'bounds':[0,0] })
+let g:sneak#state = get(g:, 'sneak#state', { 'search':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] })
 let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1 }
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
@@ -72,15 +72,18 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if !a:repeatmotion "this is a new search; set up the repeat mappings.
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let st = g:sneak#state
-    let st.search = l:search | let st.count = l:count | let st.bound = l:bounds | let st.reverse = a:reverse
+    let st.search = l:search | let st.op = a:op | let st.count = l:count | let st.bound = l:bounds | let st.reverse = a:reverse
   endif
 
   if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
     let l:histreg = @/
     try
       "until we can find a better way, just invoke / and restore the history immediately after
-      let s:last_op = 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
-      call s:perform_last_operation()
+      exec 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
+      if a:op !=# 'y'
+        let s:last_op = deepcopy(g:sneak#state)
+        silent! call repeat#set("\<Plug>SneakRepeat")
+      endif
     catch E486
       let s:notfound = 1
       echo 'not found: '.a:s | return
@@ -184,8 +187,8 @@ func! s:removehl() "remove highlighting
   silent! call matchdelete(w:sneak_sc_hl)
 endf
 
-func! s:perform_last_operation()
-  exec s:last_op
+func! s:repeat_last_op()
+  call sneak#to(s:last_op.op, s:last_op.search, s:last_op.count, 0, s:last_op.reverse, s:last_op.bounds)
   silent! call repeat#set("\<Plug>SneakRepeat")
 endf
 
@@ -258,7 +261,7 @@ onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2,
 onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 1, [0,0])<cr>
 xnoremap <silent> s <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 0, [0,0])<cr>
 xnoremap <silent> Z <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
-nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>perform_last_operation()<cr>
+nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
 
 if !hasmapto('<Plug>SneakForward')
   nmap s <Plug>SneakForward

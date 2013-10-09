@@ -1,5 +1,7 @@
 # sneak.vim: Vertical Motion for Vim
 
+The only surprises are pleasant surprises. No unexpected or incomplete behavior.
+
 minimalist, well-behaved plugin that provides:
   - move to any location with `s` followed by exactly two characters
   - move anywhere, even offscreen (unlike EasyMotion)
@@ -59,8 +61,7 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * move to autoload/
 
 ## Known Issues
-* after repeat with `.` additional matches are not highlighted
-
+* vertical scope moves after ; or ,
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/justinmk/vim-sneak/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
