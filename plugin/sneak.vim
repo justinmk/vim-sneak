@@ -298,7 +298,7 @@ endif
 if !hasmapto('<Plug>VSneakPrevious')
   if mapcheck(',', 'x') ==# ''
     xmap , <Plug>VSneakPrevious
-  elseif mapcheck('\', 'x) ==# ''
+  elseif mapcheck('\', 'x') ==# ''
     xmap \ <Plug>VSneakPrevious
   endif
 endif
