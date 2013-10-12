@@ -274,7 +274,7 @@ if !hasmapto('<Plug>SneakNext')
   nmap ; <Plug>SneakNext
 endif
 if !hasmapto('<Plug>SneakPrevious')
-  if mapleader ==# ','
+  if exists("mapleader") && mapleader ==# ','
     nmap \ <Plug>SneakPrevious
   else
     nmap , <Plug>SneakPrevious
@@ -285,7 +285,7 @@ if !hasmapto('<Plug>VSneakNext')
   xmap ; <Plug>VSneakNext
 endif
 if !hasmapto('<Plug>VSneakPrevious')
-  if mapleader ==# ','
+  if exists("mapleader") && mapleader ==# ','
     xmap \ <Plug>VSneakPrevious
   else
     xmap , <Plug>VSneakPrevious
