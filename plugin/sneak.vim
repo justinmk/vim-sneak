@@ -15,7 +15,7 @@ set cpo&vim
 let s:notfound = 0
 
 let g:sneak#state = get(g:, 'sneak#state', { 'search':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] })
-let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1 }
+let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1, 'textobject_z':1 }
 
 " http://stevelosh.com/blog/2011/09/writing-vim-plugins/
 func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
@@ -255,12 +255,16 @@ nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#to('', g:sneak#state.sea
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
-nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 1, [0,0])<cr>
-onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 0, [0,0])<cr>
-onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 1, [0,0])<cr>
-xnoremap <silent> s <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 0, [0,0])<cr>
-xnoremap <silent> Z <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
+xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 0, [0,0])<cr>
+xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
+
+if g:sneak#options.textobject_z
+  nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 0, [0,0])<cr>
+  nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 1, [0,0])<cr>
+  onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 0, [0,0])<cr>
+  onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 1, [0,0])<cr>
+endif
+
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
 
 if !hasmapto('<Plug>SneakForward') && mapcheck('s', 'n') ==# ''
@@ -279,6 +283,13 @@ if !hasmapto('<Plug>SneakPrevious')
   elseif mapcheck('\', 'n') ==# ''
     nmap \ <Plug>SneakPrevious
   endif
+endif
+
+if !hasmapto('<Plug>VSneakForward') && mapcheck('s', 'x') ==# ''
+  xmap s <Plug>VSneakForward
+endif
+if !hasmapto('<Plug>VSneakBackward') && mapcheck('Z', 'x') ==# ''
+  xmap Z <Plug>VSneakBackward
 endif
 
 if !hasmapto('<Plug>VSneakNext') && mapcheck(';', 'x') ==# ''

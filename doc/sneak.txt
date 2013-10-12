@@ -24,12 +24,15 @@ documentation TODO:
       <Plug>SneakBackward
       <Plug>SneakNext
       <Plug>SneakPrevious
+      <Plug>VSneakForward
+      <Plug>VSneakBackward
       <Plug>VSneakNext
       <Plug>VSneakPrevious
       SneakPluginTarget
       SneakPluginScope
       g:sneak#options.nextprev_f
       g:sneak#options.nextprev_t
+      g:sneak#options.textobject_z
 
 ==============================================================================
 2. Usage                                                    *sneak-usage*
