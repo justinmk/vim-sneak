@@ -45,6 +45,7 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * seek.vim
 * cleverf
 * https://github.com/svermeulen/vim-extended-ft
+* https://github.com/dahu/vim-fanfingtastic
 
 ## TODO
 * support surround.vim motion: `ysz`
@@ -59,9 +60,6 @@ Optional: [repeat.vim](https://github.com/tpope/vim-repeat) is required to repea
 * netrw mapping
 * add to VAM pool https://github.com/MarcWeber/vim-addon-manager
 * move to autoload/
-
-## Known Issues
-* vertical scope moves after ; or ,
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/justinmk/vim-sneak/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

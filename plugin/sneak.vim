@@ -72,7 +72,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if !a:repeatmotion "this is a new search; set up the repeat mappings.
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let st = g:sneak#state
-    let st.search = l:search | let st.op = a:op | let st.count = l:count | let st.bound = l:bounds | let st.reverse = a:reverse
+    let st.search = l:search | let st.op = a:op | let st.count = l:count | let st.bounds = l:bounds | let st.reverse = a:reverse
   endif
 
   if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
@@ -121,9 +121,9 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   let l:curlin = string(line('.'))
   let l:curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
 
-  "Might as well scope to window height (+/- 40). TODO: profile this
-  let l:top = max([0, line('w0')-40])
-  let l:bot = min([line('$'), line('w$')+40])
+  "Might as well scope to window height (+/- 99). TODO: profile this
+  let l:top = max([0, line('w0')-99])
+  let l:bot = min([line('$'), line('w$')+99])
   let l:restrict_top_bot = '\%'.l:gt_lt.l:curlin.'l\%>'.l:top.'l\%<'.l:bot.'l'
   let l:scope_pattern .= l:restrict_top_bot
   let l:match_pattern .= l:restrict_top_bot
@@ -148,7 +148,7 @@ func! s:attach_autocmds()
   augroup SneakPlugin
     autocmd!
     autocmd InsertEnter,WinLeave,BufLeave <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
-    "set up *nested* CursorMoved autocmd to avoid the _first_ CursorMoved event.
+    "set up *nested* CursorMoved autocmd to skip the _first_ CursorMoved event.
     autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
   augroup END
 endf
@@ -251,8 +251,8 @@ augroup END
 
 nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 0, [0,0])<cr>
 nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 1, [0,0])<cr>
-nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
-nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds,)<cr>
+nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
+nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#to('', g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1,  g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#to(visualmode(), g:sneak#state.search, g:sneak#state.count, 1, !g:sneak#state.reverse, g:sneak#state.bounds)<cr>
 nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 0, [0,0])<cr>

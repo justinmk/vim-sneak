@@ -39,13 +39,11 @@ sneak is triggered by one of the provided mappings |sneak-default-mappings|
 Example: >
 
     <cursor>Lorem ipsum dolor sit amet.
-
+<
 Type 'ssi' to jump to the beginning of the word "sit": >
 
     Lorem ipsum dolor <cursor>sit amet.
-
-And that's it!
-
+<
 ------------------------------------------------------------------------------
 2.1 Default mappings                             *sneak-default-mappings*
 
@@ -54,8 +52,8 @@ visual and operator-pending mode:
 
     Mapping           | Details
     ------------------|----------------------------------------------
-    s{char}{char}     | Jump to the next occurence of {char}{char}
-    S{char}{char}     | Jump to the previous occurence of {char}{char}
+    s{char}{char}     | Jump to the next occurrence of {char}{char}
+    S{char}{char}     | Jump to the previous occurrence of {char}{char}
     {range}s{char}{char}     | Invoke sneak in "scope" mode
     {range}S{char}{char}     | 
     {operator}z
