@@ -263,32 +263,32 @@ xnoremap <silent> s <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2,
 xnoremap <silent> Z <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
 
-if !hasmapto('<Plug>SneakForward')
+if !hasmapto('<Plug>SneakForward') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>SneakForward
 endif
-if !hasmapto('<Plug>SneakBackward')
+if !hasmapto('<Plug>SneakBackward') && mapcheck('S', 'n') ==# ''
   nmap S <Plug>SneakBackward
 endif
 
-if !hasmapto('<Plug>SneakNext')
+if !hasmapto('<Plug>SneakNext') && mapcheck(';', 'n') ==# ''
   nmap ; <Plug>SneakNext
 endif
 if !hasmapto('<Plug>SneakPrevious')
-  if exists("mapleader") && mapleader ==# ','
-    nmap \ <Plug>SneakPrevious
-  else
+  if mapcheck(',', 'n') ==# ''
     nmap , <Plug>SneakPrevious
+  elseif mapcheck('\', 'n') ==# ''
+    nmap \ <Plug>SneakPrevious
   endif
 endif
 
-if !hasmapto('<Plug>VSneakNext')
+if !hasmapto('<Plug>VSneakNext') && mapcheck(';', 'v') ==# ''
   xmap ; <Plug>VSneakNext
 endif
 if !hasmapto('<Plug>VSneakPrevious')
-  if exists("mapleader") && mapleader ==# ','
-    xmap \ <Plug>VSneakPrevious
-  else
+  if mapcheck(',', 'v') ==# ''
     xmap , <Plug>VSneakPrevious
+  elseif mapcheck('\', 'v') ==# ''
+    xmap \ <Plug>VSneakPrevious
   endif
 endif
 
