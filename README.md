@@ -1,7 +1,7 @@
-# sneak.vim: fine motor skill
+# sneak.vim :shoe:
 
-**Sneak** is a minimalist Vim plugin that fills the gap between the `f` and `/` motions, to 
-solve the problem of medium-distance motion in Vim without abandoning the many useful built-in motions.
+**Sneak** is a minimalist Vim plugin that fills the gap between the `f` and `/` motions 
+without abandoning Vim's many, useful built-in motions.
 
 ### Usage (assuming default mappings)
 
@@ -112,6 +112,23 @@ surprises—like "OMG, it actually works". If you find a bug, please report it.
 Sneak is tested on 100k+ line syntax-highlighted file, with Vim 7.2.330, 7.3, 7.4.
 
 ### Installation
+
+To install Sneak manually, just place the files directly in your `.vim` directory (or `_vimfiles` 
+on Windows). 
+
+Or, use a plugin manager:
+
+- [Pathogen](https://github.com/tpope/vim-pathogen)
+  - `cd ~/.vim/bundle && git clone git://github.com/justinmk/vim-gtfo.git`
+- [Vundle](https://github.com/gmarik/vundle)
+  1. Add `Bundle 'justinmk/vim-gtfo'` to .vimrc
+  2. Run `:BundleInstall`
+- [NeoBundle](https://github.com/Shougo/neobundle.vim)
+  1. Add `NeoBundle 'justinmk/vim-gtfo'` to .vimrc
+  2. Run `:NeoBundleInstall`
+- [vim-plug](https://github.com/junegunn/vim-plug)
+  1. Add `Plug 'justinmk/vim-gtfo'` to .vimrc
+  2. Run `:PlugInstall`
 
 If you want to be able to repeat Sneak *operations* (like `dzab`) via the dot `.` , 
 then [repeat.vim](https://github.com/tpope/vim-repeat) is required. However, to repeat 
