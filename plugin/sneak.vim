@@ -281,13 +281,13 @@ if !hasmapto('<Plug>SneakPrevious')
   endif
 endif
 
-if !hasmapto('<Plug>VSneakNext') && mapcheck(';', 'v') ==# ''
+if !hasmapto('<Plug>VSneakNext') && mapcheck(';', 'x') ==# ''
   xmap ; <Plug>VSneakNext
 endif
 if !hasmapto('<Plug>VSneakPrevious')
-  if mapcheck(',', 'v') ==# ''
+  if mapcheck(',', 'x') ==# ''
     xmap , <Plug>VSneakPrevious
-  elseif mapcheck('\', 'v') ==# ''
+  elseif mapcheck('\', 'x) ==# ''
     xmap \ <Plug>VSneakPrevious
   endif
 endif
