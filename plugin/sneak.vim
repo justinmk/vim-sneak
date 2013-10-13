@@ -19,7 +19,11 @@ let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1, 'textobject_z':1 }
 
 func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if empty(a:s) "user canceled, or state was reset by f/F/t/T
-    if a:repeatmotion | exec "norm! ".(a:reverse ? "," : ";") | else | redraw | echo '' | endif
+    if a:repeatmotion
+      exec "norm! ".(s:isvisualop(a:op) ? "\<esc>gv" : "").(a:reverse ? "," : ";")
+    else
+      redraw | echo ''
+    endif
     return
   endif
 
@@ -157,9 +161,10 @@ if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
     let g:sneak#state.search = ""
   endf
 
-  func! s:map_reset_key(key)
+  func! s:map_reset_key(key, mode)
+    let v = ("x" ==# a:mode)
     "preserve existing mapping
-    let maparg = maparg(a:key, "n")
+    let maparg = maparg(a:key, a:mode)
     if -1 != stridx(maparg, 'sneak#reset') "avoid redundant mapping, 
       " in case this file is sourced more than once (eg during debugging)
       return
@@ -167,17 +172,17 @@ if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
     if empty(maparg) "else, preserve the Vim default behavior
       let maparg = a:key
     endif
-    exec "nnoremap <silent> ".a:key." :<c-u>call sneak#reset()\<cr>".maparg
+    exec a:mode."noremap <silent> ".a:key.(v ? " <esc>" : " ")":<c-u>call sneak#reset()\<cr>".(v ? "gv" : "").maparg
   endf
 
   "if f/F/t/T are invoked, we want ; and , to work for them instead of sneak.
   if g:sneak#options.nextprev_f
-    call s:map_reset_key("f")
-    call s:map_reset_key("F")
+    call s:map_reset_key("f", "n") | call s:map_reset_key("F", "n")
+    call s:map_reset_key("f", "x") | call s:map_reset_key("F", "x")
   endif
   if g:sneak#options.nextprev_t
-    call s:map_reset_key("t")
-    call s:map_reset_key("T")
+    call s:map_reset_key("t", "n") | call s:map_reset_key("T", "n")
+    call s:map_reset_key("t", "x") | call s:map_reset_key("T", "x")
   endif
 endif
 
