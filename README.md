@@ -74,7 +74,7 @@ move to a position, while the common case for Sneak is **three (3) keystrokes**.
         * If your mapleader is `,` then sneak.vim maps `\` instead of `,`. You can 
           override this by specifying some other mapping: `nmap ? <Plug>SneakPrevious`
     * Use `z` for operations; for example, `dzab` deletes from the cursor to the next instance of "ab". 
-      `dZab` deletes backwards to the previous instance. `czab` or `cZab` works, too. 
+      `dZab` deletes backwards to the previous instance. `czab` `cZab` `yzab` and `yZab` also work as expected.
         * **Repeat the operation** with dot `.` (requires [repeat.vim](https://github.com/tpope/vim-repeat))
 
 
@@ -163,8 +163,7 @@ Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
 
 ### License
 
-Copyright © Justin M. Keyes. Distributed under the same terms as Vim itself.
-See `:help license`.
+Copyright © Justin M. Keyes. Distributed under the MIT license.
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/justinmk/vim-sneak/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
