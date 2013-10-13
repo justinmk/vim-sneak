@@ -136,24 +136,33 @@ Sneak uses two highlight groups:
       Highlights the search "scope" for |sneak-vertical-scope|.
       Default color is white (or black if background=light)
 
-There are two ways to override the default colors:
+There are three ways to override the default colors (listed in order of
+decreasing elegance):
 
-    1. Set the highlighting in your color scheme: >
+    1. Link to existing highlight groups (for example, "ErrorMsg" and
+       "Comment") so that the colors are implicitly chosen by your
+       currently-activated colorscheme: >
 
-      hi SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-      hi SneakPluginScope  guifg=black guibg=white ctermfg=black ctermbg=white
+       hi link SneakPluginTarget ErrorMsg
+       hi link SneakPluginScope  Comment
 <
-    2. Set the highlighting in your vimrc: >
+    2. To define specific colors _regardless_ of the current colorscheme, you
+       probably need to define an |autocmd| on the |ColorScheme| event: >
 
-      hi link SneakPluginTarget ErrorMsg
-      hi link SneakPluginScope  Comment
+       augroup SneakPluginColors
+           autocmd!
+           autocmd ColorScheme * hi SneakPluginTarget guifg=black guibg=red ctermfg=black ctermbg=red
+           autocmd ColorScheme * hi SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
+       augroup END
 <
-      This is ideal if you want to link the colors to highlighting groups that
-      are available in almost every color scheme, e.g. |ErrorMsg| (usually
-      bright red) and Comment (usually faded). You can be sure that the
-      color scheme's colors will be used instead of the default red/gray
-      if you choose this option.
+       |autocmd| is necessary because otherwise your colorscheme will
+       (probably) clear the highlights when it kicks in.
 
+    3. Edit your color scheme directly: >
+
+       hi SneakPluginTarget guifg=black guibg=red ctermfg=black ctermbg=red
+       hi SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
+<
 ------------------------------------------------------------------------------
 4.3 Custom mappings                                    *sneak-custom-mappings*
 

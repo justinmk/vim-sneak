@@ -216,17 +216,22 @@ func! s:getnextNchars(n, mode)
   return l:s
 endf
 
-augroup SneakPluginInit
+augroup SneakPluginColors
   autocmd!
-  highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-  autocmd ColorScheme * highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
 
-  if &background ==# 'dark'
-    highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
-    autocmd ColorScheme * highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
-  else
-    highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
-    autocmd ColorScheme * highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
+  if 0 == hlID("SneakPluginTarget")
+    highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+    autocmd ColorScheme * highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+  endif
+
+  if 0 == hlID("SneakPluginScope")
+    if &background ==# 'dark'
+      highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
+      autocmd ColorScheme * highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
+    else
+      highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
+      autocmd ColorScheme * highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
+    endif
   endif
 augroup END
 
