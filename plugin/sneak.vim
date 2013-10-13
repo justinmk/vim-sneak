@@ -17,7 +17,6 @@ let s:notfound = 0
 let g:sneak#state = get(g:, 'sneak#state', { 'search':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] })
 let g:sneak#options = { 'nextprev_f':1, 'nextprev_t':1, 'textobject_z':1 }
 
-" http://stevelosh.com/blog/2011/09/writing-vim-plugins/
 func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if empty(a:s) "user canceled, or state was reset by f/F/t/T
     if a:repeatmotion | exec "norm! ".(a:reverse ? "," : ";") | else | redraw | echo '' | endif
@@ -79,7 +78,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
     let l:histreg = @/
     try
       "until we can find a better way, just invoke / and restore the history immediately after
-      exec 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
+      silent! exec 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
       if a:op !=# 'y'
         let s:last_op = deepcopy(g:sneak#state)
         silent! call repeat#set("\<Plug>SneakRepeat")
@@ -188,7 +187,8 @@ func! s:removehl() "remove highlighting
 endf
 
 func! s:repeat_last_op()
-  call sneak#to(s:last_op.op, s:last_op.search, s:last_op.count, 0, s:last_op.reverse, s:last_op.bounds)
+  let st = s:last_op
+  call sneak#to(st.op, st.search, st.count, 0, st.reverse, st.bounds)
   silent! call repeat#set("\<Plug>SneakRepeat")
 endf
 

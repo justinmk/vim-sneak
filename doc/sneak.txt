@@ -26,8 +26,8 @@ Sneak is tested on 7.2+. Vi-compatible mode must be disabled. |'nocompatible'|
 ==============================================================================
 2. Usage                                                         *sneak-usage*
 
-Sneak is invoked by one of the provided mappings. |sneak-default-mappings|
-You can change these mappings. |sneak-custom-mappings|
+Sneak is invoked by one of the provided mappings. |sneak-defaults|
+You can change these mappings. |sneak-mappings|
 
 Examples (cursor position indicated with brackets []): >
 
@@ -50,7 +50,7 @@ Type dzad to delete from the cursor to the first instance of "ad": >
     Lorem ipsum [a]dipisicing elit
 <
 ------------------------------------------------------------------------------
-2.1 Default mappings                                  *sneak-default-mappings*
+2.1 Default mappings                                          *sneak-defaults*
 
 Sneak default NORMAL-mode mappings:
 
@@ -122,7 +122,7 @@ g:sneak#options.textobject_z = 1
 
 
 ------------------------------------------------------------------------------
-4.2 Custom highlighting                                      *sneak-custom-hl*
+4.2 Custom Highlighting                                      *sneak-highlight*
 
 Sneak uses two highlight groups:
 
@@ -164,7 +164,7 @@ decreasing elegance):
        hi SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
 <
 ------------------------------------------------------------------------------
-4.3 Custom mappings                                    *sneak-custom-mappings*
+4.3 Custom Mappings                                           *sneak-mappings*
 
 You can remap any Sneak feature (except the "text object" mappings) by 
 defining one or more of these <Plug> mappings in your |vimrc|. Replace ? with 
