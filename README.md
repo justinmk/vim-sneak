@@ -1,7 +1,7 @@
 # sneak.vim :shoe:
 
-**Sneak** is a minimalist Vim plugin that fills the gap between the `f` and `/` motions 
-without abandoning Vim's many, useful built-in motions.
+**Sneak** is a simple Vim plugin that fills the gap between the `f` and `/` 
+motions without discarding Vim's many useful built-in motions.
 
 ### Usage (assuming default mappings)
 
@@ -10,21 +10,22 @@ characters:
 
     s{char}{char}
 
-* Press `sab` to jump immediately to the next instance of the text "ab".
+* Press `sab` to **move the cursor** immediately to the next instance of the text "ab".
     * Additional matches, if any, are highlighted until the cursor is moved.
-* Press `;` to jump to the next match. 
+* Press `;` to go to the next match.
 * Press `ctrl-o` to go back to the starting point (this is a built-in Vim motion; Sneak
-  adds to the jumplist *only* on `s` invocation, *not* repeated matches, so you can 
+  adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist) 
+  *only* on `s` invocation, *not* repeated matches, so you can 
   always abandon a trail of `;` or `,` by a single `ctrl-o` or ``)
 
 Sneak can be *scoped* to a column by prefixing a number.
 
-* Press `5sxy` to jump immediately to the next instance of the text "xy" 
+* Press `5sxy` to go immediately to the next instance of the text "xy" 
   **scoped to the 5 columns** left and right of the cursor. This is called
   *vertical scope* sneak.
     * The vertical scope is indicated by a vertical highlight block (which disappears as soon the cursor is moved).
 
-Sneak is invoked with *operators* by using `z` (because `s` is taken by surround.vim).
+Sneak is invoked with **operators** by using `z` (because `s` is taken by surround.vim).
 
 * Press `dzqt` to delete the text from the cursor to the next instance of the text "qt".
 * Press `.` to repeat the `dzqt` operation.
@@ -36,8 +37,8 @@ Vim has a range of useful motions
 that cover general cases and special cases, but it's not always easy to move diagonally across 
 several lines or horizontally across a long line. Vim's built-in `f` motion is restricted to 
 the current line; and the built-in `/` search is not always appropriate for medium-distance 
-jumps (it also clutters your search history). Vim's built-in `H`, `M`, and `L` are great for 
-bisecting a distance (you can even offset `H` and `L` with a range), but from there the cursor 
+motion (it also clutters your search history). Vim's built-in `H`, `M`, and `L` are great for 
+bisecting a distance (you can even offset `H` and `L` with a count), but from there the cursor 
 is potentially several lines and columns away from the precise target. 
 
 Sneak covers that distance in three keystrokes:
@@ -49,8 +50,8 @@ Sneak was inspired by [Seek](https://github.com/goldfeld/vim-seek) and
 Vim functions for its core behavior. Unlike Seek, Sneak works across **multiple lines**, 
 works with **operators** (also supports **repeat** with the dot `.` command), works in **visual mode**, 
 and supports **motion-repeat** via `;` and `,`. Unlike EasyMotion, Sneak *embraces* Vim's built-in 
-motions: its goal is to supplement—not replace—Vim's default text navigation approach. 
-EasyMotion's default configuration requires a minimum of five (5) keystrokes to 
+motions: its goal is to supplement—not replace—Vim's default text navigation approach; 
+and EasyMotion by default requires five (5) keystrokes to 
 move to a position, while the common case for Sneak is **three (3) keystrokes**.
 
 ### Details
@@ -68,7 +69,7 @@ move to a position, while the common case for Sneak is **three (3) keystrokes**.
     * `s` (and `S`) waits for two characters, then immediately moves to the next (previous) match. 
       Additional matches are highlighted until the cursor is moved. **Works across multiple lines.**
         * `s` works in visual mode, too (use `Z` to go backward, because `S` is taken by surround.vim).
-    * `{number}s` enters "vertical scope" mode which scopes the search to +/- the column width specified by `{number}`. 
+    * `{number}s` enters *vertical scope* mode which restricts the search to 2× the column width specified by `{number}`. 
     * `;` and `,` repeat the last `s` and `S`. **They also work correctly with `f` and `t`.**
         * If your mapleader is `,` then sneak.vim maps `\` instead of `,`. You can 
           override this by specifying some other mapping: `nmap ? <Plug>SneakPrevious`
@@ -90,9 +91,9 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
   - move to any location with `s` followed by exactly two characters
   - move anywhere, even offscreen (unlike EasyMotion)
-  - jump back to the point of `s` invocation via `ctrl-o`
-    - only the *initial* invocation adds to the jump list; repeat motion 
-      via `;` or `,` does not add to the jump list 
+  - jump back to the point of `s` invocation via `ctrl-o` or `` (backtick backtick)
+    - only the *initial* invocation adds to the jumplist
+        - repeat-motion via `;` or `,` does *not* add to the jumplist
   - jumps immediately to first match (unlike EasyMotion)
   - gets out of your way as soon as you move the cursor (highlights and autocmds are cleared)
   - common case requires 3-char key sequence (EasyMotion requires 5: `,,fab`)
@@ -101,13 +102,17 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
   - preserves the `/` register, does not add noise to `/` history
   - does not wrap
   - highlights additional matches until a key other than ; or , is pressed
-  - *vertical scope* with `{number}s{char}{char}` to restrict search column to +/- `number` size
+  - *vertical scope* with `{number}s{char}{char}` restricts search column to 2× `number` size
   - always literal, for example `s\*` jumps to the literal `\*`
 
 ### Bugs
 
-Sneak is designed to be minimalist and well-behaved. There should be no surprises except pleasant 
-surprises—like "OMG, it actually works". If you find a bug, please report it.
+Sneak is designed to be well-behaved and bug-free. There should be no surprises except pleasant 
+surprises—like "OMG, it actually works".
+
+If you find a bug, please report it, and perhaps include the output of:
+
+    :call sneak#debug#report()
 
 Sneak is tested on 100k+ line syntax-highlighted file, with Vim 7.2.330, 7.3, 7.4.
 
