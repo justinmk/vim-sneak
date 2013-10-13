@@ -12,6 +12,7 @@ endf
 func! sneak#debug#report()
   redir => output
     call s:dbgfeat('autocmd')
+    call s:dbgflag('&magic')
     call s:dbgflag('&buftype')
     call s:dbgflag('&virtualedit')
     silent exec 'verbose map s | map S | map z | map Z'

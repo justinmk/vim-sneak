@@ -135,7 +135,7 @@ Or, use a plugin manager:
   1. Add `Plug 'justinmk/vim-sneak'` to .vimrc
   2. Run `:PlugInstall`
 
-If you want to be able to repeat Sneak *operations* (like `dzab`) via the dot `.` , 
+If you want to be able to repeat Sneak *operations* (like `dzab`) with dot `.`,
 then [repeat.vim](https://github.com/tpope/vim-repeat) is required. However, to repeat 
 Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
 
@@ -148,12 +148,11 @@ Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
 
 ### TODO
 * automatically handle special case if user maps SneakFoo to `f`
+* operations (and repeat-operation) should take a count
 * support surround.vim motion: `ysz`
-* provide case-insensitive option
 * `n;` should skip to *nth* occurrence
 * vertical scope for built-in `/`
-* provide "precision" option? (eg, 3 instead of the default 2)
-* use `strwidth()` instead of `len()` to support non-ascii (vim-7.3 only) 
+* use `strwidth()` instead of `len()` to support multibyte (vim-7.3 only) 
 * operator-pending mode should accept registers
 * `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
 * `gs` (or something) should visual select the scoped area

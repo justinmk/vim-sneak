@@ -35,7 +35,6 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   let l:gt_lt = a:reverse ? '<' : '>'
   " [left_bound, right_bound] 
   let l:bounds = deepcopy(a:bounds)
-  let l:count = a:count
   " example: highlight string "ab" after line 42, column 5 
   "          matchadd('foo', 'ab\%>42l\%5c', 1)
   let l:match_pattern = ''
@@ -49,15 +48,15 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   " save the jump on the initial invocation, _not_ repeats.
   if !a:repeatmotion || s:notfound | let l:searchoptions .= 's' | endif
 
-  if l:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
+  if a:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
     if !empty(a:op)
       echo 'sneak: range not supported in visual mode or operator-pending mode' | return
     endif
     " use provided bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
       "these are the _logical_ bounds highlighted in 'scope' mode
-      let l:bounds[0] =  max([0, (virtcol('.') - l:count - 1)])
-      let l:bounds[1] =  l:count + virtcol('.') + 1
+      let l:bounds[0] =  max([0, (virtcol('.') - a:count - 1)])
+      let l:bounds[1] =  a:count + virtcol('.') + 1
     endif
     "matches *all* chars in the scope.
     "important: use \%<42v (virtual column) instead of \%<42c (byte column)
@@ -75,7 +74,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if !a:repeatmotion "this is a new search; set up the repeat mappings.
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let st = g:sneak#state
-    let st.search = l:search | let st.op = a:op | let st.count = l:count | let st.bounds = l:bounds | let st.reverse = a:reverse
+    let st.search = l:search | let st.op = a:op | let st.count = a:count | let st.bounds = l:bounds | let st.reverse = a:reverse
   endif
 
   if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
@@ -85,6 +84,8 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
       silent! exec 'norm! '.a:op.(a:reverse ? '?' : '/').'\C\V'.l:search."\<cr>"
       if a:op !=# 'y'
         let s:last_op = deepcopy(g:sneak#state)
+        " repeat c as d (this matches Vim default behavior)
+        if a:op =~# '^[cd]$' | let s:last_op.op = 'd' | endif
         silent! call repeat#set("\<Plug>SneakRepeat")
       endif
     catch E486
@@ -132,7 +133,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   let l:match_pattern .= l:restrict_top_bot
   let l:curln_pattern  = l:match_bounds.'\%'.l:curlin.'l\%'.l:gt_lt.l:curcol.'v'
 
-  if l:count > 0
+  if a:count > 0
     "perform the scoped highlight...
     let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern, 1, get(w:, 'sneak_sc_hl', -1))
   endif
