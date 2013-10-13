@@ -216,25 +216,6 @@ func! s:getnextNchars(n, mode)
   return l:s
 endf
 
-func! s:dbgflag(settingname)
-  exec 'let value='.a:settingname
-  silent echo a:settingname.'='.value
-endf
-func! s:dbgfeat(featurename)
-  silent echo 'has("'.a:featurename.'")='.has(a:featurename)
-endf
-func! sneak#debugreport()
-  redir => output
-    call s:dbgfeat('autocmd')
-    call s:dbgflag('&buftype')
-    call s:dbgflag('&virtualedit')
-    silent exec 'verbose map s | map S | map z | map Z'
-  redir END
-  enew
-  silent put=output
-  "set nomodified
-endf
-
 augroup SneakPluginInit
   autocmd!
   highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
