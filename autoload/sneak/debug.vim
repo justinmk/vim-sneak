@@ -15,6 +15,7 @@ func! sneak#debug#report()
     call s:dbgflag('&magic')
     call s:dbgflag('&buftype')
     call s:dbgflag('&virtualedit')
+    call s:dbgflag('&background')
     silent exec 'verbose map s | map S | map z | map Z'
   redir END
   enew

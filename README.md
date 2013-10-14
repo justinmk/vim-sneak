@@ -13,23 +13,26 @@ characters:
 * Press `sab` to **move the cursor** immediately to the next instance of the text "ab".
     * Additional matches, if any, are highlighted until the cursor is moved.
 * Press `;` to go to the next match.
-* Press `ctrl-o` to go back to the starting point (this is a built-in Vim motion; Sneak
-  adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist) 
-  *only* on `s` invocation, *not* repeated matches, so you can 
-  always abandon a trail of `;` or `,` by a single `ctrl-o` or ``)
+* Press `ctrl-o` or `` to go back to the starting point.
+    * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
+      *only* on `s` invocation, *not* repeated matches, so you can 
+      always abandon a trail of `;` or `,` by a single `ctrl-o` or ``).
 
-Sneak can be *scoped* to a column by prefixing a number.
+Sneak can be **scoped** to a column of width 2×{number} by prefixing `s`
+with a number.
 
 * Press `5sxy` to go immediately to the next instance of the text "xy" 
-  **scoped to the 5 columns** left and right of the cursor. This is called
-  *vertical scope* sneak.
-    * The vertical scope is indicated by a vertical highlight block (which disappears as soon the cursor is moved).
+  scoped to the *5 columns left and right of the cursor*. 
+    * This *vertical scope* is indicated by a highlight block.
 
-Sneak is invoked with **operators** by using `z` (because `s` is taken by surround.vim).
+Sneak is invoked with [**operators**](http://vimdoc.sourceforge.net/htmldoc/motion.html#operator)
+by using `z` (because `s` is taken by surround.vim).
 
 * Press `dzqt` to delete the text from the cursor to the next instance of the text "qt".
-* Press `.` to repeat the `dzqt` operation.
-    * Requires [repeat.vim](https://github.com/tpope/vim-repeat)
+    * Press `.` to repeat the `dzqt` operation.
+* Press `gUz }` to upper-case the text from the cursor to the next instance of
+  the text " }".
+    * Press `.` to repeat the `gUz }` operation.
 
 ### Overview
 

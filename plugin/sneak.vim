@@ -1,8 +1,6 @@
-" sneak.vim - Vertical motion for Vim
+" sneak.vim - The missing motion
 " Author:       Justin M. Keyes
 " Version:      1.0
-" http://www.reddit.com/r/vim/comments/1io1bs/how_do_you_move_around_vertically/
-" http://www.reddit.com/r/vim/comments/1j9gm1/serious_question_what_do_you_all_think_is_a/
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
   finish
