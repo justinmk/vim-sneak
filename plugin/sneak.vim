@@ -158,6 +158,7 @@ endf
 if g:sneak#options.nextprev_f || g:sneak#options.nextprev_t
   func! sneak#reset()
     let g:sneak#state.search = ""
+    let g:sneak#state.reverse = 0
   endf
 
   func! s:map_reset_key(key, mode)
