@@ -72,7 +72,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if !a:repeatmotion "this is a new search; set up the repeat mappings.
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let st = g:sneak#state
-    let st.search = l:search | let st.op = a:op | let st.count = a:count | let st.bounds = l:bounds | let st.reverse = a:reverse
+    let st.search = a:s | let st.op = a:op | let st.count = a:count | let st.bounds = l:bounds | let st.reverse = a:reverse
   endif
 
   if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
