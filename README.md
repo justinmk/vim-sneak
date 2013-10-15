@@ -1,7 +1,10 @@
 # sneak.vim :shoe:
 
-**Sneak** is a simple Vim plugin that fills the gap between the `f` and `/` 
-motions without discarding Vim's many useful built-in motions.
+**Sneak** is a Vim plugin that fills the gap between `f` and `/` without
+discarding Vim's many useful built-in motions.
+
+See [Overview](#overview) for concept and [FAQ](#faq) for answers to common
+questions.
 
 ### Usage (assuming default mappings)
 
@@ -36,13 +39,16 @@ by using `z` (because `s` is taken by surround.vim).
 
 ### Overview
 
-Vim has a range of useful motions 
-that cover general cases and special cases, but it's not always easy to move diagonally across 
-several lines or horizontally across a long line. Vim's built-in `f` motion is restricted to 
-the current line; and the built-in `/` search is not always appropriate for medium-distance 
-motion (it also clutters your search history). Vim's built-in `H`, `M`, and `L` are great for 
-bisecting a distance (you can even offset `H` and `L` with a count), but from there the cursor 
-is potentially several lines and columns away from the precise target. 
+    l  f  t  %  'm  }  ]m  ]]  M  L     /
+                                     ^
+                                     |
+                                   sneak
+
+Vim's built-in motions cover many special cases, but it's not always easy to move across 
+several lines—or a long line—to an arbitrary position. The `f` motion is restricted to 
+the current line, and the `/` search is [clunky](#faq) for medium-distance 
+motion . `H`, `M`, and `L` are great for bisecting a distance, but from there
+the cursor is potentially several lines and columns away from the target.
 
 Sneak covers that distance in three keystrokes:
 
@@ -51,11 +57,11 @@ Sneak covers that distance in three keystrokes:
 Sneak was inspired by [Seek](https://github.com/goldfeld/vim-seek) and 
 [EasyMotion](https://github.com/Lokaltog/vim-easymotion), but it's written from scratch and uses stock 
 Vim functions for its core behavior. Unlike Seek, Sneak works across **multiple lines**, 
-works with **operators** (also supports **repeat** with the dot `.` command), works in **visual mode**, 
-and supports **motion-repeat** via `;` and `,`. Unlike EasyMotion, Sneak *embraces* Vim's built-in 
-motions: its goal is to supplement—not replace—Vim's default text navigation approach; 
-and EasyMotion by default requires five (5) keystrokes to 
-move to a position, while the common case for Sneak is **three (3) keystrokes**.
+works with **operators** (including **repeat** with dot `.`), works in **visual mode**, 
+and supports **motion-repeat** via `;` and `,`. Unlike EasyMotion, Sneak is 
+designed to *complement*—not replace—Vim's built-in motions; and
+EasyMotion by default requires five (5) keystrokes to move to a position, while
+the common case for Sneak is **three (3) keystrokes**.
 
 ### Details
 
@@ -141,6 +147,39 @@ Or, use a plugin manager:
 If you want to be able to repeat Sneak *operations* (like `dzab`) with dot `.`,
 then [repeat.vim](https://github.com/tpope/vim-repeat) is required. However, to repeat 
 Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
+
+### FAQ
+
+#### Why not use `/` with a two-character search?
+
+* `/ab<cr>` requires 33% more keystrokes than `sab`
+  * `f` and `t` exist for a similar reason
+  * common operations should use as few keystrokes as possible
+* clutters your search history
+* requires escaping of special characters
+  * you could `nnoremap / /\V`, but then you have a different problem
+* highlight madness
+
+This is why Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#left-right-motions).
+
+#### Why not use `f` and mash `;` 
+
+Sneak is like `f` with these advantages:
+
+* fifty times (50×) *more precise* than `f` or `t`
+* moves vertically, too
+* remembers the initial position in the Vim jumplist
+  * this is more useful than you think: you can explore a trail of matches
+    by mashing `;`, and then at any point return to the initial position via
+    `ctrl-o` or `` (backtick backtick)
+* highlights additional matches *in the direction of your search* 
+  * gives a visual impression of how far you are from a target
+
+#### I don't want to give up `s` because it's in my muscle memory.
+
+You can specify any mapping for Sneak (see the help doc). But I would think
+Vim users are quite accustomed to learning new tricks and breaking old
+habits :)
 
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
