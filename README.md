@@ -177,7 +177,7 @@ Sneak is like `f` with these advantages:
 
 #### How dare you remap `s`?
 
-You can specify any mapping for Sneak (see [help doc](blob/master/doc/sneak.txt)).
+You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
