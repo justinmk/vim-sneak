@@ -1,4 +1,4 @@
-*sneak.txt*	Version 1.0.
+*sneak.txt*                                                        Version 1.1
 
                     Sneak - the missing motion for Vim
 
@@ -21,7 +21,7 @@ behavior for |f| and |t|).
 Sneak has a few other features, but above all, Sneak tries to get out of your
 way: highlights and autocmds are removed as soon as the cursor is moved.
 
-Sneak is tested on 7.2+. Vi-compatible mode must be disabled. |'nocompatible'|
+Sneak is tested on 7.2+. Vi-compatibility must be disabled. 'nocompatible'
 
 ==============================================================================
 2. Usage                                                         *sneak-usage*
@@ -102,8 +102,13 @@ file using the following settings.
 ------------------------------------------------------------------------------
 4.1 Options                                                    *sneak-options*
 
-g:sneak#options.nextprev_f = 1
-g:sneak#options.nextprev_t = 1
+Following is a list of Sneak options with their default values.
+To change an option, add a |let| statement in your |vimrc|, for example: >
+
+    let g:sneak#nextprev_f = 0
+<
+g:sneak#nextprev_f = 1
+g:sneak#nextprev_t = 1
 
     0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
         define different maps for <Plug>SneakNext or <Plug>SneakPrevious and
@@ -113,13 +118,18 @@ g:sneak#options.nextprev_t = 1
         of the last s or S. This allows you to use ; and , for all three
         motions.
 
-g:sneak#options.textobject_z = 1
+g:sneak#textobject_z = 1
 
     0 : Disables "operator" support, so Sneak will not map {operator}z
 
     1 : Enables "operator" support, so operations like dzab, dZab, 
         czab, cZab, yzab, and yZab invoke Sneak.
 
+g:sneak#use_ic_scs = 0
+
+    0 : Always case-sensitive
+
+    1 : Case sensitivity is determined by 'ignorecase' and 'smartcase'.
 
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*

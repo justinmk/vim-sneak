@@ -71,7 +71,7 @@ the common case for Sneak is **three (3) keystrokes**.
 ```
       nmap f <Plug>SneakForward
       nmap F <Plug>SneakBackward
-      g:sneak#options.nextprev_f = 0 
+      let g:sneak#nextprev_f = 0
 ```
 
 * Default mappings:
@@ -162,7 +162,7 @@ Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
 
 This is why Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#left-right-motions).
 
-#### Why not use `f` and mash `;` 
+#### Why not use `f` and mash `;` ?
 
 Sneak is like `f` with these advantages:
 
@@ -175,11 +175,9 @@ Sneak is like `f` with these advantages:
 * highlights additional matches *in the direction of your search* 
   * gives a visual impression of how far you are from a target
 
-#### I don't want to give up `s` because it's in my muscle memory.
+#### How dare you remap `s`?
 
-You can specify any mapping for Sneak (see the help doc). But I would think
-Vim users are quite accustomed to learning new tricks and breaking old
-habits :)
+You can specify any mapping for Sneak (see [help doc](blob/master/doc/sneak.txt)).
 
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
