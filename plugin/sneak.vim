@@ -20,6 +20,7 @@ let s:opt = { 'nextprev_f' : get(g:, 'sneak#nextprev_f', 1)
       \ ,'nextprev_t'   : get(g:, 'sneak#nextprev_t', 1)
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
+      \ ,'map_netrw'   : get(g:, 'sneak#map_netrw', 1)
       \ }
 
 "repeat *motion* (not operation)
@@ -305,6 +306,22 @@ if !hasmapto('<Plug>VSneakPrevious')
   elseif mapcheck('\', 'x') ==# ''
     xmap \ <Plug>VSneakPrevious
   endif
+endif
+
+if s:opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
+  func! s:map_netrw_key(key)
+    if -1 != stridx(maparg(a:key,"n"), "_Net")
+      exec 'nnoremap <buffer> <silent> <leader>'.a:key.' '.maparg(a:key,'n')
+      "unmap netrw's buffer-local mapping to allow Sneak's global mapping.
+      silent! exe 'nunmap <buffer> '.a:key
+    endif
+  endf
+
+  augroup SneakPluginNetrw
+    autocmd!
+    autocmd filetype netrw autocmd SneakPluginNetrw CursorMoved <buffer>
+          \ call <sid>map_netrw_key('s') | call <sid>map_netrw_key('S') | autocmd! SneakPluginNetrw * <buffer>
+  augroup END
 endif
 
 

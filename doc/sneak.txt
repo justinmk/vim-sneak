@@ -114,7 +114,7 @@ g:sneak#nextprev_t = 1
         define different maps for <Plug>SneakNext or <Plug>SneakPrevious and
         still use ; and , for |f| and |t| as usual.
 
-    1 : Pressing |f| (or |t|) will causing ; and , to apply to that motion instead
+    1 : Pressing |f| (or |t|) will cause ; and , to apply to that motion instead
         of the last s or S. This allows you to use ; and , for all three
         motions.
 
@@ -130,6 +130,13 @@ g:sneak#use_ic_scs = 0
     0 : Always case-sensitive
 
     1 : Case sensitivity is determined by 'ignorecase' and 'smartcase'.
+
+g:sneak#map_netrw = 1
+
+    0 : Don't do any special handling of |netrw| buffers.
+
+    1 : Set up Sneak mappings (s and S) in |netrw| buffers (|Ex| and |Vex|), and
+        move netrw's default s and S mappings to <leader>s and <leader>S.
 
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*
