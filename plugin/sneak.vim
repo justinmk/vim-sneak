@@ -134,8 +134,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   let l:match_pattern .= l:restrict_top_bot
   let l:curln_pattern  = l:match_bounds.'\%'.l:curlin.'l\%'.l:gt_lt.l:curcol.'v'
 
-  if a:count > 0
-    "perform the scoped highlight...
+  if max(l:bounds) > 0 "perform the scoped highlight...
     let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern, 1, get(w:, 'sneak_sc_hl', -1))
   endif
 
