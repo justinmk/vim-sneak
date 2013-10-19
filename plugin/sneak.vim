@@ -25,7 +25,8 @@ let s:opt = { 'nextprev_f' : get(g:, 'sneak#nextprev_f', 1)
 
 "repeat *motion* (not operation)
 func! sneak#rpt(op, count, reverse) range abort
-  call sneak#to(a:op, s:st.search, a:count, 1, xor(a:reverse, s:st.reverse), s:st.bounds)
+  call sneak#to(a:op, s:st.search, a:count, 1,
+        \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.bounds)
 endf
 
 func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
