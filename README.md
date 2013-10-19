@@ -187,15 +187,12 @@ You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 * [Fanf,ingTastic; ](https://github.com/dahu/vim-fanfingtastic)
 
 ### TODO
-* operations (and repeat-operation) should take a count
+* repeat-operation should take a count
 * `n;` should skip to *nth* occurrence
 * vertical scope for built-in `/`
 * use `strwidth()` instead of `len()` to support multibyte (vim-7.3 only) 
 * operator-pending mode should accept registers
-* `dzab` and `czab` wrap around, but probably shouldn't (for consistency with `sab`)
-* `gs` (or something) should visual select the scoped area
 * add to VAM pool https://github.com/MarcWeber/vim-addon-manager
-* move to autoload/
 
 ### License
 
