@@ -213,18 +213,18 @@ endf
 func! s:isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
 endf
-func! s:getinputchar()
+func! s:getchar()
   let l:c = getchar()
   return type(l:c) == type(0) ? nr2char(l:c) : l:c
 endf
 
-func! s:getnextNchars(n, mode)
+func! s:getnchars(n, mode)
   let l:s = ''
   echo '>'
   for i in range(1, a:n)
     "preserve existing selection
     if s:isvisualop(a:mode) | exe 'norm! gv' | endif
-    let l:c = s:getinputchar()
+    let l:c = s:getchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], l:c)
       return ""
     endif
@@ -253,10 +253,10 @@ augroup SneakPluginColors
   endif
 augroup END
 
-nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 0, [0,0])<cr>
-nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnextNchars(2, ''), v:count, 0, 1, [0,0])<cr>
-xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 0, [0,0])<cr>
-xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#to(visualmode(), <sid>getnextNchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
+nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnchars(2, ''), v:count, 0, 0, [0,0])<cr>
+nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnchars(2, ''), v:count, 0, 1, [0,0])<cr>
+xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#to(visualmode(), <sid>getnchars(2, visualmode()), v:count, 0, 0, [0,0])<cr>
+xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#to(visualmode(), <sid>getnchars(2, visualmode()), v:count, 0, 1, [0,0])<cr>
 
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', v:count, 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', v:count, 1)<cr>
@@ -264,10 +264,10 @@ xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), v
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), v:count, 1)<cr>
 
 if s:opt.textobject_z
-  nnoremap <silent> yz     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 0, [0,0])<cr>
-  nnoremap <silent> yZ     :<c-u>call sneak#to('y',          <sid>getnextNchars(2, 'y'), v:count, 0, 1, [0,0])<cr>
-  onoremap <silent> z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 0, [0,0])<cr>
-  onoremap <silent> Z      :<c-u>call sneak#to(v:operator,   <sid>getnextNchars(2, v:operator), v:count, 0, 1, [0,0])<cr>
+  nnoremap <silent> yz :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), v:count, 0, 0, [0,0])<cr>
+  nnoremap <silent> yZ :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), v:count, 0, 1, [0,0])<cr>
+  onoremap <silent> z  :<c-u>call sneak#to(v:operator, <sid>getnchars(2, v:operator), v:count, 0, 0, [0,0])<cr>
+  onoremap <silent> Z  :<c-u>call sneak#to(v:operator, <sid>getnchars(2, v:operator), v:count, 0, 1, [0,0])<cr>
 endif
 
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
