@@ -10,8 +10,6 @@ let g:loaded_sneak_plugin = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
-let s:notfound = 0
-
 "persist state for repeat
 let s:st = { 'search':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
 
@@ -59,7 +57,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   " search backwards
   if a:reverse | let l:searchoptions .= 'b' | endif
   " save the jump on the initial invocation, _not_ repeats.
-  if !a:repeatmotion || s:notfound | let l:searchoptions .= 's' | endif
+  if !a:repeatmotion | let l:searchoptions .= 's' | endif
 
   if a:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
     if !empty(a:op)
@@ -92,7 +90,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
     let l:histreg = @/
     try
-      "until we can find a better way, just invoke / and restore the history immediately after
+      " invoke / and restore the history immediately after
       silent! exec 'norm! '.a:op.(a:reverse ? '?' : '/').sprefix.l:search."\<cr>"
       if a:op !=# 'y'
         let s:last_op = deepcopy(s:st)
@@ -101,35 +99,26 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
         silent! call repeat#set("\<Plug>SneakRepeat")
       endif
     catch E486
-      let s:notfound = 1
-      echo 'not found: '.a:s | return
+      call s:notfound(': '.a:s) | return
     finally
       call histdel("/", histnr("/")) "delete the last search from the history
       let @/ = l:histreg
     endtry
   else "jump to the first match, or exit
-    let l:matchpos = searchpos(sprefix.l:match_pattern.'\zs'.l:search, l:searchoptions)
-    if 0 == max(l:matchpos)
-      let s:notfound = 1
-      if max(l:bounds) > 0
-        echo printf('not found (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) | return
-      else
-        echo 'not found: '.a:s | return
-      endif
+    let matchpos = searchpos(sprefix.l:match_pattern.'\zs'.l:search, l:searchoptions)
+
+    "if the user was in visual mode, extend the selection.
+    if s:isvisualop(a:op)
+      norm! gv
+      if max(matchpos) > 0 | call cursor(matchpos) | endif
+    endif
+
+    if 0 == max(matchpos)
+      call s:notfound((max(l:bounds) > 0) ? printf(' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:s) : ': '.a:s)
+      return
     endif
   endif
   "search succeeded
-
-  if s:notfound "search succeeded; clear previous 'not found' message (if any).
-    let s:notfound = 0
-    redraw! | echo a:s
-  endif
-
-  "if the user was in visual mode, extend the selection.
-  if s:isvisualop(a:op)
-    norm! gv
-    call cursor(matchpos)
-  endif
 
   call s:removehl()
 
@@ -158,6 +147,15 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ sprefix.l:match_pattern.'\zs'.l:search.'\|'.l:curln_pattern.l:search,
         \ 2, get(w:, 'sneak_hl_id', -1))
+endf
+
+func! s:notfound(msg)
+  redraw | echo 'not found'.a:msg
+  augroup SneakNotFound "clear 'not found' message at next opportunity.
+    autocmd!
+    autocmd InsertEnter,WinLeave,BufLeave * redraw | echo '' | autocmd! SneakNotFound
+    autocmd CursorMoved * redraw | echo '' | autocmd! SneakNotFound
+  augroup END
 endf
 
 func! s:attach_autocmds()
