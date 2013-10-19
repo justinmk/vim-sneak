@@ -59,10 +59,8 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
   " save the jump on the initial invocation, _not_ repeats.
   if !a:repeatmotion | let l:searchoptions .= 's' | endif
 
-  if a:count > 0 || max(l:bounds) > 0 "narrow the search to a column of width +/- the specified range (v:count)
-    if !empty(a:op)
-      echo 'sneak: range not supported in visual mode or operator-pending mode' | return
-    endif
+  "scope to a column of width 2*(v:count)
+  if (a:count > 0 || max(l:bounds) > 0) && (empty(a:op) || s:isvisualop(a:op))
     " use provided bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
       "these are the _logical_ bounds highlighted in 'scope' mode
