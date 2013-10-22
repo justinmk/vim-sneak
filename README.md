@@ -6,7 +6,7 @@ discarding Vim's many useful built-in motions.
 See [Overview](#overview) for concept and [FAQ](#faq) for answers to common
 questions.
 
-<a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="http://i.imgur.com/QHYtRjf.png"></a>
+<a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="http://i.imgur.com/wMu1Oi0.png"></a>
 
 ### Usage (assuming default mappings)
 
