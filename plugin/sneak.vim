@@ -87,6 +87,8 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
 
   if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
     let l:histreg = @/
+    let wrap = &wrapscan | let &wrapscan = 0
+
     try
       " invoke / and restore the history immediately after
       silent! exec 'norm! '.a:op.(a:reverse ? '?' : '/').sprefix.l:search."\<cr>"
@@ -101,6 +103,7 @@ func! sneak#to(op, s, count, repeatmotion, reverse, bounds) range abort
     finally
       call histdel("/", histnr("/")) "delete the last search from the history
       let @/ = l:histreg
+      let &wrapscan = wrap
     endtry
   else "jump to the first match, or exit
     let matchpos = searchpos(sprefix.l:match_pattern.'\zs'.l:search, l:searchoptions)
