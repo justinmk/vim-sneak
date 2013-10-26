@@ -13,12 +13,12 @@ set cpo&vim
 "persist state for repeat
 let s:st = { 'search':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
 
-"options
-let s:opt = { 'nextprev_f' : get(g:, 'sneak#nextprev_f', 1)
-      \ ,'nextprev_t'   : get(g:, 'sneak#nextprev_t', 1)
+"options                                 v-- for backwards-compatibility
+let s:opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
+      \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
-      \ ,'map_netrw'   : get(g:, 'sneak#map_netrw', 1)
+      \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
       \ }
 
 "repeat *motion* (not operation)
@@ -167,7 +167,16 @@ func! s:attach_autocmds()
   augroup END
 endf
 
-if s:opt.nextprev_f || s:opt.nextprev_t
+func! s:init()
+  for k in ['f', 't'] "if user mapped Sneak to f or t, that key should *not* reset Sneak
+    if maparg(k, 'n') =~# '<Plug>Sneak'
+      let s:opt[k.'_reset'] = 0
+    endif
+  endfor
+endf
+call s:init()
+
+if s:opt.f_reset || s:opt.t_reset
   func! sneak#reset()
     let s:st.search = ""
     let s:st.reverse = 0
@@ -187,12 +196,12 @@ if s:opt.nextprev_f || s:opt.nextprev_t
     exec a:mode."noremap <silent> ".a:key.(v ? " <esc>" : " ")":<c-u>call sneak#reset()\<cr>".(v ? "gv" : "").maparg
   endf
 
-  "if f/F/t/T are invoked, we want ; and , to work for them instead of sneak.
-  if s:opt.nextprev_f
+  "if f/F/t/T is invoked then ; and , should repeat that motion
+  if s:opt.f_reset
     call s:map_reset_key("f", "n") | call s:map_reset_key("F", "n")
     call s:map_reset_key("f", "x") | call s:map_reset_key("F", "x")
   endif
-  if s:opt.nextprev_t
+  if s:opt.t_reset
     call s:map_reset_key("t", "n") | call s:map_reset_key("T", "n")
     call s:map_reset_key("t", "x") | call s:map_reset_key("T", "x")
   endif

@@ -102,21 +102,27 @@ file using the following settings.
 ------------------------------------------------------------------------------
 4.1 Options                                                    *sneak-options*
 
-Following is a list of Sneak options with their default values.
-To change an option, add a |let| statement in your |vimrc|, for example: >
+To change an option, add a |let| statement in your |vimrc|. For example: >
 
-    let g:sneak#nextprev_f = 0
+    let g:sneak#use_ic_scs = 0
 <
-g:sneak#nextprev_f = 1
-g:sneak#nextprev_t = 1
+Following is a list of Sneak options with their default values.
+
+g:sneak#f_reset = 1
+g:sneak#t_reset = 1
+
+        Note: if you have mapped f (or t) to a |sneak-mappings| then the 
+        default is 0.
 
     0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
         define different maps for <Plug>SneakNext or <Plug>SneakPrevious and
         still use ; and , for |f| and |t| as usual.
 
-    1 : Pressing |f| (or |t|) will cause ; and , to apply to that motion instead
-        of the last s or S. This allows you to use ; and , for all three
-        motions.
+
+    1 : Pressing |f| (or |t|) causes Sneak to "reset" so that |;| and |,| will apply
+        to the last f (or t) motion instead of the last s or S. This makes it
+        possible to use ; and , for all three motions (f, t, and s).
+
 
 g:sneak#textobject_z = 1
 
@@ -164,7 +170,8 @@ decreasing elegance):
        hi link SneakPluginScope  Comment
 <
     2. To define specific colors _regardless_ of the current colorscheme, you
-       probably need to define an |autocmd| on the |ColorScheme| event: >
+       probably need to define an |autocmd| on the |ColorScheme| event
+       (otherwise the colorscheme will clear the highlights): >
 
        augroup SneakPluginColors
            autocmd!
@@ -172,9 +179,6 @@ decreasing elegance):
            autocmd ColorScheme * hi SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
        augroup END
 <
-       |autocmd| is necessary because otherwise your colorscheme will
-       (probably) clear the highlights when it kicks in.
-
     3. Edit your color scheme directly: >
 
        hi SneakPluginTarget guifg=black guibg=red ctermfg=black ctermbg=red
@@ -184,17 +188,28 @@ decreasing elegance):
 4.3 Custom Mappings                                           *sneak-mappings*
 
 You can remap any Sneak feature (except the "text object" mappings) by 
-defining one or more of these <Plug> mappings in your |vimrc|. Replace ? with 
-the key sequence that you want to map to each respective feature: >
+defining any of these <Plug> mappings in your |vimrc| as shown: >
 
-      nmap ? <Plug>SneakForward
-      nmap ? <Plug>SneakBackward
-      nmap ? <Plug>SneakNext
-      nmap ? <Plug>SneakPrevious
-      xmap ? <Plug>VSneakForward
-      xmap ? <Plug>VSneakBackward
-      xmap ? <Plug>VSneakNext
-      xmap ? <Plug>VSneakPrevious
+    nmap ? <Plug>SneakForward
+    nmap ? <Plug>SneakBackward
+    nmap ? <Plug>SneakNext
+    nmap ? <Plug>SneakPrevious
+    xmap ? <Plug>VSneakForward
+    xmap ? <Plug>VSneakBackward
+    xmap ? <Plug>VSneakNext
+    xmap ? <Plug>VSneakPrevious
+<
+Here are some examples: >
+
+    nmap f       <Plug>SneakForward
+    xmap f       <Plug>VSneakForward
+    nmap F       <Plug>SneakBackward
+    xmap F       <Plug>VSneakBackward
+
+    nmap <enter> <Plug>SneakNext
+    xmap <enter> <Plug>VSneakNext
+    nmap <bs>    <Plug>SneakPrevious
+    xmap <bs>    <Plug>VSneakPrevious
 <
 ==============================================================================
 5. Contributing                                           *sneak-contributing*

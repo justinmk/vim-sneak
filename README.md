@@ -73,7 +73,6 @@ the common case for Sneak is **three (3) keystrokes**.
 ```
       nmap f <Plug>SneakForward
       nmap F <Plug>SneakBackward
-      let g:sneak#nextprev_f = 0
 ```
 
 * Default mappings:
@@ -184,6 +183,7 @@ You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion)
+* [improvedft](https://github.com/chrisbra/improvedft)
 * [clever-f](https://github.com/rhysd/clever-f.vim)
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
 * [Fanf,ingTastic; ](https://github.com/dahu/vim-fanfingtastic)

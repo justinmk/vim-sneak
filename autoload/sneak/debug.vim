@@ -23,7 +23,8 @@ func! sneak#debug#report()
     call s:dbgflag('&ignorecase')
     call s:dbgflag('&smartcase')
     call s:dbgflag('&background')
-    silent exec 'verbose map s | map S | map z | map Z'
+    call s:dbgflag('g:mapleader')
+    silent exec 'verbose map s | map S | map z | map Z | map ; '
   redir END
   enew
   silent put=vimversion
