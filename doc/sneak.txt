@@ -58,6 +58,8 @@ Sneak default NORMAL-mode mappings:
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     S{char}{char}            | Go to the previous occurrence of {char}{char}
+    s{char}<Enter>           | Go to the next occurrence of {char}
+    S{char}<Enter>           | Go to the previous occurrence of {char}
     ;                        | Go to the next match
     , or \                   | Go to the previous match
     {range}s{char}{char}     | Invoke |sneak-vertical-scope|
@@ -73,6 +75,8 @@ Sneak default VISUAL-mode mappings:
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     Z{char}{char}            | Go to the previous occurrence of {char}{char}
+    s{char}<Enter>           | Go to the next occurrence of {char}
+    Z{char}<Enter>           | Go to the previous occurrence of {char}
     ;                        | Go to the next match
     , or \                   | Go to the previous match
 
@@ -214,21 +218,23 @@ Here are some examples: >
 ==============================================================================
 5. Contributing                                           *sneak-contributing*
 
-Report bugs or request features on GitHub:
+Bug reports, feature requests, and pull requests are welcome:
 
     https://github.com/justinmk/vim-sneak
 
 In your bug report, it is helpful to include the output of this command: >
 
     :call sneak#debug#report()
+
+If you are feeling diligent: to narrow down the cause of the issue, you can
+run Vim without any plugins except sneak.vim like this: >
+
+    vim -u NONE -N -c ':set runtimepath+=~/.vim/bundle/vim-sneak/' -c ':runtime plugin/sneak.vim'
 <
-If you have any code improvements, fork the above repository and send a pull 
-request!
-
-Author: Justin M. Keyes <justinkz+vim@gmail.com>
-
 ==============================================================================
 6. Credits                                                     *sneak-credits*
+
+Author: Justin M. Keyes <justinkz+vim@gmail.com>
 
 Sneak was inspired by vim-seek and vim-easymotion.
 

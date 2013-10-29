@@ -221,25 +221,31 @@ endf
 func! s:isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
 endf
+
 func! s:getchar()
-  let l:c = getchar()
-  return type(l:c) == type(0) ? nr2char(l:c) : l:c
+  let c = getchar()
+  return type(c) == type(0) ? nr2char(c) : c
 endf
 
 func! s:getnchars(n, mode)
-  let l:s = ''
+  let s = ''
   echo '>'
   for i in range(1, a:n)
     "preserve existing selection
     if s:isvisualop(a:mode) | exe 'norm! gv' | endif
-    let l:c = s:getchar()
-    if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], l:c)
+    let c = s:getchar()
+    if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
       return ""
     endif
-    let l:s .= l:c
-    redraw | echo '>'.l:s
+    if i > 1 && c ==# "\<CR>"
+      "special case: accept the current input (feature #15)
+      break
+    else
+      let s .= c
+    endif
+    redraw | echo '>'.s
   endfor
-  return l:s
+  return s
 endf
 
 augroup SneakPluginColors
