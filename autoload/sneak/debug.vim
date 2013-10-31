@@ -9,6 +9,19 @@ func! s:dbgfeat(featurename)
   silent echo 'has("'.a:featurename.'")='.has(a:featurename)
 endf
 
+func! s:dbgfunc(funcname)
+  silent echo exists("*".a:funcname) ? "defined:     ".a:funcname
+                                   \ : "not defined: ".a:funcname
+endf
+
+func! sneak#debug#profile()
+  profile start profile.log
+  profile func sneak*
+  "trace all sneak script files
+  profile file *sneak/*
+  autocmd VimLeavePre * profile pause
+endf
+
 func! sneak#debug#report()
   redir => vimversion
     silent version
@@ -24,6 +37,10 @@ func! sneak#debug#report()
     call s:dbgflag('&smartcase')
     call s:dbgflag('&background')
     call s:dbgflag('g:mapleader')
+    silent echo ""
+    call s:dbgfunc("sneak#to")
+    call s:dbgfunc("sneak#rpt")
+    call s:dbgfunc("sneak#debug#report")
     silent exec 'verbose map f | map F | map t | map T | map s | map S | map z | map Z | map ; '
   redir END
   enew

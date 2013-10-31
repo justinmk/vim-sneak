@@ -181,8 +181,6 @@ func! s:attach_autocmds()
 endf
 
 func! s:init()
-  "if user mapped anything to f or t, do not map over it; unfortunately this
-  "also means we cannot reset ; or , when f or t is invoked.
   for k in ['f', 't']
     if maparg(k, 'n') =~# '<Plug>Sneak'
       let s:opt[k.'_reset'] = 0
@@ -203,7 +201,8 @@ func! sneak#reset(count, visual, key)
 endf
 
 func! s:map_reset_key(key, mode)
-  "prevent unnecessary re-mapping if we never unmapped previously.
+  "if user mapped anything to f or t, do not map over it; unfortunately this
+  "also means we cannot reset ; or , when f or t is invoked.
   if mapcheck(a:key, a:mode) ==# ''
     let v = ("x" ==# a:mode)
     exec a:mode."noremap <silent> ".a:key.(v ? " <esc>" : " ")
