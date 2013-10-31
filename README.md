@@ -3,8 +3,8 @@
 **Sneak** is a Vim plugin that fills the gap between `f` and `/` without
 discarding Vim's many useful built-in motions.
 
-See [Overview](#overview) for concept and [FAQ](#faq) for answers to common
-questions.
+See [overview](#overview) for concept, [FAQ](#faq) for answers to common
+questions, and [`:help sneak`](doc/sneak.txt) for options and details.
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
@@ -18,6 +18,7 @@ characters:
 * Press `sab` to **move the cursor** immediately to the next instance of the text "ab".
     * Additional matches, if any, are highlighted until the cursor is moved.
 * Press `;` to go to the next match.
+* Press `3;` to skip to the third match from the current position.
 * Press `ctrl-o` or `` to go back to the starting point.
     * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
       *only* on `s` invocation, *not* repeated matches, so you can 
@@ -180,6 +181,14 @@ Sneak is like `f` with these advantages:
 
 You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 
+#### I want to use an "f-enhancement" plugin simultaneously with Sneak
+
+Sneak is intended to replace the so-called [f-enhancement plugins](#related).
+You can use Sneak *and* keep your `f` plugin or mapping, however, Sneak won't
+be able to "hook" into `f`, which means `;` and `,` will always repeat the
+last Sneak-search. (There is no way for Sneak to know if `f` was pressed
+*and* reliably preserve a custom `f` (or `t`) mapping.)
+
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion)
@@ -189,12 +198,9 @@ You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 * [Fanf,ingTastic; ](https://github.com/dahu/vim-fanfingtastic)
 
 ### TODO
-* repeat-operation should take a count
-* `n;` should skip to *nth* occurrence
 * vertical scope for built-in `/`
 * use `strwidth()` instead of `len()` to support multibyte (vim-7.3 only) 
 * operator-pending mode should accept registers
-* add to VAM pool https://github.com/MarcWeber/vim-addon-manager
 
 ### License
 

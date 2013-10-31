@@ -60,8 +60,8 @@ Sneak default NORMAL-mode mappings:
     S{char}{char}            | Go to the previous occurrence of {char}{char}
     s{char}<Enter>           | Go to the next occurrence of {char}
     S{char}<Enter>           | Go to the previous occurrence of {char}
-    ;                        | Go to the next match
-    , or \                   | Go to the previous match
+    ;                        | Go to the [count]'th next match
+    , or \                   | Go to the [count]'th previous match
     {range}s{char}{char}     | Invoke |sneak-vertical-scope|
     {range}S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
@@ -77,8 +77,8 @@ Sneak default VISUAL-mode mappings:
     Z{char}{char}            | Go to the previous occurrence of {char}{char}
     s{char}<Enter>           | Go to the next occurrence of {char}
     Z{char}<Enter>           | Go to the previous occurrence of {char}
-    ;                        | Go to the next match
-    , or \                   | Go to the previous match
+    ;                        | Go to the [count]'th next match
+    , or \                   | Go to the [count]'th previous match
 
 
 ==============================================================================
@@ -122,10 +122,15 @@ g:sneak#t_reset = 1
         define different maps for <Plug>SneakNext or <Plug>SneakPrevious and
         still use ; and , for |f| and |t| as usual.
 
-
     1 : Pressing |f| (or |t|) causes Sneak to "reset" so that |;| and |,| will apply
         to the last f (or t) motion instead of the last s or S. This makes it
         possible to use ; and , for all three motions (f, t, and s).
+
+        Note: if f (or t) was already mapped by you or a plugin, Sneak will
+        not override the existing mapping unless you explicitly set f_reset
+        (or t_reset). This means Sneak will not be able to reset ; or , when
+        you invoke f or t. See the README.md FAQ regarding "f-enhancement"
+        plugins.
 
 
 g:sneak#textobject_z = 1
