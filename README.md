@@ -66,35 +66,13 @@ designed to *complement*—not replace—Vim's built-in motions; and
 EasyMotion by default requires five (5) keystrokes to move to a position, while
 the common case for Sneak is **three (3) keystrokes**.
 
-### Details
-
-* Sneak chooses sane defaults out-of-the-box, but the defaults can be changed using the various 
-  `<Plug>` mappings. E.g., if you would rather just replace Vim's built-in `f` completely with 
-  Sneak, put this in your .vimrc: 
+Sneak chooses sane defaults out-of-the-box, but the defaults can be changed
+using the provided `<Plug>` mappings. E.g., if you would rather just replace
+Vim's built-in `f` completely, put this in your .vimrc: 
 ```
       nmap f <Plug>SneakForward
       nmap F <Plug>SneakBackward
 ```
-
-* Default mappings:
-    * `s` (and `S`) waits for two characters, then immediately moves to the next (previous) match. 
-      Additional matches are highlighted until the cursor is moved. **Works across multiple lines.**
-        * `s` works in visual mode, too (use `Z` to go backward, because `S` is taken by surround.vim).
-    * `{number}s` enters *vertical scope* mode which restricts the search to 2× the column width specified by `{number}`. 
-    * `;` and `,` repeat the last `s` and `S`. **They also work correctly with `f` and `t`.**
-        * If your mapleader is `,` then sneak.vim maps `\` instead of `,`. You can 
-          override this by specifying some other mapping: `nmap ? <Plug>SneakPrevious`
-    * Use `z` for operations; for example, `dzab` deletes from the cursor to the next instance of "ab". 
-      `dZab` deletes backwards to the previous instance. `czab` `cZab` `yzab` and `yZab` also work as expected.
-        * **Repeat the operation** with dot `.` (requires [repeat.vim](https://github.com/tpope/vim-repeat))
-
-
-If you, or one of your plugins, already maps `s` and `S` to some feature, Sneak 
-provides `<Plug>` mappings for you to specify alternative key maps. Keep in mind, 
-however, that *motion* mappings should absolutely be the *least friction* mappings 
-in your editor, because motion is the most common editor task. Remapping Sneak to 
-something like `<leader>s` is really not recommended; consider moving your existing `s` 
-and `S` mappings to some other corner of your keyboard. 
 
 ### Motivation
 
@@ -103,12 +81,14 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
   - move to any location with `s` followed by exactly two characters
   - move anywhere, even offscreen (unlike EasyMotion)
   - jump back to the point of `s` invocation via `ctrl-o` or `` (backtick backtick)
-    - only the *initial* invocation adds to the jumplist
-        - repeat-motion via `;` or `,` does *not* add to the jumplist
+    - only the initial invocation adds to the jumplist; repeat-motion
+      via `;` or `,` does *not* add to the jumplist
   - jumps immediately to first match (unlike EasyMotion)
-  - gets out of your way as soon as you move the cursor (highlights and autocmds are cleared)
   - common case requires 3-char key sequence (EasyMotion requires 5: `,,fab`)
+  - gets out of your way as soon as you move the cursor
   - repeat the motion with `;` or `,`
+  - works with operations
+  - works with counts
   - does not break expected behavior of `f t F T ; ,`
   - preserves the `/` register, does not add noise to `/` history
   - does not wrap
@@ -118,10 +98,8 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
 ### Bugs
 
-Sneak is designed to be well-behaved and bug-free. There should be no surprises except pleasant 
-surprises—like "OMG, it actually works".
-
-If you find a bug, please report it, and perhaps include the output of:
+Sneak is built to be well-behaved and annoyance-free. If you find a bug,
+please report it, and perhaps include the output of:
 
     :call sneak#debug#report()
 

@@ -1,4 +1,4 @@
-*sneak.txt*                                                        Version 1.1
+*sneak.txt*                                                        Version 1.2
 
                     Sneak - the missing motion for Vim
 
@@ -87,14 +87,46 @@ Sneak default VISUAL-mode mappings:
 ------------------------------------------------------------------------------
 3.1 Normal Mode
 
+`s` (and `S`) waits for two characters, then immediately moves to the next
+(previous) match. Additional matches are highlighted until the cursor is
+moved. Works across multiple lines.
+
+`[count]s` enters |sneak-vertical-scope| mode.
+
+`;` and `,` repeat the last `s` and `S`. They also work correctly with `f` and `t`,
+unless you or another plugin have mapped `f` or `t` to a custom mapping.
+`[count];` and `[count],` skip to the [count]'th match, similar to the
+behavior of `[count]f` and `[count]t`.
+
+    Note: If your mapleader is `,` then Sneak maps `\` instead of `,`.
+    You can override this by specifying some other mapping, eg: >
+
+    nmap ? <Plug>SneakPrevious
+<
 ------------------------------------------------------------------------------
 3.2 Visual Mode
+
+`s` works in visual mode the same as normal mode, however to search backwards
+use `Z` (because `S` is taken by the |surround| plugin). `;` and `,` also
+work in visual mode as they do in normal mode.
 
 ------------------------------------------------------------------------------
 3.3 Text Object (for use with an |operator|)
 
+Use `z` for operations; for example, `dzab` deletes from the cursor to the next
+instance of "ab". `dZab` deletes backwards to the previous instance.
+`czab` `cZab` `yzab` and `yZab` also work as expected.
+
+Repeat the operation with |.|
+
+    Note: repeat requires repeat.vim https://github.com/tpope/vim-repeat
+
 ------------------------------------------------------------------------------
 3.4 Vertical Scope                                      *sneak-vertical-scope*
+
+Sneak has a unique feature called "vertical scope" search. This is invoked by 
+prefixing a normal Sneak search (`s` or `S`) with a number. In that case, 
+the search is restricted to a column having a width of 2× the the number.
 
 ==============================================================================
 4. Configuration                                         *sneak-configuration*
@@ -195,6 +227,11 @@ decreasing elegance):
 <
 ------------------------------------------------------------------------------
 4.3 Custom Mappings                                           *sneak-mappings*
+
+Sneak provides <Plug> mappings for you to specify alternative key maps.
+Keep in mind, however, that motion mappings should absolutely be the
+least-friction mappings in your editor, because motion is the most common
+editor task. Remapping Sneak to something like `<leader>s` is not recommended.
 
 You can remap any Sneak feature (except the "text object" mappings) by 
 defining any of these <Plug> mappings in your |vimrc| as shown: >
