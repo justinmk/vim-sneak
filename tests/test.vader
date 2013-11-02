@@ -53,6 +53,21 @@ Expect:
   111 22 333 44442555 6666 7 88888
   1111 2 33 444 555 66 77a 8
 
+Do (visual mode forwards):
+  vwjs42los55;d
+
+Expect:
+  1 22222 33 444 555 6666 7 888
+  11 222 3333 4 555 6666 7 88888
+  1111 2 33 444 555 66 77a 8
+
+Do (visual mode backwards):
+  jjjvwwoZ33;;\d
+
+Expect:
+  1 22222 33 444 555 6666 7 888
+  11 222 333 444 555 66 77a 8
+
 Given:
   a,,bbb
   aa,,bb
@@ -134,6 +149,8 @@ Expect javascript:
 
 ###########################################################
 
+#sneak's use of feedkeys and/or dynamic unmap breaks this test, as well as macros
+#if f or t is used with temporary sneak-reset mappings
 Given:
   | Option     | Type    | Default | Description                                    |
   | --         | --      | --      | --                                             |
@@ -145,12 +162,8 @@ Given:
   | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
-Execute:
-  "TODO: fDs1\<Space>;\2fe2;3j4Ti\~
-  "f doesn't work in Vader?
-  normal fD
-  call feedkeys('fD')
-  normal x
+Do:
+  fDs1\<Space>;\2fe2;3j4Ti\~
 
 Expect:
   | Option     | Type    | Default | Description                                    |
