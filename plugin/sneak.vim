@@ -195,7 +195,9 @@ func! sneak#reset(count, visual, key)
   endif
   let s:st.search = ""
   let s:st.reverse = 0
-  silent! exec 'unmap '.a:key
+  for k in ['f', 'F', 't', 'T'] "unmap _all_ temp mappings to mitigate #21.
+    silent! exec 'unmap '.k
+  endfor
   "feed the keys exactly once, with the correct count
   call feedkeys(max([1, a:count]).a:key)
 endf
