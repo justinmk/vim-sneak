@@ -1,0 +1,28 @@
+FUNCTION  BuildFoo()
+Called 1 time
+Total time:   0.004633
+ Self time:   0.004633
+
+count  total (s)   self (s)
+    1              0.000211   exec "norm! /m\<cr>"
+    1              0.000142   let g:foomatches = []
+                              "TODO: need to deal with the 'offset' returned by getpos() if virtualedit=all
+    1              0.000007   let p1 = getpos(".") "first match postion
+    1              0.000004   call add(g:foomatches, p1)
+  201              0.000220   for i in range(1, 200)
+  200              0.001846     norm! n
+  200              0.000677     let p = getpos(".")
+  200              0.000574     if p1[1] == p[1] && p1[2] == p[2]
+                                  " break
+    6              0.000004     endif
+  200              0.000432     call add(g:foomatches, p)
+  200              0.000153   endfor
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+    1   0.004633             BuildFoo()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+    1              0.004633  BuildFoo()
+

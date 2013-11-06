@@ -1,0 +1,27 @@
+FUNCTION  BuildFoo2()
+Called 1 time
+Total time:   0.002992
+ Self time:   0.002992
+
+count  total (s)   self (s)
+    1              0.000187   let g:foomatches = []
+                              "TODO: need to deal with the 'offset' returned by getpos() if virtualedit=all
+                              "NOTE: the search should be 'warm' before profiling
+    1              0.000025   let p1 = searchpos("m") "first match postion
+    1              0.000007   call add(g:foomatches, p1)
+  201              0.000239   for i in range(1, 200)
+  200              0.001125     let p = searchpos("m")
+  200              0.000555     if p1[0] == p[0] && p1[1] == p[1]
+                                  " break
+    5              0.000002     endif
+  200              0.000407     call add(g:foomatches, p)
+  200              0.000146   endfor
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+    1   0.002992             BuildFoo2()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+    1              0.002992  BuildFoo2()
+
