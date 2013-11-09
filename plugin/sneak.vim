@@ -189,28 +189,24 @@ func! s:init()
 endf
 call s:init()
 
-func! sneak#reset(count, visual, key)
-  if a:visual
-    norm! gv
-  endif
+func! sneak#reset(key)
+  let c = s:getchar()
+
   let s:st.search = ""
   let s:st.reverse = 0
-  for k in ['f', 'F', 't', 'T'] "unmap _all_ temp mappings to mitigate #21.
+  for k in ['f', 'F', 't', 'T'] "unmap all temp mappings
     silent! exec 'unmap '.k
   endfor
-  "feed the keys exactly once, with the correct count
-  call feedkeys(max([1, a:count]).a:key)
+
+  "count is prepended implicitly by the <expr> mapping
+  return a:key.c
 endf
 
 func! s:map_reset_key(key, mode)
   "if user mapped anything to f or t, do not map over it; unfortunately this
   "also means we cannot reset ; or , when f or t is invoked.
   if maparg(a:key, a:mode) ==# ''
-    let v = ("x" ==# a:mode)
-    "use v:prevcount for visual mapping because we <esc> before the ex command.
-    let c = v ?  'v:prevcount' : 'v:count1'
-    exec printf("%snoremap <silent> %s %s:<c-u>call sneak#reset(%s, %d, '%s')\<cr>",
-          \ a:mode, a:key, (v ? "<esc>" : ""), c, v, a:key)
+    exec printf("%snoremap <silent> <expr> %s sneak#reset('%s')", a:mode, a:key, a:key)
   endif
 endf
 
