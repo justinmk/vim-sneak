@@ -205,7 +205,7 @@ endf
 func! s:map_reset_key(key, mode)
   "if user mapped anything to f or t, do not map over it; unfortunately this
   "also means we cannot reset ; or , when f or t is invoked.
-  if mapcheck(a:key, a:mode) ==# ''
+  if maparg(a:key, a:mode) ==# ''
     let v = ("x" ==# a:mode)
     "use v:prevcount for visual mapping because we <esc> before the ex command.
     let c = v ?  'v:prevcount' : 'v:count1'
