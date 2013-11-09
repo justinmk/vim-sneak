@@ -149,20 +149,18 @@ Expect javascript:
 
 ###########################################################
 
-#sneak's use of feedkeys and/or dynamic unmap breaks this test, as well as macros
-#if f or t is used with temporary sneak-reset mappings
 Given:
   | Option     | Type    | Default | Description                                    |
   | --         | --      | --      | --                                             |
   | threads    | Fixnum  | 1       | number of threads in the thread pool           |
   | queues     | Fixnum  | 1       | number of concurrent queues                    |
   | queue_size | Fixnum  | 1000    | size of each queue                             |
-  | interval   | NumeRic | 0       | dispatcher interval for batch processing       |
+  | interval   | Numeric | 0       | dispatcher interval for batch processing       |
   | batch      | Boolean | false   | enables batch processing mode                  |
   | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
-Do:
+Do (crazy sequence with s, f, counts, and repeats):
   fDs1\<Space>;\2fe2;3j4Ti\~
 
 Expect:
@@ -176,4 +174,20 @@ Expect:
   | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
+###########################################################
+
+Given:
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+
+Execute (create mapping with f as a prefix / do s ; fe):
+  nnoremap foobar :echo 'hi'<cr>
+  normal sbc2;;fe;iX
+  nunmap foobar
+
+Expect:
+  abcdef abcdef abcdef
+  abcdef abcdXef abcdef
+  abcdef abcdef abcdef
 
