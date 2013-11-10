@@ -1,4 +1,12 @@
-
+" TODO:
+"   janus
+"   spf13
+"   VIM
+"   YADR https://github.com/skwp/dotfiles
+" 
+" YADR easymotion settings:
+"   https://github.com/skwp/dotfiles/blob/master/vim/settings/easymotion.vim
+"
 " NOTE: cchar cannot be more than 1 character.
 "   strategy: make SneakPluginTarget fg/bg the same color, then conceal the
 "             other char.
