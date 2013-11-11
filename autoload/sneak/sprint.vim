@@ -87,6 +87,12 @@ func! FooInit()
   set concealcursor=ncv
   set conceallevel=2
   syntax clear
+  "TODO: restore user's Conceal highlight
+  "   https://github.com/osyo-manga/vim-over/blob/d8819448fc4074342abd5cb6cb2f0fff47b7aa22/autoload/over/command_line.vim#L225
+  "     redir => conceal_hl
+  "     silent highlight Conceal
+  "     redir END
+  "     let s:old_hi_cursor = substitute(matchstr(conceal_hl, 'xxx \zs.*'), '[ \t\n]\+', ' ', 'g')
   hi Conceal guibg=magenta guifg=white
 endf
 
