@@ -1,10 +1,12 @@
 # sneak.vim :shoe:
 
-**Sneak** is a Vim plugin that fills the gap between `f` and `/` without
-discarding Vim's many useful built-in motions.
+**Sneak** is a powerful yet minimalist Vim plugin that provides a new **motion** more flexible 
+than `f`, more subtle than `/`. It is designed with deliberate attention to detail, speed, and 
+reliability.
 
 See [overview](#overview) for concept, [FAQ](#faq) for answers to common
 questions, and [`:help sneak`](doc/sneak.txt) for options and details.
+Regression tests are maintained in the [`test` branch](https://github.com/justinmk/vim-sneak/tree/test).
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
