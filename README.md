@@ -98,15 +98,6 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
   - *vertical scope* with `{number}s{char}{char}` restricts search column to 2× `number` size
   - always literal, for example `s\*` jumps to the literal `\*`
 
-### Bugs
-
-Sneak is built to be well-behaved and annoyance-free. If you find a bug,
-please report it, and perhaps include the output of:
-
-    :call sneak#debug#report()
-
-Sneak is tested on 100k+ line syntax-highlighted file, with Vim 7.2.330, 7.3, 7.4.
-
 ### Installation
 
 To install Sneak manually, just place the files directly in your `.vim` directory 
@@ -176,6 +167,16 @@ last Sneak-search. (There is no way for Sneak to know if `f` was pressed
 * [clever-f](https://github.com/rhysd/clever-f.vim)
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
 * [Fanf,ingTastic; ](https://github.com/dahu/vim-fanfingtastic)
+
+### Bugs
+
+Sneak is built to be well-behaved and annoyance-free. If you find a bug,
+please report it, and perhaps include the output of:
+
+    :call sneak#debug#report()
+
+Sneak is tested on a 10-MB, 400k-lines, syntax-highlighted file with 
+Vim 7.2.330, 7.3, 7.4.
 
 ### TODO
 * vertical scope for built-in `/`
