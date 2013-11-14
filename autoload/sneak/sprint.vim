@@ -62,7 +62,7 @@ func! sneak#sprint#to(s)
   call winrestview(w)
   redraw
   let choice = s:getchar()
-  if choice != "\<Esc>"
+  if choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
     let p = s:matchmap[choice]
     call setpos('.', [ 0, p[0], p[1], 0 ])
   endif
