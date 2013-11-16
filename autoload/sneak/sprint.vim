@@ -40,17 +40,12 @@ func! ProfileFoo()
   autocmd VimLeavePre * profile pause
 endf
 
-func! FooHL(locations)
-  syntax match Foo4 "e\%18l\%>10c\%<60c" conceal cchar=E
-
-endf
-
 "TODO: <space> should skip to the 53rd match, if any
-let g:fooprefixes = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
-let g:foomap = {}
+let s:matchkeys = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
+let s:matchmap = {}
 
-func! FooPlaceMatch(c, pos)
-  let g:foomap[a:c] = a:pos
+func! s:placematch(c, pos)
+  let s:matchmap[a:c] = a:pos
   "TODO: figure out why we must +1 the column...
   exec "syntax match FooConceal '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
 endf
@@ -59,8 +54,9 @@ endf
 "NOTE: the search should be 'warm' before profiling
 "NOTE: searchpos() appears to be about 30% faster than 'norm! n' for
 "      a 1-char search pattern, but needs to be tested on complicated search patterns vs 'norm! /'
-func! FooMatchAndMark(s)
-  let maxmarks = len(g:fooprefixes) - 1
+func! sneak#sprint#to(s)
+  call s:init()
+  let maxmarks = len(s:matchkeys) - 1
   let w = winsaveview()
   for i in range(0, maxmarks)
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
@@ -68,14 +64,17 @@ func! FooMatchAndMark(s)
     if 0 == max(p)
       break
     endif
-    let c = strpart(g:fooprefixes, i, 1)
-    call FooPlaceMatch(c, p)
+    let c = strpart(s:matchkeys, i, 1)
+    call s:placematch(c, p)
   endfor
   call winrestview(w)
   redraw
   let choice = s:getchar()
-  let p = g:foomap[choice]
-  call setpos('.', [0, p[0], p[1], 0])
+  if choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
+    let p = s:matchmap[choice]
+    call setpos('.', [ 0, p[0], p[1], 0 ])
+  endif
+  setlocal syntax=ON
 endf
 
 func! s:getchar()
@@ -83,16 +82,17 @@ func! s:getchar()
   return type(c) == type(0) ? nr2char(c) : c
 endf
 
-func! FooInit()
+func! s:init()
   set concealcursor=ncv
   set conceallevel=2
-  syntax clear
   "TODO: restore user's Conceal highlight
   "   https://github.com/osyo-manga/vim-over/blob/d8819448fc4074342abd5cb6cb2f0fff47b7aa22/autoload/over/command_line.vim#L225
   "     redir => conceal_hl
   "     silent highlight Conceal
   "     redir END
   "     let s:old_hi_cursor = substitute(matchstr(conceal_hl, 'xxx \zs.*'), '[ \t\n]\+', ' ', 'g')
+  "syntax clear
+  setlocal syntax=OFF
   hi Conceal guibg=magenta guifg=white
 endf
 
