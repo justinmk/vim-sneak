@@ -133,7 +133,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, sprint) range ab
   endif
   "search succeeded
 
-  call s:removehl()
+  call sneak#hl#removehl()
 
   "position _after_ completed search
   let l:curlin = string(line('.'))
@@ -177,9 +177,9 @@ endf
 func! s:attach_autocmds()
   augroup SneakPlugin
     autocmd!
-    autocmd InsertEnter,WinLeave,BufLeave <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
+    autocmd InsertEnter,WinLeave,BufLeave <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
     "set up *nested* CursorMoved autocmd to skip the _first_ CursorMoved event.
-    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call <sid>removehl() | autocmd! SneakPlugin * <buffer>
+    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
   augroup END
 endf
 
@@ -226,11 +226,6 @@ func! s:ft_hook() "set up temporary mappings to 'hook' into f/F/t/T
     call s:map_reset_key("t", "n") | call s:map_reset_key("T", "n")
     call s:map_reset_key("t", "x") | call s:map_reset_key("T", "x")
   endif
-endf
-
-func! s:removehl() "remove highlighting
-  silent! call matchdelete(w:sneak_hl_id)
-  silent! call matchdelete(w:sneak_sc_hl)
 endf
 
 func! s:repeat_last_op()
