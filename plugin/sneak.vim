@@ -238,18 +238,13 @@ func! s:isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
 endf
 
-func! s:getchar()
-  let c = getchar()
-  return type(c) == type(0) ? nr2char(c) : c
-endf
-
 func! s:getnchars(n, mode)
   let s = ''
   echo '>'
   for i in range(1, a:n)
     "preserve existing selection
     if s:isvisualop(a:mode) | exe 'norm! gv' | endif
-    let c = s:getchar()
+    let c = sneak#util#getchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
       return ""
     endif
