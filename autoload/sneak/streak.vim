@@ -17,6 +17,9 @@
 "       syntax clear
 "       [do the conceal]
 "       syntax enable
+" FEATURES:
+"   - skips folds
+"   - if first match is past window, does not invoke streak-mode
 "
 " :help :syn-priority
 "   In case more than one item matches at the same position, the one that was
@@ -50,7 +53,7 @@ func! s:placematch(c, pos)
   exec "syntax match SneakConceal '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
 endf
 
-"TODO: need to deal with the 'offset' returned by getpos() if virtualedit=all
+"TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
 "NOTE: the search should be 'warm' before profiling
 "NOTE: searchpos() appears to be about 30% faster than 'norm! n' for
 "      a 1-char search pattern, but needs to be tested on complicated search patterns vs 'norm! /'
@@ -58,35 +61,53 @@ func! sneak#streak#to(s)
   call s:init()
   let maxmarks = len(s:matchkeys) - 1
   let w = winsaveview()
-  for i in range(0, maxmarks)
+
+  let i = 0
+  while i < maxmarks
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
     let p = searchpos(a:s, 'W')
+
     if 0 == max(p)
       break
     endif
+
+    "optimization: if we are in a fold, skip to the end of the fold.
+    let foldend = foldclosedend(p[0])
+    if -1 != foldend
+      if foldend >= line("w$")
+        break "fold ends at/below bottom of window.
+      endif
+      call cursor(foldend + 1, 1)
+      continue
+    endif
+
     let c = strpart(s:matchkeys, i, 1)
     call s:placematch(c, p)
-  endfor
+    let i += 1
+  endwhile
+
   call winrestview(w)
   redraw
+
   let choice = sneak#util#getchar()
   if choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
     let p = s:matchmap[choice]
-    call setpos('.', [ 0, p[0], p[1], 0 ])
+    call cursor(p[0], p[1])
   endif
 
-  call s:removehl()
+  call s:finish()
 endf
 
-func! s:removehl()
-  syntax clear SneakConceal
+func! s:finish()
+  silent! syntax clear SneakConceal
   call sneak#hl#removehl()
-  if !empty(b:sneak_syntax_orig)
-    let &syntax=b:sneak_syntax_orig
-  endif
+  let &syntax=s:syntax_orig
 endf
 
 func! s:init()
+  " does not affect search()/searchpos()
+  " set foldopen-=search
+
   set concealcursor=ncv
   set conceallevel=2
   "TODO: restore user's Conceal highlight
@@ -97,7 +118,7 @@ func! s:init()
   "     let s:old_hi_cursor = substitute(matchstr(conceal_hl, 'xxx \zs.*'), '[ \t\n]\+', ' ', 'g')
   "syntax clear
 
-  let b:sneak_syntax_orig=&syntax
+  let s:syntax_orig=&syntax
   setlocal syntax=OFF
 
   hi Conceal guibg=magenta guifg=white
