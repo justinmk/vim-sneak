@@ -47,7 +47,7 @@ let s:matchmap = {}
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
   "TODO: figure out why we must +1 the column...
-  exec "syntax match FooConceal '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
+  exec "syntax match SneakConceal '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
 endf
 
 "TODO: need to deal with the 'offset' returned by getpos() if virtualedit=all
@@ -74,7 +74,16 @@ func! sneak#sprint#to(s)
     let p = s:matchmap[choice]
     call setpos('.', [ 0, p[0], p[1], 0 ])
   endif
-  setlocal syntax=ON
+
+  call s:removehl()
+endf
+
+func! s:removehl()
+  syntax clear SneakConceal
+  call sneak#hl#removehl()
+  if !empty(b:sneak_syntax_orig)
+    let &syntax=b:sneak_syntax_orig
+  endif
 endf
 
 func! s:getchar()
@@ -92,7 +101,10 @@ func! s:init()
   "     redir END
   "     let s:old_hi_cursor = substitute(matchstr(conceal_hl, 'xxx \zs.*'), '[ \t\n]\+', ' ', 'g')
   "syntax clear
+
+  let b:sneak_syntax_orig=&syntax
   setlocal syntax=OFF
+
   hi Conceal guibg=magenta guifg=white
 endf
 
