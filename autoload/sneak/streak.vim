@@ -54,7 +54,7 @@ endf
 "NOTE: the search should be 'warm' before profiling
 "NOTE: searchpos() appears to be about 30% faster than 'norm! n' for
 "      a 1-char search pattern, but needs to be tested on complicated search patterns vs 'norm! /'
-func! sneak#sprint#to(s)
+func! sneak#streak#to(s)
   call s:init()
   let maxmarks = len(s:matchkeys) - 1
   let w = winsaveview()
@@ -69,7 +69,7 @@ func! sneak#sprint#to(s)
   endfor
   call winrestview(w)
   redraw
-  let choice = s:getchar()
+  let choice = sneak#util#getchar()
   if choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
     let p = s:matchmap[choice]
     call setpos('.', [ 0, p[0], p[1], 0 ])
@@ -84,11 +84,6 @@ func! s:removehl()
   if !empty(b:sneak_syntax_orig)
     let &syntax=b:sneak_syntax_orig
   endif
-endf
-
-func! s:getchar()
-  let c = getchar()
-  return type(c) == type(0) ? nr2char(c) : c
 endf
 
 func! s:init()

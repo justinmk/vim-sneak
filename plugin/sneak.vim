@@ -20,7 +20,7 @@ let s:opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
-      \ ,'sprint'       : get(g:, 'sneak#sprint', 0) && (v:version >= 703)
+      \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703)
       \ }
 
 "repeat *motion* (not operation)
@@ -34,7 +34,7 @@ func! sneak#rpt(op, count, reverse) range abort
         \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.bounds, 0)
 endf
 
-func! sneak#to(op, input, count, repeatmotion, reverse, bounds, sprint) range abort
+func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range abort
   if empty(a:input) "user canceled
     redraw | echo '' | return
   endif
@@ -45,7 +45,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, sprint) range ab
 
   let s = sneak#search#instance(a:repeatmotion, a:reverse)
   let s.search = escape(a:input, '"\')
-  let sprint_mode = 0
+  let streak_mode = 0
 
   " {count} prefix means 'skip this many' _only_ on repeat-motion.
   "   sanity check: max out at 999, to avoid searchpos() OOM.
@@ -115,9 +115,9 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, sprint) range ab
       endif
     endfor
 
-    if !a:repeatmotion && (a:sprint || s:opt.sprint)
-      "if there are >=2 _additional_ matches, enter sprint-mode.
-      let sprint_mode = s.hasmatches(2)
+    if !a:repeatmotion && (a:streak || s:opt.streak)
+      "if there are >=2 _additional_ matches, enter streak-mode.
+      let streak_mode = s.hasmatches(2)
     endif
 
     "if the user was in visual mode, extend the selection.
@@ -160,8 +160,8 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, sprint) range ab
         \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search),
         \ 2, get(w:, 'sneak_hl_id', -1))
 
-  if sprint_mode
-    call sneak#sprint#to(s.search)
+  if streak_mode
+    call sneak#streak#to(s.search)
   endif
 endf
 
@@ -301,7 +301,7 @@ if s:opt.textobject_z
 endif
 
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
-nnoremap <silent> <Plug>SneakSprint :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 1)<cr>
+nnoremap <silent> <Plug>SneakStreak :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 1)<cr>
 
 if !hasmapto('<Plug>SneakForward') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>SneakForward
