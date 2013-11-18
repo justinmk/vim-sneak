@@ -312,7 +312,7 @@ endif
 if !hasmapto('<Plug>SneakPrevious')
   if mapcheck(',', 'n') ==# ''
     nmap , <Plug>SneakPrevious
-  elseif mapcheck('\', 'n') ==# ''
+  elseif mapcheck('\', 'n') ==# '' || mapcheck('\', 'n') ==# ','
     nmap \ <Plug>SneakPrevious
   endif
 endif
