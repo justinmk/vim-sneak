@@ -63,7 +63,7 @@ func! sneak#streak#to(s)
   let w = winsaveview()
 
   let i = 0
-  while i < maxmarks
+  while i <= maxmarks
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
     let p = searchpos(a:s, 'W')
 
@@ -121,6 +121,6 @@ func! s:init()
   let s:syntax_orig=&syntax
   setlocal syntax=OFF
 
-  hi Conceal guibg=magenta guifg=white
+  hi Conceal guibg=magenta guifg=white gui=underline ctermbg=magenta ctermfg=white cterm=underline
 endf
 
