@@ -1,10 +1,12 @@
 # sneak.vim :shoe:
 
-**Sneak** is a Vim plugin that fills the gap between `f` and `/` without
-discarding Vim's many useful built-in motions.
+**Sneak** is a powerful yet minimalist Vim plugin that provides a new **motion** more flexible 
+than `f`, more subtle than `/`. It is designed with deliberate attention to detail, speed, and 
+reliability.
 
 See [overview](#overview) for concept, [FAQ](#faq) for answers to common
 questions, and [`:help sneak`](doc/sneak.txt) for options and details.
+Regression tests are maintained in the [`test` branch](https://github.com/justinmk/vim-sneak/tree/test).
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
@@ -96,15 +98,6 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
   - *vertical scope* with `{number}s{char}{char}` restricts search column to 2× `number` size
   - always literal, for example `s\*` jumps to the literal `\*`
 
-### Bugs
-
-Sneak is built to be well-behaved and annoyance-free. If you find a bug,
-please report it, and perhaps include the output of:
-
-    :call sneak#debug#report()
-
-Sneak is tested on 100k+ line syntax-highlighted file, with Vim 7.2.330, 7.3, 7.4.
-
 ### Installation
 
 To install Sneak manually, just place the files directly in your `.vim` directory 
@@ -174,6 +167,16 @@ last Sneak-search. (There is no way for Sneak to know if `f` was pressed
 * [clever-f](https://github.com/rhysd/clever-f.vim)
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
 * [Fanf,ingTastic; ](https://github.com/dahu/vim-fanfingtastic)
+
+### Bugs
+
+Sneak is built to be well-behaved and annoyance-free. If you find a bug,
+please report it, and perhaps include the output of:
+
+    :call sneak#debug#report()
+
+Sneak is tested on a 10-MB, 400k-lines, syntax-highlighted file with 
+Vim 7.2.330, 7.3, 7.4.
 
 ### TODO
 * vertical scope for built-in `/`
