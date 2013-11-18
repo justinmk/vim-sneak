@@ -193,7 +193,7 @@ endf
 call s:init()
 
 func! sneak#reset(key)
-  let c = s:getchar()
+  let c = sneak#util#getchar()
 
   let s:st.input = ""
   let s:st.reverse = 0
