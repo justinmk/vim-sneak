@@ -17,6 +17,8 @@ Execute (Clean up test environment):
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious
   let mapleader = ','
+  let sneak#streak = 0
+  call sneak#init()
 
 ###########################################################
 
@@ -114,7 +116,7 @@ Given ruby:
   \\\\  \ \ ? !--``.ago_		*$&()[]{}
 
 
-Do (align around all =):
+Do (search for backticks, then backslashes):
   llls``S\\i:)
 
 Expect ruby:
