@@ -30,7 +30,7 @@ characters:
       *only* on `s` invocation—not repeats—so you can 
       abandon a trail of `;` or `,` by a single `ctrl-o` or ``.
 
-Sneak can be **scoped** to a column of width 2×{number} by prefixing `s`
+Sneak can be **scoped** to a column of width 2×[number] by prefixing `s`
 with a number.
 
 * Press `5sxy` to go immediately to the next instance of "xy" within 5 columns
@@ -77,7 +77,7 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
   - does not break expected behavior of `f t F T ; ,`
   - preserves the `/` register, does not add noise to `/` history
   - does not wrap
-  - *vertical scope* with `[count]s{char}{char}` restricts search column to 2× `number` size
+  - *vertical scope* with `[count]s{char}{char}` restricts search column to 2× `count` size
   - always literal, for example `s\*` jumps to the literal `\*`
 
 ### Installation
