@@ -14,14 +14,24 @@ set cpo&vim
 "persist state for repeat
 let s:st = { 'input':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
 
-"options                                 v-- for backwards-compatibility
-let s:opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
+func! sneak#init()
+  "options                                 v-- for backwards-compatibility
+  let s:opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
       \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703)
       \ }
+
+  for k in ['f', 't'] "if user mapped f/t to Sneak, then disable f/t reset.
+    if maparg(k, 'n') =~# '<Plug>Sneak'
+      let s:opt[k.'_reset'] = 0
+    endif
+  endfor
+endf
+
+call sneak#init()
 
 "repeat *motion* (not operation)
 func! sneak#rpt(op, count, reverse) range abort
@@ -34,7 +44,7 @@ func! sneak#rpt(op, count, reverse) range abort
         \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.bounds, 0)
 endf
 
-func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range abort
+func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range abort "{{{
   if empty(a:input) "user canceled
     redraw | echo '' | return
   endif
@@ -163,7 +173,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   if streak_mode
     call sneak#streak#to(s.search)
   endif
-endf
+endf "}}}
 
 func! s:notfound(msg)
   redraw | echo 'not found'.a:msg
@@ -182,15 +192,6 @@ func! s:attach_autocmds()
     autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
   augroup END
 endf
-
-func! s:init()
-  for k in ['f', 't']
-    if maparg(k, 'n') =~# '<Plug>Sneak'
-      let s:opt[k.'_reset'] = 0
-    endif
-  endfor
-endf
-call s:init()
 
 func! sneak#reset(key)
   let c = sneak#util#getchar()
@@ -312,7 +313,7 @@ endif
 if !hasmapto('<Plug>SneakPrevious')
   if mapcheck(',', 'n') ==# ''
     nmap , <Plug>SneakPrevious
-  elseif mapcheck('\', 'n') ==# ''
+  elseif mapcheck('\', 'n') ==# '' || mapcheck('\', 'n') ==# ','
     nmap \ <Plug>SneakPrevious
   endif
 endif
