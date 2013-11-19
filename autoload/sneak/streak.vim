@@ -1,7 +1,6 @@
 " TODO:
 "   janus
 "   spf13
-"   VIM
 "   YADR https://github.com/skwp/dotfiles
 " 
 " YADR easymotion settings:
@@ -20,6 +19,9 @@
 " FEATURES:
 "   - skips folds
 "   - if first match is past window, does not invoke streak-mode
+"   - there is no 'grouping'. There is never more than one 'choose' step.
+"     - If your search has >52 matches, press <tab> to jump to the 53rd match
+"       and highlight the next 52 matches.
 "
 " :help :syn-priority
 "   In case more than one item matches at the same position, the one that was
@@ -43,7 +45,6 @@ func! ProfileFoo()
   autocmd VimLeavePre * profile pause
 endf
 
-"TODO: <space> should skip to the 53rd match, if any
 let s:matchkeys = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
 let s:matchmap = {}
 
@@ -58,12 +59,16 @@ endf
 "NOTE: searchpos() appears to be about 30% faster than 'norm! n' for
 "      a 1-char search pattern, but needs to be tested on complicated search patterns vs 'norm! /'
 func! sneak#streak#to(s)
+  while s:do_streak(a:s) | endwhile
+endf
+func! s:do_streak(s)
   call s:init()
-  let maxmarks = len(s:matchkeys) - 1
+  let maxmarks = len(s:matchkeys)
   let w = winsaveview()
 
   let i = 0
-  while i <= maxmarks
+  let overflow = [0, 0] "position of the next match (if any) after we have run out of target labels.
+  while 1
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
     let p = searchpos(a:s, 'W')
 
@@ -81,8 +86,14 @@ func! sneak#streak#to(s)
       continue
     endif
 
-    let c = strpart(s:matchkeys, i, 1)
-    call s:placematch(c, p)
+    if i < maxmarks
+      let c = strpart(s:matchkeys, i, 1)
+      call s:placematch(c, p)
+    else "we have exhausted the target labels; grab the first non-labeled match.
+      let overflow = p
+      break
+    endif
+
     let i += 1
   endwhile
 
@@ -90,12 +101,18 @@ func! sneak#streak#to(s)
   redraw
 
   let choice = sneak#util#getchar()
-  if choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
+
+  call s:finish()
+
+  if choice == "\<Tab>" && max(overflow) > 0
+    call cursor(overflow[0], overflow[1])
+    return 1
+  elseif choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
     let p = s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
 
-  call s:finish()
+  return 0 "no overflow
 endf
 
 func! s:finish()
@@ -121,6 +138,6 @@ func! s:init()
   let s:syntax_orig=&syntax
   setlocal syntax=OFF
 
-  hi Conceal guibg=magenta guifg=white gui=underline ctermbg=magenta ctermfg=white cterm=underline
+  hi Conceal guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=underline
 endf
 
