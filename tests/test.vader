@@ -193,3 +193,35 @@ Expect:
   abcdef abcdXef abcdef
   abcdef abcdef abcdef
 
+###########################################################
+
+Execute (enable streak-mode):
+  let sneak#streak = 1
+  call sneak#init()
+
+Given:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (basic streak motion):
+  sabsD
+
+Expect:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAa
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################################
