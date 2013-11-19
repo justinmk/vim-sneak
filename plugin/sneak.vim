@@ -12,7 +12,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 "persist state for repeat
-let s:st = { 'input':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
+let s:st = { 'rst':0, 'input':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
 
 func! sneak#init()
   "options                                 v-- for backwards-compatibility
@@ -35,7 +35,7 @@ call sneak#init()
 
 "repeat *motion* (not operation)
 func! sneak#rpt(op, count, reverse) range abort
-  if empty(s:st.input) "state was reset by f/F/t/T
+  if s:st.rst "reset by f/F/t/T
     exec "norm! ".(s:isvisualop(a:op) ? "gv" : "").a:count.(a:reverse ? "," : ";")
     return
   endif
@@ -91,7 +91,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
 
   if !a:repeatmotion "this is a new (not repeat) invocation
     "persist even if the search fails, because the _reverse_ direction might have a match.
-    let s:st.input = a:input | let s:st.op = a:op | let s:st.count = a:count | let s:st.bounds = l:bounds | let s:st.reverse = a:reverse
+    let s:st.rst = 0 | let s:st.input = a:input | let s:st.op = a:op | let s:st.count = a:count | let s:st.bounds = l:bounds | let s:st.reverse = a:reverse
 
     "set temporary hooks on f/F/t/T so that we know when to reset Sneak.
     call s:ft_hook()
@@ -196,7 +196,7 @@ endf
 func! sneak#reset(key)
   let c = sneak#util#getchar()
 
-  let s:st.input = ""
+  let s:st.rst = 1
   let s:st.reverse = 0
   for k in ['f', 'F', 't', 'T'] "unmap all temp mappings
     silent! exec 'unmap '.k
@@ -245,9 +245,12 @@ func! s:getnchars(n, mode)
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
       return ""
     endif
-    if i > 1 && c ==# "\<CR>"
-      "special case: accept the current input (feature #15)
-      break
+    if c == "\<CR>"
+      if i > 1 "special case: accept the current input (feature #15)
+        break
+      else "special case: repeat the last search (useful for streak-mode).
+        return s:st.input
+      endif
     else
       let s .= c
     endif
