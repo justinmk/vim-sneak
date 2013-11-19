@@ -1,12 +1,16 @@
 # sneak.vim :shoe:
 
 **Sneak** is a powerful yet minimalist Vim plugin that provides a new **motion** more flexible 
-than `f`, more subtle than `/`. It is designed with deliberate attention to detail, speed, and 
-reliability.
+than `f`, more subtle than `/`. It works across **multiple lines**,
+with **operators** (including **repeat** with dot `.`), in **visual mode**, 
+and supports **repeat-motion** via `;` and `,` with optional
+[`[count]`](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
 
-See [overview](#overview) for concept, [FAQ](#faq) for answers to common
-questions, and [`:help sneak`](doc/sneak.txt) for options and details.
-Regression tests are maintained in the [`test` branch](https://github.com/justinmk/vim-sneak/tree/test).
+See [Motivation](#motivation) for concept and [FAQ](#faq) for answers to common
+questions. Tests are in the [`test` branch](https://github.com/justinmk/vim-sneak/tree/test).
+
+The plugin chooses sane defaults, but they can be changed
+using `<Plug>` mappings. See [`:help sneak`](doc/sneak.txt) for options and details.
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
@@ -23,26 +27,26 @@ characters:
 * Press `3;` to skip to the third match from the current position.
 * Press `ctrl-o` or `` to go back to the starting point.
     * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
-      *only* on `s` invocation, *not* repeated matches, so you can 
-      always abandon a trail of `;` or `,` by a single `ctrl-o` or ``).
+      *only* on `s` invocation—not repeats—so you can 
+      abandon a trail of `;` or `,` by a single `ctrl-o` or ``.
 
 Sneak can be **scoped** to a column of width 2×{number} by prefixing `s`
 with a number.
 
-* Press `5sxy` to go immediately to the next instance of the text "xy" 
-  scoped to the *5 columns left and right of the cursor*. 
-    * This *vertical scope* is indicated by a highlight block.
+* Press `5sxy` to go immediately to the next instance of "xy" within 5 columns
+  of the cursor.
+    * A highlight block indicates the vertical scope.
 
 Sneak is invoked with [**operators**](http://vimdoc.sourceforge.net/htmldoc/motion.html#operator)
-by using `z` (because `s` is taken by surround.vim).
+via `z` (because `s` is taken by surround.vim).
 
-* Press `dzqt` to delete the text from the cursor to the next instance of the text "qt".
+* Press `dzqt` to delete from the cursor up to the next instance of "qt".
     * Press `.` to repeat the `dzqt` operation.
-* Press `gUz }` to upper-case the text from the cursor to the next instance of
-  the text " }".
-    * Press `.` to repeat the `gUz }` operation.
+* Press `gUz\}` to upper-case the text from the cursor until the next instance
+  of the literal text `\}`
+    * Press `.` to repeat the `gUz\}` operation.
 
-### Overview
+### Motivation
 
     l  f  t  %  'm  }  ]m  ]]  M  L     /
                                      ^
@@ -53,30 +57,7 @@ Vim's built-in motions cover many special cases, but it's not always easy to mov
 several lines—or a long line—to an arbitrary position. The `f` motion is restricted to 
 the current line, and the `/` search is [clunky](#faq) for medium-distance 
 motion . `H`, `M`, and `L` are great for bisecting a distance, but from there
-the cursor is potentially several lines and columns away from the target.
-
-Sneak covers that distance in three keystrokes:
-
-    s{char}{char}
-
-Sneak was inspired by [Seek](https://github.com/goldfeld/vim-seek) and 
-[EasyMotion](https://github.com/Lokaltog/vim-easymotion), but it's written from scratch and uses stock 
-Vim functions for its core behavior. Unlike Seek, Sneak works across **multiple lines**, 
-works with **operators** (including **repeat** with dot `.`), works in **visual mode**, 
-and supports **motion-repeat** via `;` and `,`. Unlike EasyMotion, Sneak is 
-designed to *complement*—not replace—Vim's built-in motions; and
-EasyMotion by default requires five (5) keystrokes to move to a position, while
-the common case for Sneak is **three (3) keystrokes**.
-
-Sneak chooses sane defaults out-of-the-box, but the defaults can be changed
-using the provided `<Plug>` mappings. E.g., if you would rather just replace
-Vim's built-in `f` completely, put this in your .vimrc: 
-```
-      nmap f <Plug>SneakForward
-      nmap F <Plug>SneakBackward
-```
-
-### Motivation
+the cursor is potentially several lines and columns from the target.
 
 Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
@@ -86,16 +67,17 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
     - only the initial invocation adds to the jumplist; repeat-motion
       via `;` or `,` does *not* add to the jumplist
   - jumps immediately to first match (unlike EasyMotion)
-  - common case requires 3-char key sequence (EasyMotion requires 5: `,,fab`)
-  - gets out of your way as soon as you move the cursor
+  - EasyMotion by default requires five (5) keystrokes (example: `,,fab`) to
+    choose a target, while the common case for Sneak is **three (3) keystrokes**.
+  - highlights additional matches until a key other than ; or , is pressed
+    - gets out of your way as soon as you move the cursor
   - repeat the motion with `;` or `,`
   - works with operations
   - works with counts
   - does not break expected behavior of `f t F T ; ,`
   - preserves the `/` register, does not add noise to `/` history
   - does not wrap
-  - highlights additional matches until a key other than ; or , is pressed
-  - *vertical scope* with `{number}s{char}{char}` restricts search column to 2× `number` size
+  - *vertical scope* with `[count]s{char}{char}` restricts search column to 2× `number` size
   - always literal, for example `s\*` jumps to the literal `\*`
 
 ### Installation
@@ -152,6 +134,14 @@ Sneak is like `f` with these advantages:
 
 You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 
+#### How can I replace `f` with Sneak?
+
+If you would rather just replace Vim's built-in `f` completely:
+```
+      nmap f <Plug>SneakForward
+      nmap F <Plug>SneakBackward
+```
+
 #### I want to use an "f-enhancement" plugin simultaneously with Sneak
 
 Sneak is intended to replace the so-called [f-enhancement plugins](#related).
@@ -177,11 +167,6 @@ please report it, and perhaps include the output of:
 
 Sneak is tested on a 10-MB, 400k-lines, syntax-highlighted file with 
 Vim 7.2.330, 7.3, 7.4.
-
-### TODO
-* vertical scope for built-in `/`
-* use `strwidth()` instead of `len()` to support multibyte (vim-7.3 only) 
-* operator-pending mode should accept registers
 
 ### License
 
