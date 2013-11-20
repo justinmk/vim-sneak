@@ -22,6 +22,11 @@
 "   - there is no 'grouping'. There is never more than one 'choose' step.
 "     - If your search has >52 matches, press <tab> to jump to the 53rd match
 "       and highlight the next 52 matches.
+" 
+" cf. EASYMOTION:
+"   https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
+"     - easymotion edits the buffer, plans to create a new buffer
+"     - "the current way of highligthing is insanely slow"
 "
 " :help :syn-priority
 "   In case more than one item matches at the same position, the one that was
@@ -29,10 +34,6 @@
 "   using an item that matches the same text.  But a keyword always goes before a
 "   match or region.  And a keyword with matching case always goes before a
 "   keyword with ignoring case.
-"
-" important options:
-"   set concealcursor=ncv
-"   set conceallevel=2
 "
 "   syntax match SneakPluginTarget "e\%20l\%>10c\%<60c" conceal cchar=E
 "
@@ -126,7 +127,7 @@ func! s:init()
   " set foldopen-=search
 
   set concealcursor=ncv
-  set conceallevel=2
+  set conceallevel=1
   "TODO: restore user's Conceal highlight
   "   https://github.com/osyo-manga/vim-over/blob/d8819448fc4074342abd5cb6cb2f0fff47b7aa22/autoload/over/command_line.vim#L225
   "     redir => conceal_hl
@@ -138,6 +139,6 @@ func! s:init()
   let s:syntax_orig=&syntax
   setlocal syntax=OFF
 
-  hi Conceal guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=underline
+  hi Conceal guibg=magenta guifg=white gui=underline,bold ctermbg=magenta ctermfg=white cterm=underline
 endf
 
