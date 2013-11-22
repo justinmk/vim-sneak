@@ -149,9 +149,9 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   let l:curlin = string(line('.'))
   let l:curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
 
-  "Might as well scope to window height (+/- 99). TODO: profile this
+  "Might as well scope to window height (+/- 99).
   let l:top = max([0, line('w0')-99])
-  let l:bot = min([line('$'), line('w$')+99])
+  let l:bot = line('w$')+99
   let l:restrict_top_bot = '\%'.l:gt_lt.l:curlin.'l\%>'.l:top.'l\%<'.l:bot.'l'
   let l:scope_pattern .= l:restrict_top_bot
   let s.match_pattern .= l:restrict_top_bot
@@ -164,7 +164,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   call s:attach_autocmds()
 
   "perform the match highlight...
-  "  - scope to window because matchadd() highlight is per-window.
+  "  - store in w: because matchadd() highlight is per-window.
   "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search),

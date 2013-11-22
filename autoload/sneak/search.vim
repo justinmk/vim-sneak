@@ -44,7 +44,7 @@ func! sneak#search#new()
     return self._dosearch()
   endf
 
-  " returns true if there are n matches after the cursor position.
+  " returns true if there are n _visible_ matches after the cursor position.
   func! s.hasmatches(n)
     let stopline = self._reverse ? line("w0") : line("w$")
     for i in range(1, a:n)
