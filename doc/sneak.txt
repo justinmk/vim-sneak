@@ -103,6 +103,11 @@ behavior of `[count]f` and `[count]t`.
 
     nmap ? <Plug>SneakPrevious
 <
+
+s<Enter> ("s" followed by Enter) always repeats the last search, even if `;`
+and `,` were reset by `f` or `t`. This is especially useful for re-invoking
+|sneak-streak-mode|, because `;` and `,` never invoke streak-mode.
+
 ------------------------------------------------------------------------------
 3.2 Visual Mode
 
@@ -127,6 +132,10 @@ Repeat the operation with |.|
 Sneak has a unique feature called "vertical scope" search. This is invoked by 
 prefixing a normal Sneak search (`s` or `S`) with a number. In that case, 
 the search is restricted to a column having a width of 2× the the number.
+
+------------------------------------------------------------------------------
+3.5 Streak Mode                                            *sneak-streak-mode*
+
 
 ==============================================================================
 4. Configuration                                         *sneak-configuration*
@@ -278,11 +287,14 @@ run Vim without any plugins except sneak.vim like this: >
 
 Author: Justin M. Keyes <justinkz+vim@gmail.com>
 
-Sneak was inspired by vim-seek and vim-easymotion.
+Sneak was inspired by vim-seek[1] and vim-easymotion[2].
 
 Tim Pope's plugin sources were used for reference and best practices.
 
 easymotion.txt was used for the initial version of this document.
+
+[1] https://github.com/goldfeld/vim-seek
+[2] https://github.com/Lokaltog/vim-easymotion
 
 ==============================================================================
 vim:tw=78:sw=4:ts=8:ft=help:norl:

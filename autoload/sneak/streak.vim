@@ -22,6 +22,11 @@
 "   - there is no 'grouping'. There is never more than one 'choose' step.
 "     - If your search has >52 matches, press <tab> to jump to the 53rd match
 "       and highlight the next 52 matches.
+" 
+" cf. EASYMOTION:
+"   https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
+"     - easymotion edits the buffer, plans to create a new buffer
+"     - "the current way of highligthing is insanely slow"
 "
 " :help :syn-priority
 "   In case more than one item matches at the same position, the one that was
