@@ -29,6 +29,9 @@ func! sneak#init()
       let s:opt[k.'_reset'] = 0
     endif
   endfor
+
+  "search object singleton
+  let s:s = sneak#search#new()
 endf
 
 call sneak#init()
@@ -53,15 +56,14 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   "  - highlight actual matches at or below (above) the cursor position
   "  - highlight the vertical 'tunnel' that the search is scoped-to
 
-  let s = sneak#search#instance(a:repeatmotion, a:reverse)
-  let s.search = escape(a:input, '"\')
+  let s = s:s
+  call s.init(s:opt, a:input, a:repeatmotion, a:reverse)
   let streak_mode = 0
 
-  " {count} prefix means 'skip this many' _only_ on repeat-motion.
+  " [count] means 'skip this many' (_only_ on repeat-motion).
   "   sanity check: max out at 999, to avoid searchpos() OOM.
   let skip = a:repeatmotion ? min([999, a:count]) : 0
 
-  let s.prefix = (s:opt.use_ic_scs ? '' : '\C').'\V'
   let l:gt_lt = a:reverse ? '<' : '>'
   let l:bounds = deepcopy(a:bounds) " [left_bound, right_bound]
   " pattern used to highlight the vertical 'scope'

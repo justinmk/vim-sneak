@@ -1,21 +1,13 @@
 
-func! sneak#search#instance(repeatmotion, reverse)
-  "singleton
-  if !exists("s:instance")
-    let s:instance = sneak#search#new()
-  endif
-  call s:instance.init(a:repeatmotion, a:reverse)
-  return s:instance
-endf
-
 " construct a new 'search' object
 func! sneak#search#new()
   let s = {}
 
-  func! s.init(repeatmotion, reverse)
-    let self.prefix = ''
+  func! s.init(opt, input, repeatmotion, reverse)
+    " search pattern modifiers (case-sensitivity, magic)
+    let self.prefix = sneak#search#get_cs(a:input, a:opt.use_ic_scs).'\V'
     " the escaped user input to search for
-    let self.search = ''
+    let self.search = escape(a:input, '"\')
 
     " example: highlight string 'ab' after line 42, column 5 
     "          matchadd('foo', 'ab\%>42l\%5c', 1)
@@ -58,5 +50,13 @@ func! sneak#search#new()
   endf
 
   return s
+endf
+
+" gets the case sensitivity modifier for the search
+func! sneak#search#get_cs(input, use_ic_scs)
+  if !a:use_ic_scs || !&ignorecase || (&smartcase && sneak#util#has_upper(a:input))
+    return '\C'
+  endif
+  return '\c'
 endf
 
