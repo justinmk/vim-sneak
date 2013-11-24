@@ -188,7 +188,7 @@ Expect:
 
 ###########################################################
 
-Execute (enable streak-mode):
+Execute (streak-mode):
   let sneak#streak = 1
   call sneak#init()
 
@@ -205,16 +205,145 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAa
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-
-
-
-
-
-
-
-
-
-
-
+Execute (cleanup):
+  let g:sneak#streak = 0
+  call sneak#init()
 
 ###########################################################
+
+Execute (ASCII has_upper):
+  Assert sneak#util#has_upper("Ab")
+
+Execute (ASCII !has_upper):
+  Assert !sneak#util#has_upper("ab")
+
+Execute (cyrillic has_upper):
+  Assert sneak#util#has_upper("АБРАЗиЯ")
+
+Execute (cyrillic !has_upper):
+  Assert !sneak#util#has_upper("абразия")
+
+Execute (set ignorecase):
+  set ignorecase
+  set nosmartcase
+  let g:sneak#use_ic_scs = 1
+  call sneak#init()
+
+Execute (sneak#search#get_cs):
+  Assert '\c' == sneak#search#get_cs('AB', 1)
+
+Given (ASCII):
+  fooabAB
+Do (ASCII + ignorecase):
+  sABix
+Expect:
+  fooxabAB
+Do (ASCII + ignorecase + repeat):
+  sAB;ix
+Expect:
+  fooabxAB
+
+Given (cyrillic):
+  fooабАБаб
+Do:
+  sабix
+Expect:
+  fooxабАБаб
+Do:
+  sАБix
+Expect:
+  fooxабАБаб
+Do (cyrillic + ignorecase + repeat):
+  sАБ;ix
+Expect:
+  fooабxАБаб
+Do (cyrillic + ignorecase + repeat x2):
+  sАБ;;ix
+Expect:
+  fooабАБxаб
+
+Execute (set smartcase):
+  set smartcase
+  call sneak#init()
+
+Given (ASCII):
+  fooabABaB
+Do:
+  sABix
+Expect:
+  fooabxABaB
+Given (cyrillic):
+  fooабАБаБ
+Do:
+  sабix
+Expect:
+  fooxабАБаБ
+Do:
+  sАБix
+Expect:
+  fooабxАБаБ
+Do:
+  sаБix
+Expect:
+  fooабАБxаБ
+
+Execute (unset sneak#use_ic_scs):
+  let g:sneak#use_ic_scs = 0
+  call sneak#init()
+
+Given (ASCII):
+  fooAbabaB
+Do:
+  sabix
+Expect:
+  fooAbxabaB
+Given (cyrillic):
+  fooаБАБаб
+Do:
+  sабix
+Expect:
+  fooаБАБxаб
+Do:
+  sАБix
+Expect:
+  fooаБxАБаб
+Do:
+  sаБix
+Expect:
+  fooxаБАБаб
+Do:
+  sабix
+Expect:
+  fooаБАБxаб
+
+Given (kanji):
+  この機能を使用する場合、コマンfooド
+  ラインではなくてコマンドラインウィンドウから
+Do:
+  s機能ix
+Expect:
+  このx機能を使用する場合、コマンfooド
+  ラインではなくてコマンドラインウィンドウから
+Do:
+  sooix
+Expect:
+  この機能を使用する場合、コマンfxooド
+  ラインではなくてコマンドラインウィンドウから
+Do:
+  soドix
+Expect:
+  この機能を使用する場合、コマンfoxoド
+  ラインではなくてコマンドラインウィンドウから
+Do:
+  sド\<Enter>ix
+Expect:
+  この機能を使用する場合、コマンfooxド
+  ラインではなくてコマンドラインウィンドウから
+
+
+Execute (cleanup):
+  let g:sneak#use_ic_scs = 0
+  call sneak#init()
+
+###########################################################
+
