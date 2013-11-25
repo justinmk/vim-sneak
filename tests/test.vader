@@ -1,0 +1,220 @@
+Execute (Clean up test environment):
+  nmap ; <Plug>SneakNext
+  nmap \ <Plug>SneakPrevious
+  let mapleader = ','
+  let sneak#streak = 0
+  call sneak#init()
+
+###########################################################
+
+Given:
+  1 22222 33 444 555 6666 7 888
+  11 222 3333 4 55 6666 77 888
+  111 22 333 444 42555 6666 7 88888
+  1111 2 33 444 555 66 77a 8
+
+Do (move to 22):
+  s22x
+
+Expect:
+  1 2222 33 444 555 6666 7 888
+  11 222 3333 4 55 6666 77 888
+  111 22 333 444 42555 6666 7 88888
+  1111 2 33 444 555 66 77a 8
+
+Do (next match):
+  s22;x
+
+Expect:
+  1 2222 33 444 555 6666 7 888
+  11 222 3333 4 55 6666 77 888
+  111 22 333 444 42555 6666 7 88888
+  1111 2 33 444 555 66 77a 8
+
+Do (skip to third match):
+  s\<Space>43;x
+
+Expect:
+  1 22222 33 444 555 6666 7 888
+  11 222 3333 4 55 6666 77 888
+  111 22 333 44442555 6666 7 88888
+  1111 2 33 444 555 66 77a 8
+
+Do (visual mode forwards):
+  vwjs42los55;d
+
+Expect:
+  1 22222 33 444 555 6666 7 888
+  11 222 3333 4 555 6666 7 88888
+  1111 2 33 444 555 66 77a 8
+
+Do (visual mode backwards):
+  jjjvwwoZ33;;\d
+
+Expect:
+  1 22222 33 444 555 6666 7 888
+  11 222 333 444 555 66 77a 8
+
+Given:
+  a,,bbb
+  aa,,bb
+  aaa,,b
+  aaaa,,
+  aaa,b,
+  aa,bb,
+  a,bbb,
+
+Do (search backwards):
+  jjSbbx
+
+Expect:
+  a,,bbb
+  aa,,b
+  aaa,,b
+  aaaa,,
+  aaa,b,
+  aa,bb,
+  a,bbb,
+
+###########################################################
+
+Given:
+  Paul McCartney 1942
+  George Harrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (search for H):
+  sH\<Enter>x
+
+Expect:
+  Paul McCartney 1942
+  George arrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (delete, then repeat operation):
+  dzar.
+
+Expect:
+  arrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+###########################################################
+
+Given ruby:
+  xyz="abc=def"
+  a=b#=c
+  \\\\  \ \ ? !--``.ago_		*$&()[]{}
+
+
+Do (search for backticks, then backslashes):
+  llls``S\\i:)
+
+Expect ruby:
+  xyz="abc=def"
+  a=b#=c
+  \\:)\\  \ \ ? !--``.ago_		*$&()[]{}
+
+###########################################################
+
+Given javascript:
+  var jdbc = {
+    // JDBC driver for MySQL database:
+    driver: "com.mysql.jdbc.Driver",
+    /* JDBC URL for the connection (jdbc:mysql://HOSTNAME/DATABASE) */
+    url: 'jdbc:mysql://localhost/test',
+    abpa: "pass",
+    "pass:pass":"r00t:pa55"
+  };
+
+Do (vertical scope and count-prefixed repeat-motion):
+  wwjl3spa2;i:
+
+Expect javascript:
+  var jdbc = {
+    // JDBC driver for MySQL database:
+    driver: "com.mysql.jdbc.Driver",
+    /* JDBC URL for the connection (jdbc:mysql://HOSTNAME/DATABASE) */
+    url: 'jdbc:mysql://localhost/test',
+    abpa: "pass",
+    "pass::pass":"r00t:pa55"
+  };
+
+###########################################################
+
+Given:
+  | Option     | Type    | Default | Description                                    |
+  | --         | --      | --      | --                                             |
+  | threads    | Fixnum  | 1       | number of threads in the thread pool           |
+  | queues     | Fixnum  | 1       | number of concurrent queues                    |
+  | queue_size | Fixnum  | 1000    | size of each queue                             |
+  | interval   | Numeric | 0       | dispatcher interval for batch processing       |
+  | batch      | Boolean | false   | enables batch processing mode                  |
+  | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
+  | logger     | Logger  | nil     | logger instance for debug logs                 |
+
+Do (crazy sequence with s, f, counts, and repeats):
+  fDs1\<Space>;\2fe2;3j4Ti\~
+
+Expect:
+  | Option     | Type    | Default | Description                                    |
+  | --         | --      | --      | --                                             |
+  | threads    | Fixnum  | 1       | number of threads in the thread pool           |
+  | queues     | Fixnum  | 1       | number of concurrent queues                    |
+  | queue_size | Fixnum  | 1000    | size of each queue                             |
+  | interval   | NumeRic | 0       | dispatcher interval for batch processing       |
+  | batch      | Boolean | false   | enables batch processing mode                  |
+  | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
+  | logger     | Logger  | nil     | logger instance for debug logs                 |
+
+###########################################################
+
+Given:
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+
+Execute (create mapping with f as a prefix / do s ; fe):
+  nnoremap foobar :echo 'hi'<cr>
+  normal sbc2;;fe;iX
+  nunmap foobar
+
+Expect:
+  abcdef abcdef abcdef
+  abcdef abcdXef abcdef
+  abcdef abcdef abcdef
+
+###########################################################
+
+Execute (enable streak-mode):
+  let sneak#streak = 1
+  call sneak#init()
+
+Given:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (basic streak motion):
+  sabsD
+
+Expect:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAa
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################################
