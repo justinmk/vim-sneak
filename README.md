@@ -7,7 +7,7 @@ and supports **repeat-motion** via `;` and `,` with optional
 [`[count]`](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
 
 See [Motivation](#motivation) for concept and [FAQ](#faq) for answers to common
-questions. Tests are in the [`test` branch](https://github.com/justinmk/vim-sneak/tree/test).
+questions. Tests are in the [`test/` directory](tests/).
 
 The plugin chooses sane defaults, but they can be changed
 using `<Plug>` mappings. See [`:help sneak`](doc/sneak.txt) for options and details.
