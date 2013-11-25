@@ -7,6 +7,17 @@ Execute (Clean up test environment):
 
 ###########################################################
 
+# this must be the first test, because it tests f-repeat
+# for the case where s has not ever been invoked.
+Given:
+  ababAbABababaB
+Do (f-repeat without having ever invoked s / issue #31):
+  fa;ix
+Expect:
+  ababAbABxababaB
+
+###########################################################
+
 Given:
   1 22222 33 444 555 6666 7 888
   11 222 3333 4 55 6666 77 888

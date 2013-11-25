@@ -12,7 +12,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 "persist state for repeat
-let s:st = { 'rst':0, 'input':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
+let s:st = { 'rst':1, 'input':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
 
 func! sneak#init()
   "options                                 v-- for backwards-compatibility
