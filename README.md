@@ -1,20 +1,18 @@
 # sneak.vim :shoe:
 
-**Sneak** is a powerful yet minimalist Vim plugin that provides a new **motion** more flexible 
-than `f`, more subtle than `/`. It works across **multiple lines**,
-with **operators** (including **repeat** with dot `.`), in **visual mode**, 
-and supports **repeat-motion** via `;` and `,` with optional
-[`[count]`](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
 
-See [Motivation](#motivation) for concept and [FAQ](#faq) for answers to common
-questions. Tests are in the [`test/` directory](tests/).
+*Sneak* is a Vim plugin that enables you to move to any location specified by two characters. 
+It works across **multiple lines**;
+with **operators** (including **repeat** `.`); in **visual mode**; 
+and with [**`[count]`**](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]) when the motion is 
+repeated via `;` or `,`.
 
-The plugin chooses sane defaults, but they can be changed
-using `<Plug>` mappings. See [`:help sneak`](doc/sneak.txt) for options and details.
+The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings.
+See [`:help sneak`](doc/sneak.txt) for options and details.
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
-### Usage (assuming default mappings)
+### Usage (Default)
 
 Sneak is invoked with `s` (sneak forward) or `S` (sneak backwards), followed by exactly two 
 characters:
