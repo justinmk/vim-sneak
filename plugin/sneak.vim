@@ -169,7 +169,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
         \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search),
         \ 2, get(w:, 'sneak_hl_id', -1))
 
-  if streak_mode
+  if streak_mode && 0 == max(l:bounds) "vertical scope beats streak-mode
     call sneak#streak#to(s.search)
   endif
 endf "}}}

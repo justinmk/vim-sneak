@@ -130,8 +130,10 @@ Repeat the operation with |.|
 3.4 Vertical Scope                                      *sneak-vertical-scope*
 
 Sneak has a unique feature called "vertical scope" search. This is invoked by 
-prefixing a normal Sneak search (`s` or `S`) with a number. In that case, 
-the search is restricted to a column having a width of 2× the the number.
+prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case, 
+the search is restricted to a column having a width of 2× the [count].
+
+|sneak-vertical-scope| never invokes |sneak-streak-mode|.
 
 ------------------------------------------------------------------------------
 3.5 Streak Mode                                            *sneak-streak-mode*
