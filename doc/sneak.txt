@@ -103,10 +103,12 @@ behavior of `[count]f` and `[count]t`.
 
     nmap ? <Plug>SneakPrevious
 <
+Sneak adds to the |jumplist| only on the initial invocation; so after hopping
+around with ; and , you can easily go back via |CTRL-O| or |``|.
 
 s<Enter> ("s" followed by Enter) always repeats the last search, even if `;`
 and `,` were reset by `f` or `t`. This is especially useful for re-invoking
-|sneak-streak-mode|, because `;` and `,` never invoke streak-mode.
+|sneak-streak-mode| (because `;` and `,` never invoke streak-mode).
 
 ------------------------------------------------------------------------------
 3.2 Visual Mode
@@ -138,6 +140,33 @@ the search is restricted to a column having a width of 2× the [count].
 ------------------------------------------------------------------------------
 3.5 Streak Mode                                            *sneak-streak-mode*
 
+Sneak has another not-so-unique feature called "streak" mode. If you are
+familiar with vim-easymotion:
+
+    https://github.com/Lokaltog/vim-easymotion
+
+...then you may recognize Sneak streak-mode as being similar. However, there
+are several differences (explained below) that make Sneak streak-mode faster,
+simpler, more predictable, and less noisy.
+
+To enable streak-mode: >
+
+    let g:sneak#streak = 1
+>
+Sneak streak-mode minimizes the number of steps to get to a location.
+
+    - invoked _only_ if there are 2 or more _visible_ (not off-screen) matches
+    - automatically jumps to the first match
+    - press <Space> or <Esc> to escape streak-mode
+    - press <Tab> to skip to the next 52 matches
+    - last "streak" can be repeated with s<Enter>
+
+As always,
+    - you can skip to the next or previous match with ; or ,
+    - you can return to your original location via |CTRL-O| or |``|
+
+Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is invoked
+      and streak-mode will _not_ be invoked.
 
 ==============================================================================
 4. Configuration                                         *sneak-configuration*
@@ -195,6 +224,12 @@ g:sneak#map_netrw = 1
 
     1 : Set up Sneak mappings (s and S) in |netrw| buffers (|Ex| and |Vex|), and
         move netrw's default s and S mappings to <leader>s and <leader>S.
+
+g:sneak#streak = 0
+
+    0 : Disable |sneak-streak-mode|.
+
+    1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
 
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*
