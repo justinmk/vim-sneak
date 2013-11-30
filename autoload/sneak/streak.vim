@@ -61,6 +61,7 @@ endf
 "      a 1-char search pattern, but needs to be tested on complicated search patterns vs 'norm! /'
 func! sneak#streak#to(s)
   while s:do_streak(a:s) | endwhile
+  call sneak#hl#removehl()
 endf
 func! s:do_streak(s)
   call s:init()
