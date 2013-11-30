@@ -266,25 +266,6 @@ func! s:cnt(...) "if an arg is passed, it means 'visual mode'
   return max([1, a:0 ? v:prevcount : v:count1])
 endf
 
-augroup SneakPluginColors
-  autocmd!
-
-  if 0 == hlID("SneakPluginTarget")
-    highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-    autocmd ColorScheme * highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
-  endif
-
-  if 0 == hlID("SneakPluginScope")
-    if &background ==# 'dark'
-      highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
-      autocmd ColorScheme * highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
-    else
-      highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
-      autocmd ColorScheme * highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
-    endif
-  endif
-augroup END
-
 nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 0)<cr>
 nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 1, [0,0], 0)<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', <sid>cnt(), 0)<cr>
