@@ -60,3 +60,5 @@ func! sneak#search#get_cs(input, use_ic_scs)
   return '\c'
 endf
 
+"search object singleton
+let g:sneak#search#instance = sneak#search#new()

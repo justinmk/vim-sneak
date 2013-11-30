@@ -41,7 +41,7 @@ func! sneak#debug#report()
     call s:dbgfunc("sneak#to")
     call s:dbgfunc("sneak#rpt")
     call s:dbgfunc("sneak#search#new")
-    call s:dbgfunc("sneak#search#instance")
+    call s:dbgfunc("sneak#hl#removehl")
     silent exec 'verbose map f | map F | map t | map T | map s | map S | map z | map Z | map ; '
   redir END
   enew

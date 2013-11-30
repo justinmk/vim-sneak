@@ -29,9 +29,6 @@ func! sneak#init()
       let s:opt[k.'_reset'] = 0
     endif
   endfor
-
-  "search object singleton
-  let s:s = sneak#search#new()
 endf
 
 call sneak#init()
@@ -56,7 +53,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   "  - highlight actual matches at or below (above) the cursor position
   "  - highlight the vertical 'tunnel' that the search is scoped-to
 
-  let s = s:s
+  let s = g:sneak#search#instance
   call s.init(s:opt, a:input, a:repeatmotion, a:reverse)
   let streak_mode = 0
 
