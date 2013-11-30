@@ -63,6 +63,12 @@ func! sneak#streak#to(s)
   while s:do_streak(a:s) | endwhile
   call sneak#hl#removehl()
 endf
+
+" highlight the cursor location (else the cursor is not visible during getchar())
+func! s:hl_cursor_pos()
+  let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 2, -1)
+endf
+
 func! s:do_streak(s)
   call s:init()
   let maxmarks = len(s:matchkeys)
@@ -120,12 +126,14 @@ endf
 func! s:finish()
   silent! syntax clear SneakConceal
   call sneak#hl#removehl()
+  silent! call matchdelete(w:sneak_cursor_hl)
   let &syntax=s:syntax_orig
 endf
 
 func! s:init()
   " does not affect search()/searchpos()
   " set foldopen-=search
+  call s:hl_cursor_pos()
 
   set concealcursor=ncv
   set conceallevel=2
