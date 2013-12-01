@@ -17,6 +17,17 @@ Expect:
   ababAbABxababaB
 
 ###########################################################
+# unit tests
+
+Execute (hl#links_to returns linked-to highlight group):
+  hi! link Conceal SneakConceal
+  Assert 'SneakConceal' ==# sneak#hl#links_to('Conceal')
+
+Execute (hl#links_to returns empty string if not linked):
+  hi! link Conceal NONE
+  Assert empty(sneak#hl#links_to('Conceal'))
+
+###########################################################
 
 Given:
   1 22222 33 444 555 6666 7 888
