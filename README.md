@@ -2,13 +2,18 @@
 
 
 *Sneak* is a Vim plugin that enables you to move to any location specified by two characters. 
-It works across **multiple lines**;
-with **operators** (including **repeat** `.`); in **visual mode**; 
-and with [**`[count]`**](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]) when the motion is 
-repeated via `;` or `,`.
+It works across **multiple lines**; with **operators** (including **repeat** `.`);
+and in **visual mode**. Move to the next or previous match via `;`
+or `,`. Move to the *nth* match by prefixing `;` or `,` with a
+[**`[count]`**](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
 
 The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings.
 See [`:help sneak`](doc/sneak.txt) for options and details.
+
+**New (Experimental) Feature:** Use Sneak as an elegant, streamlined alternative
+to [EasyMotion](https://github.com/Lokaltog/vim-easymotion) by enabling **Streak-Mode**:
+
+    let g:sneak#streak = 1
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 

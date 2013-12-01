@@ -54,12 +54,14 @@ Type dzad to delete from the cursor to the first instance of "ad": >
 
 Sneak default NORMAL-mode mappings:
 
-    Normal-mode mapping      | Description
+    Normal-mode key sequence | Description
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     S{char}{char}            | Go to the previous occurrence of {char}{char}
     s{char}<Enter>           | Go to the next occurrence of {char}
     S{char}<Enter>           | Go to the previous occurrence of {char}
+    s<Enter>                 | Repeat the last Sneak.
+    S<Enter>                 | Repeat the last Sneak, in reverse direction.
     ;                        | Go to the [count]'th next match
     , or \                   | Go to the [count]'th previous match
     {range}s{char}{char}     | Invoke |sneak-vertical-scope|
@@ -71,12 +73,14 @@ Sneak default NORMAL-mode mappings:
 
 Sneak default VISUAL-mode mappings:
 
-    Visual-mode mapping      | Description
+    Visual-mode key sequence | Description
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     Z{char}{char}            | Go to the previous occurrence of {char}{char}
     s{char}<Enter>           | Go to the next occurrence of {char}
     Z{char}<Enter>           | Go to the previous occurrence of {char}
+    s<Enter>                 | Repeat the last Sneak.
+    Z<Enter>                 | Repeat the last Sneak, in reverse direction.
     ;                        | Go to the [count]'th next match
     , or \                   | Go to the [count]'th previous match
 
@@ -137,33 +141,36 @@ the search is restricted to a column having a width of 2× the [count].
 
 |sneak-vertical-scope| never invokes |sneak-streak-mode|.
 
+Use cases:
+
+    - CSV file
+    - hex editing :%!xxd
+    - any columnar layout
+
 ------------------------------------------------------------------------------
-3.5 Streak Mode                                            *sneak-streak-mode*
+3.5 Streak-Mode                                            *sneak-streak-mode*
 
-Sneak has another not-so-unique feature called "streak" mode. If you are
-familiar with vim-easymotion:
-
-    https://github.com/Lokaltog/vim-easymotion
-
-...then you may recognize Sneak streak-mode as being similar. However, there
-are several differences (explained below) that make Sneak streak-mode faster,
-simpler, more predictable, and less noisy.
+Sneak "streak" mode minimizes the number of steps to get to a location, using
+a clever interface similar to vim-easymotion[2]. However, there are several
+differences (explained below) that make Sneak streak-mode faster, simpler,
+and more predictable than vim-easymotion.
 
 To enable streak-mode: >
 
     let g:sneak#streak = 1
 >
-Sneak streak-mode minimizes the number of steps to get to a location.
+Sneak streak-mode:
 
-    - invoked _only_ if there are 2 or more _visible_ (not off-screen) matches
+    - is invoked _only_ if there are >2 visible (not off-screen) matches
+        - as always, you can reach off-screen matches with ; and ,
     - automatically jumps to the first match
-    - press <Space> or <Esc> to escape streak-mode
-    - press <Tab> to skip to the next 52 matches
-    - last "streak" can be repeated with s<Enter>
+        - press <Space> or <Esc> to escape streak-mode
+        - press <Tab> to skip to the next 52 matches
+    - can be repeated at any time with s<Enter>
 
-As always,
-    - you can skip to the next or previous match with ; or ,
-    - you can return to your original location via |CTRL-O| or |``|
+As always, you can:
+    - skip to the next or previous match with ; or ,
+    - return to your original location via |CTRL-O| or |``|
 
 Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is invoked
       and streak-mode will _not_ be invoked.
