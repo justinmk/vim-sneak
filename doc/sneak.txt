@@ -234,17 +234,25 @@ g:sneak#streak = 0
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*
 
-Sneak uses two highlight groups:
+Sneak uses the following highlight groups:
 
     SneakPluginTarget
 
-      Highlights additional matches.
-      Default color is hideous magenta :)
+        Highlights additional matches. Default color is hideous magenta :)
 
     SneakPluginScope
 
-      Highlights the search "scope" for |sneak-vertical-scope|.
-      Default color is white (or black if background=light)
+        Highlights the search "scope" for |sneak-vertical-scope|.
+        Default color is white (or black if background=light)
+
+    SneakStreakTarget
+
+        Highlights matches for |sneak-streak-mode|.
+
+    SneakStreakMask
+
+        Used to de-emphasize un-labeled matches and the "tail" of labeled
+        matches in |sneak-streak-mode|, so the target label is easier to see.
 
 There are three ways to override the default colors (listed in order of
 decreasing elegance):

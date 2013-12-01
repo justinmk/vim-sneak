@@ -10,8 +10,7 @@
 "   strategy: make SneakPluginTarget fg/bg the same color, then conceal the
 "             other char.
 " 
-" NOTE: syntax highlighting seems to almost always take priority over 
-" conceal highlighting.
+" NOTE: keyword highlighting always takes priority over conceal.
 "   strategy:
 "       syntax clear
 "       [do the conceal]
@@ -19,7 +18,8 @@
 " FEATURES:
 "   - skips folds
 "   - if first match is past window, does not invoke streak-mode
-"   - there is no 'grouping'. There is never more than one 'choose' step.
+"   - there is no 'grouping'
+"     - this minimizes the steps for the common case
 "     - If your search has >52 matches, press <tab> to jump to the 53rd match
 "       and highlight the next 52 matches.
 " 
@@ -34,13 +34,8 @@
 "   using an item that matches the same text.  But a keyword always goes before a
 "   match or region.  And a keyword with matching case always goes before a
 "   keyword with ignoring case.
-"
-"   syntax match SneakPluginTarget "e\%20l\%>10c\%<60c" conceal cchar=E
-"
-"   "conceal match 'e' on line 18 between columns 10,60
-"   syntax match Foo4 "e\%18l\%>10c\%<60c" conceal cchar=E
 
-func! ProfileFoo()
+func! ProfileStreak()
   profile start profile.log
   profile func Foo*
   autocmd VimLeavePre * profile pause
@@ -52,7 +47,7 @@ let s:matchmap = {}
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
   "TODO: figure out why we must +1 the column...
-  exec "syntax match SneakConceal '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
+  exec "syntax match SneakStreakTarget '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
 endf
 
 "TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
@@ -70,7 +65,7 @@ func! s:hl_cursor_pos()
 endf
 
 func! s:do_streak(s)
-  call s:init()
+  call s:before()
   let maxmarks = len(s:matchkeys)
   let w = winsaveview()
 
@@ -85,6 +80,7 @@ func! s:do_streak(s)
     endif
 
     "optimization: if we are in a fold, skip to the end of the fold.
+    "note: we must do this because 'set foldopen-=search' does not affect search()
     let foldend = foldclosedend(p[0])
     if -1 != foldend
       if foldend >= line("w$")
@@ -110,7 +106,7 @@ func! s:do_streak(s)
 
   let choice = sneak#util#getchar()
 
-  call s:finish()
+  call s:after()
 
   if choice == "\<Tab>" && max(overflow) > 0
     call cursor(overflow[0], overflow[1])
@@ -123,31 +119,28 @@ func! s:do_streak(s)
   return 0 "no overflow
 endf
 
-func! s:finish()
-  silent! syntax clear SneakConceal
-  call sneak#hl#removehl()
+func! s:after()
   silent! call matchdelete(w:sneak_cursor_hl)
+  "remove temporary highlight links
+  if !empty(s:orig_hl_conceal) | exec 'hi! link Conceal '.s:orig_hl_conceal | else | hi! link Conceal NONE | endif
+  if !empty(s:orig_hl_sneaktarget) | exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget | else | hi! link SneakPluginTarget NONE | endif
   let &syntax=s:syntax_orig
 endf
 
-func! s:init()
-  " does not affect search()/searchpos()
-  " set foldopen-=search
+func! s:before()
   call s:hl_cursor_pos()
 
   set concealcursor=ncv
   set conceallevel=2
-  "TODO: restore user's Conceal highlight
-  "   https://github.com/osyo-manga/vim-over/blob/d8819448fc4074342abd5cb6cb2f0fff47b7aa22/autoload/over/command_line.vim#L225
-  "     redir => conceal_hl
-  "     silent highlight Conceal
-  "     redir END
-  "     let s:old_hi_cursor = substitute(matchstr(conceal_hl, 'xxx \zs.*'), '[ \t\n]\+', ' ', 'g')
-  "syntax clear
 
   let s:syntax_orig=&syntax
   setlocal syntax=OFF
 
-  hi Conceal guibg=magenta guifg=white gui=underline,bold ctermbg=magenta ctermfg=white cterm=underline
+  let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
+  let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakPluginTarget')
+  "set temporary link to our custom 'conceal' highlight
+  hi! link Conceal SneakStreakTarget
+  "set temporary link to hide the sneak search targets
+  hi! link SneakPluginTarget SneakStreakMask
 endf
 

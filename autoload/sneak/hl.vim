@@ -13,20 +13,22 @@ func! sneak#hl#links_to(hlgroup)
   return substitute(matchstr(hl, 'links to \zs.*'), '\s', '', 'g')
 endf
 
-augroup SneakPluginColors
-  autocmd!
+if 0 == hlID("SneakPluginTarget")
+  highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+endif
 
-  if 0 == hlID("SneakPluginTarget")
-    highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+if 0 == hlID("SneakStreakMask")
+  highlight SneakStreakMask guifg=magenta guibg=magenta ctermfg=magenta ctermbg=magenta
+endif
+
+if 0 == hlID("SneakPluginScope")
+  if &background ==# 'dark'
+    highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
+  else
+    highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
   endif
+endif
 
-
-  if 0 == hlID("SneakPluginScope")
-    if &background ==# 'dark'
-      highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
-    else
-      highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
-    endif
-  endif
-
-augroup END
+if 0 == hlID("SneakStreakTarget")
+  hi SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=bold
+endif
