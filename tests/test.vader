@@ -232,6 +232,7 @@ Execute (cleanup):
   call sneak#init()
 
 ###########################################################
+# unicode, multibyte
 
 Execute (ASCII has_upper):
   Assert sneak#util#has_upper("Ab")
@@ -309,7 +310,7 @@ Do:
 Expect:
   fooабАБxаБ
 
-Execute (unset sneak#use_ic_scs):
+Execute (set case-sensitive):
   let g:sneak#use_ic_scs = 0
   call sneak#init()
 
@@ -362,10 +363,38 @@ Expect:
   この機能を使用する場合、コマンfooxド
   ラインではなくてコマンドラインウィンドウから
 
+# https://github.com/Lokaltog/vim-easymotion/issues/28
+# "If a word starts with æ, ø or å the highlighting is disturbed."
+Given (Norwegian):
+  foo æfooæ æfooø øfoo
+Do:
+  søfix
+Expect:
+  foo æfooæ æfooø xøfoo
 
-Execute (cleanup):
-  let g:sneak#use_ic_scs = 0
-  call sneak#init()
+Given (random unicode):
+  ´µµ¶·¸¹°°¡À£¨ª¦©¨ª¦¦Þ¨¦©ß©¨
+  foo æfïooææ ïoòôõïo ïofoo fooïo ïoïo
+Do:
+  sææix
+Expect:
+  ´µµ¶·¸¹°°¡À£¨ª¦©¨ª¦¦Þ¨¦©ß©¨
+  foo æfïooxææ ïoòôõïo ïofoo fooïo ïoïo
+
+Given (multibyte chars in various arrangements):
+  foo æfïooæ ïoòôõïo ïofoo fooïo ïoïo
+Do:
+  sïo;;;;ix
+Expect:
+  foo æfïooæ ïoòôõïo ïofoo fooxïo ïoïo
+
+Given (adjacent multibyte chars):
+  foo æfïïooæ ïoòôõïo ïïofoo fïïooïo
+Do:
+  sïï;;ax
+Expect:
+  foo æfïïooæ ïoòôõïo ïïofoo fïxïooïo
+
 
 ###########################################################
 

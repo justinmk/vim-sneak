@@ -2,6 +2,10 @@
 "   janus
 "   spf13
 "   YADR https://github.com/skwp/dotfiles
+"
+" KNOWN ISSUES:
+"   sneak basic mode has no known flaws with multibyte, but
+"   streak-mode target labeling is broken with multibyte
 " 
 " YADR easymotion settings:
 "   https://github.com/skwp/dotfiles/blob/master/vim/settings/easymotion.vim
@@ -47,7 +51,7 @@ let s:matchmap = {}
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
   "TODO: figure out why we must +1 the column...
-  exec "syntax match SneakStreakTarget '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."v' conceal cchar=".a:c
+  exec "syntax match SneakStreakTarget '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."c' conceal cchar=".a:c
 endf
 
 "TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
