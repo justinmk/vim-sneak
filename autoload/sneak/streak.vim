@@ -73,7 +73,7 @@ func! s:do_streak(s)
   let overflow = [0, 0] "position of the next match (if any) after we have run out of target labels.
   while 1
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
-    let p = searchpos(a:s, 'W')
+    let p = searchpos((a:s.prefix).(a:s.search), 'W')
 
     if 0 == max(p)
       break
