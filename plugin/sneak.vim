@@ -33,6 +33,10 @@ endf
 
 call sneak#init()
 
+func! sneak#opt()
+  return s:opt
+endf
+
 "repeat *motion* (not operation)
 func! sneak#rpt(op, count, reverse) range abort
   if s:st.rst "reset by f/F/t/T
@@ -197,8 +201,11 @@ func! sneak#reset(key)
 
   let s:st.rst = 1
   let s:st.reverse = 0
-  for k in ['f', 'F', 't', 'T'] "unmap all temp mappings
-    silent! exec 'unmap '.k
+  for k in ['f', 't'] "unmap the temp mappings
+    if s:opt[k.'_reset']
+      silent! exec 'unmap '.k
+      silent! exec 'unmap '.toupper(k)
+    endif
   endfor
 
   "count is prepended implicitly by the <expr> mapping
@@ -206,22 +213,19 @@ func! sneak#reset(key)
 endf
 
 func! s:map_reset_key(key, mode)
-  "if user mapped anything to f or t, do not map over it; unfortunately this
-  "also means we cannot reset ; or , when f or t is invoked.
-  if maparg(a:key, a:mode) ==# ''
-    exec printf("%snoremap <silent> <expr> %s sneak#reset('%s')", a:mode, a:key, a:key)
-  endif
+  exec printf("%snoremap <silent> <expr> %s sneak#reset('%s')", a:mode, a:key, a:key)
 endf
 
 func! s:ft_hook() "set up temporary mappings to 'hook' into f/F/t/T
-  if s:opt.f_reset
-    call s:map_reset_key("f", "n") | call s:map_reset_key("F", "n")
-    call s:map_reset_key("f", "x") | call s:map_reset_key("F", "x")
-  endif
-  if s:opt.t_reset
-    call s:map_reset_key("t", "n") | call s:map_reset_key("T", "n")
-    call s:map_reset_key("t", "x") | call s:map_reset_key("T", "x")
-  endif
+  for k in ['f', 't']
+    for m in ['n', 'x']
+      "if user mapped anything to f or t, do not map over it; unfortunately this
+      "also means we cannot reset ; or , when f or t is invoked.
+      if s:opt[k.'_reset'] && maparg(k, m) ==# ''
+        call s:map_reset_key(k, m) | call s:map_reset_key(toupper(k), m)
+      endif
+    endfor
+  endfor
 endf
 
 func! s:repeat_last_op()

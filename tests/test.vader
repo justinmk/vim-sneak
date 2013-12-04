@@ -397,4 +397,21 @@ Expect:
 
 
 ###########################################################
+# test sneak mapped to 'f' (instead of default 's')
+
+Execute (map to f):
+  unmap s
+  nmap f <Plug>SneakForward
+  nmap F <Plug>SneakBackward
+  call sneak#init()
+
+Given:
+  abcdef abcdef abcdef
+
+# issue #35
+Do (sneak 'f', then Vim default 't', then sneak 'f'):
+  fderxtcrxfderx;rx
+
+Expect:
+  abcxef axcxef abcxef
 
