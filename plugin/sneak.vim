@@ -334,7 +334,7 @@ if s:opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
 
   augroup SneakPluginNetrw
     autocmd!
-    autocmd filetype netrw autocmd SneakPluginNetrw CursorMoved <buffer>
+    autocmd FileType netrw autocmd SneakPluginNetrw CursorMoved <buffer>
           \ call <sid>map_netrw_key('s') | call <sid>map_netrw_key('S') | autocmd! SneakPluginNetrw * <buffer>
   augroup END
 endif
