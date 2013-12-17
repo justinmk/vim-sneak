@@ -114,7 +114,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
         silent! call repeat#set("\<Plug>SneakRepeat")
       endif
     catch E486
-      call s:notfound(': '.a:input) | return
+      call sneak#util#echo('not found: '.a:input) | return
     finally
       call histdel("/", histnr("/")) "delete the last search from the history
       let @/ = l:histreg
@@ -129,7 +129,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     endfor
 
     if !a:repeatmotion && (a:streak || s:opt.streak)
-      "if there are >=2 _additional_ matches, enter streak-mode.
+      "enter streak-mode iff there are >=2 _additional_ matches.
       let streak_mode = s.hasmatches(2)
     endif
 
@@ -140,7 +140,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     endif
 
     if 0 == max(matchpos)
-      call s:notfound((max(l:bounds) > 0) ? printf(' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : ': '.a:input)
+      call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : ': '.a:input))
       return
     endif
   endif
@@ -177,15 +177,6 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     call sneak#streak#to(s)
   endif
 endf "}}}
-
-func! s:notfound(msg)
-  redraw | echo 'not found'.a:msg
-  augroup SneakNotFound "clear 'not found' message at next opportunity.
-    autocmd!
-    autocmd InsertEnter,WinLeave,BufLeave * redraw | echo '' | autocmd! SneakNotFound
-    autocmd CursorMoved * redraw | echo '' | autocmd! SneakNotFound
-  augroup END
-endf
 
 func! s:attach_autocmds()
   augroup SneakPlugin
