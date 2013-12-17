@@ -46,7 +46,6 @@ func! ProfileStreak()
 endf
 
 let s:matchkeys = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
-let s:matchmap = {}
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
@@ -84,8 +83,7 @@ func! s:do_streak(s)
       break
     endif
 
-    "optimization: if we are in a fold, skip to the end of the fold.
-    "note: we must do this because 'set foldopen-=search' does not affect search()
+    "If we are in a fold, skip to the end of the fold. Note: 'set foldopen-=search' does not affect search().
     let foldend = foldclosedend(p[0])
     if -1 != foldend
       if foldend >= line("w$")
@@ -106,8 +104,7 @@ func! s:do_streak(s)
     let i += 1
   endwhile
 
-  call winrestview(w)
-  redraw
+  call winrestview(w) | redraw
 
   let choice = sneak#util#getchar()
 
@@ -133,6 +130,7 @@ func! s:after()
 endf
 
 func! s:before()
+  let s:matchmap = {}
   call s:hl_cursor_pos()
 
   set concealcursor=ncv

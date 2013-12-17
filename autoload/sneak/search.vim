@@ -21,17 +21,12 @@ func! sneak#search#new()
     if !a:repeatmotion | let self._search_options .= 's' | endif
   endf
 
-  func! s._dosearch(...)
-    let searchoptions = (a:0 > 0) ? a:1 : self._search_options
-    let stopline = (a:0 > 1) ? a:2 : 0
-    return searchpos((self.prefix).(self.match_pattern).'\zs'.(self.search)
-          \, searchoptions
-          \, stopline
-          \)
-  endf
-
   func! s.dosearch()
-    return self._dosearch()
+    let self._searchpattern = (self.prefix).(self.match_pattern).'\zs'.(self.search)
+    return searchpos(self._searchpattern
+          \, self._search_options
+          \, 0
+          \)
   endf
 
   func! s.get_onscreen_searchpattern(w)
@@ -47,15 +42,24 @@ func! sneak#search#new()
 
   " returns 1 if there are n visible matches in the direction of the current search.
   func! s.hasmatches(n)
-    let stopline = self._reverse ? line("w0") : line("w$")
-    for i in range(1, a:n)
-      " 'n' search option means 'do not move cursor'.
-      let matchpos = self._dosearch('n', stopline)
-      if 0 != max(matchpos) && a:n == i
-        return 1
+    let w = winsaveview()
+    let searchpattern = (self._searchpattern).(self.get_onscreen_searchpattern(w))
+    let visiblematches = 0
+
+
+    while 1
+      let matchpos = searchpos(searchpattern, self.search_options_no_s, self.get_stopline())
+      if 0 == matchpos[0] "no more matches
+        break
       endif
-    endfor
-    return 0
+      let visiblematches += 1
+      if visiblematches == a:n
+        break
+      endif
+    endwhile
+
+    call winrestview(w)
+    return visiblematches >= a:n
   endf
 
   return s

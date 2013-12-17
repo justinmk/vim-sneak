@@ -161,7 +161,7 @@ To enable streak-mode: >
 >
 Sneak streak-mode:
 
-    - is invoked _only_ if there are >2 visible (not off-screen) matches
+    - is invoked _only_ if there are ≥2 visible (not off-screen) matches
         - as always, you can reach off-screen matches with ; and ,
     - automatically jumps to the first match
         - press <Space> or <Esc> to escape streak-mode
