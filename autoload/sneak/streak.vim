@@ -79,7 +79,7 @@ func! s:do_streak(s)
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
     let p = searchpos((a:s.prefix).(a:s.search), 'W')
 
-    if 0 == max(p)
+    if 0 == p[0]
       break
     endif
 
@@ -112,7 +112,7 @@ func! s:do_streak(s)
 
   call s:after()
 
-  if choice == "\<Tab>" && max(overflow) > 0
+  if choice == "\<Tab>" && overflow[0] > 0
     call cursor(overflow[0], overflow[1])
     return 1
   elseif choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
