@@ -72,12 +72,13 @@ func! s:do_streak(s)
   call s:before()
   let maxmarks = len(s:matchkeys)
   let w = winsaveview()
+  let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
   let i = 0
   let overflow = [0, 0] "position of the next match (if any) after we have run out of target labels.
   while 1
     " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
-    let p = searchpos((a:s.prefix).(a:s.search), 'W')
+    let p = searchpos(search_pattern, a:s.search_options_no_s, a:s.get_stopline())
 
     if 0 == p[0]
       break
