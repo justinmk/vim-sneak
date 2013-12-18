@@ -1,6 +1,5 @@
 " TODO:
 "   janus
-"   spf13
 "   YADR https://github.com/skwp/dotfiles
 "
 " KNOWN ISSUES:
@@ -10,18 +9,20 @@
 " YADR easymotion settings:
 "   https://github.com/skwp/dotfiles/blob/master/vim/settings/easymotion.vim
 "
-" NOTE: cchar cannot be more than 1 character.
-"   strategy: make SneakPluginTarget fg/bg the same color, then conceal the
-"             other char.
+" NOTES:
+"   problem:  cchar cannot be more than 1 character.
+"   strategy: make fg/bg the same color, then conceal the other char.
 " 
-" NOTE: keyword highlighting always takes priority over conceal.
-"   strategy:
-"       syntax clear
-"       [do the conceal]
-"       syntax enable
+"   problem:  keyword highlighting always takes priority over conceal.
+"   strategy: syntax clear | [do the conceal] | syntax enable
+"
+" PROFILING:
+"   - the search should be 'warm' before profiling
+"   - searchpos() appears to be about 30% faster than 'norm! n'
+"
 " FEATURES:
 "   - skips folds
-"   - if first match is past window, does not invoke streak-mode
+"   - if no visible matches, does not invoke streak-mode
 "   - there is no 'grouping'
 "     - this minimizes the steps for the common case
 "     - If your search has >52 matches, press <tab> to jump to the 53rd match
@@ -31,19 +32,6 @@
 "   https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
 "     - easymotion edits the buffer, plans to create a new buffer
 "     - "the current way of highligthing is insanely slow"
-"
-" :help :syn-priority
-"   In case more than one item matches at the same position, the one that was
-"   defined LAST wins.  Thus you can override previously defined syntax items by
-"   using an item that matches the same text.  But a keyword always goes before a
-"   match or region.  And a keyword with matching case always goes before a
-"   keyword with ignoring case.
-
-func! ProfileStreak()
-  profile start profile.log
-  profile func Foo*
-  autocmd VimLeavePre * profile pause
-endf
 
 let s:matchkeys = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
 
@@ -54,9 +42,6 @@ func! s:placematch(c, pos)
 endf
 
 "TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
-"NOTE: the search should be 'warm' before profiling
-"NOTE: searchpos() appears to be about 30% faster than 'norm! n' for
-"      a 1-char search pattern, but needs to be tested on complicated search patterns vs 'norm! /'
 func! sneak#streak#to(s)
   while s:do_streak(a:s) | endwhile
   call sneak#hl#removehl()

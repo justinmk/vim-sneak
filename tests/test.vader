@@ -19,6 +19,9 @@ Expect:
 ###########################################################
 # unit tests
 
+Do (tickle the autoloads):
+  sab
+
 Execute (hl#links_to returns linked-to highlight group):
   hi! link Conceal SneakConceal
   Assert 'SneakConceal' ==# sneak#hl#links_to('Conceal')
@@ -26,6 +29,21 @@ Execute (hl#links_to returns linked-to highlight group):
 Execute (hl#links_to returns empty string if not linked):
   hi! link Conceal NONE
   Assert empty(sneak#hl#links_to('Conceal'))
+
+Given:
+  abab
+  abab
+
+Execute (s.hasmatches()):
+  norm! jll
+  let s = g:sneak#search#instance
+  call s.init(sneak#opt(), "ab", 0, 0)
+  Assert !s.hasmatches(2)
+  Assert !s.hasmatches(1)
+  norm! k
+  Assert s.hasmatches(1)
+  Assert s.hasmatches(2)
+  Assert !s.hasmatches(3)
 
 ###########################################################
 
@@ -227,6 +245,14 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAa
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
+Do (backwards streak motion):
+  jj$Sefdix
+
+Expect:
+  abcdxef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
 Execute (cleanup):
   let g:sneak#streak = 0
   call sneak#init()
@@ -415,3 +441,9 @@ Do (sneak 'f', then Vim default 't', then sneak 'f'):
 Expect:
   abcxef axcxef abcxef
 
+
+###########################################################
+Execute (cleanup):
+  unmap f
+  unmap F
+  call sneak#init()
