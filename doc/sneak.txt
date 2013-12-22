@@ -1,8 +1,9 @@
-*sneak.txt*  motion improved - Version 1.2
+*sneak.txt*  motion improved - Version 1.3
 
                     Sneak - the missing motion for Vim
 
 ==============================================================================
+
 1. Overview                                                            *sneak*
 
 Sneak provides a way to move quickly and precisely to locations that would 
@@ -22,6 +23,7 @@ Sneak has a few other features, but above all, Sneak tries to get out of your
 way: highlights and autocmds are removed as soon as the cursor is moved.
 
 Sneak is tested on 7.2+. Vi-compatibility must be disabled. 'nocompatible'
+|sneak-streak-mode| requires Vim 7.3+.
 
 ==============================================================================
 2. Usage                                                         *sneak-usage*
