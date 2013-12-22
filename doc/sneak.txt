@@ -3,7 +3,6 @@
                     Sneak - the missing motion for Vim
 
 ==============================================================================
-
 1. Overview                                                            *sneak*
 
 Sneak provides a way to move quickly and precisely to locations that would 
