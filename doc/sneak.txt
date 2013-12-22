@@ -1,4 +1,4 @@
-*sneak.txt*                                                        Version 1.2
+*sneak.txt*  motion improved - Version 1.2
 
                     Sneak - the missing motion for Vim
 
