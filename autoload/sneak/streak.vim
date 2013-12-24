@@ -68,13 +68,10 @@ func! s:do_streak(s)
       break
     endif
 
-    "If we are in a fold, skip to the end of the fold. Note: 'set foldopen-=search' does not affect search().
-    let foldend = foldclosedend(p[0])
-    if -1 != foldend
-      if foldend >= line("w$")
-        break "fold ends at/below bottom of window.
-      endif
-      call cursor(foldend + 1, 1)
+    let skippedfold = sneak#util#skipfold(p[0]) "Note: 'set foldopen-=search' does not affect search().
+    if -1 == skippedfold
+      break
+    elseif 1 == skippedfold
       continue
     endif
 

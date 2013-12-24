@@ -30,3 +30,21 @@ func! sneak#util#wincol1()
   call winrestview(w)
   return c
 endf
+
+"Moves the cursor to the first line after the current folded lines.
+"Returns:
+"     1  if the cursor was moved
+"     0  if the cursor is not in a fold
+"    -1  if the end of the fold is at/below the bottom of the window
+func! sneak#util#skipfold(current_line)
+  let foldend = foldclosedend(a:current_line)
+  if -1 != foldend
+    if foldend >= line("w$") "fold ends at/below bottom of window.
+      return -1
+    endif
+    call cursor(foldend + 1, 1)
+    return 1
+  endif
+  return 0
+endf
+

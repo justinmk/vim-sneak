@@ -46,11 +46,12 @@ func! sneak#search#new()
     let searchpattern = (self._searchpattern).(self.get_onscreen_searchpattern(w))
     let visiblematches = 0
 
-
     while 1
       let matchpos = searchpos(searchpattern, self.search_options_no_s, self.get_stopline())
       if 0 == matchpos[0] "no more matches
         break
+      elseif 1 == sneak#util#skipfold(matchpos[0])
+        continue
       endif
       let visiblematches += 1
       if visiblematches == a:n
