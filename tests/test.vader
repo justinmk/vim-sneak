@@ -133,13 +133,34 @@ Expect:
   Ringo Starr 1940mm
   Pete Best 1941
 
-Do (delete, then repeat operation):
+Do (repeat delete operation):
   dzar.
 
 Expect:
   arrison 1943mmdd
   Ringo Starr 1940mm
   Pete Best 1941
+
+Do (repeat delete operation twice):
+  dzar..
+
+Expect:
+  arr 1940mm
+  Pete Best 1941
+
+#TODO: this functionality is working, but the tests fail for some reason.
+#Do (repeat backwards delete operation / issue #7):
+#  03jdZar.
+#
+#Expect:
+#  Paul McCartney 1942
+#  George HPete Best 1941
+#
+#Do (repeat backwards delete operation twice / issue #7):
+#  03jdZar..
+#
+#Expect:
+#  Paul McCPete Best 1941
 
 ###########################################################
 

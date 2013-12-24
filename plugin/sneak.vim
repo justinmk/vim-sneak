@@ -237,7 +237,6 @@ endf
 func! s:repeat_last_op()
   let st = s:last_op
   call sneak#to(st.op, st.input, st.count, 0, st.reverse, st.bounds, 0)
-  silent! call repeat#set("\<Plug>SneakRepeat")
 endf
 
 func! s:isvisualop(op)
