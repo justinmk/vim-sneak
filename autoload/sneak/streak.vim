@@ -49,7 +49,9 @@ endf
 
 " highlight the cursor location (else the cursor is not visible during getchar())
 func! s:hl_cursor_pos()
-  let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 2, -1)
+  if hlexists('Cursor')
+    let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 2, -1)
+  endif
 endf
 
 func! s:do_streak(s)
