@@ -7,7 +7,7 @@ endf
 
 "returns 1 if the string contains an uppercase char. [unicode-compatible]
 func! sneak#util#has_upper(s)
- return -1 != match(a:s, '\v[[:upper:]]+')
+ return -1 != match(a:s, '\C[[:upper:]]')
 endf
 
 "displays a message that will dissipate at the next opportunity.
