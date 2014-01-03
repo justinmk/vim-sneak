@@ -8,10 +8,10 @@ or `,`. Move to the *nth* match by prefixing `;` or `,` with a
 [**`[count]`**](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
 
 The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings.
-See [`:help sneak`](doc/sneak.txt) for options and details.
+See [`:help sneak`](doc/sneak.txt) for full options and details.
 
-**New (Experimental) Feature:** Use Sneak as an elegant, streamlined alternative
-to [EasyMotion](https://github.com/Lokaltog/vim-easymotion) by enabling **Streak-Mode**:
+**New (Experimental) Option:** Use Sneak as an elegant, streamlined alternative
+to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 
     let g:sneak#streak = 1
 
@@ -57,31 +57,25 @@ via `z` (because `s` is taken by surround.vim).
                                    sneak
 
 Vim's built-in motions cover many special cases, but it's not always easy to move across 
-several lines—or a long line—to an arbitrary position. The `f` motion is restricted to 
+several lines to an arbitrary position: the `f` motion is restricted to 
 the current line, and the `/` search is [clunky](#faq) for medium-distance 
-motion . `H`, `M`, and `L` are great for bisecting a distance, but from there
-the cursor is potentially several lines and columns from the target.
+motion.
 
 Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
   - move to any location with `s` followed by exactly two characters
   - move anywhere, even offscreen (unlike EasyMotion)
+  - jump immediately to first match (unlike EasyMotion)
   - jump back to the point of `s` invocation via `ctrl-o` or `` (backtick backtick)
     - only the initial invocation adds to the jumplist; repeat-motion
       via `;` or `,` does *not* add to the jumplist
-  - jumps immediately to first match (unlike EasyMotion)
-  - EasyMotion by default requires five (5) keystrokes (example: `,,fab`) to
-    choose a target, while the common case for Sneak is **three (3) keystrokes**.
-  - highlights additional matches until a key other than ; or , is pressed
-    - gets out of your way as soon as you move the cursor
-  - repeat the motion with `;` or `,`
-  - works with operations
-  - works with counts
-  - does not break expected behavior of `f t F T ; ,`
-  - preserves the `/` register, does not add noise to `/` history
-  - does not wrap
-  - *vertical scope* with `[count]s{char}{char}` restricts search column to 2× `count` size
-  - always literal, for example `s\*` jumps to the literal `\*`
+  - EasyMotion by default requires five (5) keystrokes (example: `,,fab`),
+    while the common case for Sneak is **three (3) keystrokes**.
+  - repeat the motion via `;` or `,` (unlike EasyMotion)
+  - does not break default behavior of `f t F T ; ,`
+  - does not add noise to `/` history
+  - *vertical scope* with `[count]s{char}{char}` restricts the search to 2× `count` size
+  - always literal: `s\*` jumps to the literal `\*`
 
 ### Installation
 
@@ -108,30 +102,25 @@ Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
 
 ### FAQ
 
-#### Why not use `/` with a two-character search?
+#### Why not use `/`?
 
 * `/ab<cr>` requires 33% more keystrokes than `sab`
   * `f` and `t` exist for a similar reason
   * common operations should use as few keystrokes as possible
-* clutters your search history
-* requires escaping of special characters
-  * you could `nnoremap / /\V`, but then you have a different problem
-* highlight madness
+* Sneak doesn't clutter your search history
+* Sneak is always literal (no need to escape special characters)
+* Sneak has smarter, subtler highlighting
 
 This is why Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#left-right-motions).
 
-#### Why not use `f` and mash `;` ?
+#### Why not use `f`?
 
-Sneak is like `f` with these advantages:
-
-* fifty times (50×) *more precise* than `f` or `t`
-* moves vertically, too
-* remembers the initial position in the Vim jumplist
-  * this is more useful than you think: you can explore a trail of matches
-    by mashing `;`, and then at any point return to the initial position via
-    `ctrl-o` or `` (backtick backtick)
-* highlights additional matches *in the direction of your search* 
-  * gives a visual impression of how far you are from a target
+* Sneak is fifty times (50×) *more precise* than `f` or `t`
+* Sneak moves vertically
+* Sneak remembers the initial position in the Vim jumplist
+  * This allows you to explore a trail of matches via `;`,
+    then return to the initial position via `ctrl-o` or ``
+* Sneak highlights matches *only in the direction of your search* 
 
 #### How dare you remap `s`?
 
@@ -139,19 +128,29 @@ You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
 
 #### How can I replace `f` with Sneak?
 
-If you would rather just replace Vim's built-in `f` completely:
 ```
-      nmap f <Plug>SneakForward
-      nmap F <Plug>SneakBackward
+    nmap f <Plug>SneakForward
+    nmap F <Plug>SneakBackward
+    xmap f <Plug>VSneakForward
+    xmap F <Plug>VSneakBackward
 ```
+
+#### How can I make `f` do a *one-character* Sneak?
+
+Use the `:Sneak` and `:SneakBackward` commands.
+```
+    nnoremap f :Sneak!         1<cr>
+    nnoremap F :SneakBackward! 1<cr>
+    xnoremap f <esc>:<c-u>SneakV!         1<cr>
+    xnoremap F <esc>:<c-u>SneakVBackward! 1<cr>
+```
+(Bang `!` prevents streak-mode even if you have set `g:sneak#streak = 1`)
 
 #### I want to use an "f-enhancement" plugin simultaneously with Sneak
 
 Sneak is intended to replace the so-called [f-enhancement plugins](#related).
-You can use Sneak *and* keep your `f` plugin or mapping, however, Sneak won't
-be able to "hook" into `f`, which means `;` and `,` will always repeat the
-last Sneak-search. (There is no way for Sneak to know if `f` was pressed
-*and* reliably preserve a custom `f` (or `t`) mapping.)
+You can use both, but Sneak won't be able to "hook" into `f`, which means
+`;` and `,` will always repeat the last Sneak.
 
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)

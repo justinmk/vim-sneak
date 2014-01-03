@@ -1,4 +1,4 @@
-*sneak.txt*  motion improved - Version 1.3
+*sneak.txt*  motion improved - Version 1.5
 
                     Sneak - the missing motion for Vim
 
@@ -116,14 +116,37 @@ and `,` were reset by `f` or `t`. This is especially useful for re-invoking
 |sneak-streak-mode| (because `;` and `,` never invoke streak-mode).
 
 ------------------------------------------------------------------------------
-3.2 Visual Mode
+3.2 Commands                                                  *sneak-commands*
+
+Sneak provides commands for additional flexibility.
+
+:Sneak[!] {max}
+:SneakBackward[!] {max}
+                    Invoke Sneak and perform the search when {max} characters
+                    are input at the Sneak prompt. For example, the default
+                    {max} is two (2), so when two characters are entered, the
+                    match is performed without having to press <Enter>. You
+                    can map a key to ":Sneak 1" if you want f-like
+                    behavior, or ":Sneak 3" if you want more precision (eg for
+                    text with a high degree of uniformity).
+
+                    If [!] is given then |g:sneak#streak| is ignored and
+                    "normal" Sneak is performed.
+
+:SneakV[!] {max}
+:SneakVBackward[!] {max}
+                    Same as :Sneak and :SneakBackward, but preserve the
+                    current visual selection.
+
+------------------------------------------------------------------------------
+3.3 Visual Mode
 
 `s` works in visual mode the same as normal mode, however to search backwards
 use `Z` (because `S` is taken by the |surround| plugin). `;` and `,` also
 work in visual mode as they do in normal mode.
 
 ------------------------------------------------------------------------------
-3.3 Text Object (for use with an |operator|)
+3.4 Text Object (for use with an |operator|)
 
 Use `z` for operations; for example, `dzab` deletes from the cursor to the next
 instance of "ab". `dZab` deletes backwards to the previous instance.
@@ -134,7 +157,7 @@ Repeat the operation with |.|
     Note: repeat requires repeat.vim https://github.com/tpope/vim-repeat
 
 ------------------------------------------------------------------------------
-3.4 Vertical Scope                                      *sneak-vertical-scope*
+3.5 Vertical Scope                                      *sneak-vertical-scope*
 
 Sneak has a unique feature called "vertical scope" search. This is invoked by 
 prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case, 
@@ -149,18 +172,18 @@ Use cases:
     - any columnar layout
 
 ------------------------------------------------------------------------------
-3.5 Streak-Mode                                            *sneak-streak-mode*
+3.6 Streak-Mode                                            *sneak-streak-mode*
 
 Sneak "streak" mode minimizes the number of steps to get to a location, using
 a clever interface similar to vim-easymotion[2]. However, there are several
 differences (explained below) that make Sneak streak-mode faster, simpler,
 and more predictable than vim-easymotion.
 
-To enable streak-mode: >
-
+To enable "passive" or "smart" streak-mode:                   *g:sneak#streak*
+>
     let g:sneak#streak = 1
 >
-Sneak streak-mode:
+Streak-mode:
 
     - is invoked _only_ if there are ≥2 visible (not off-screen) matches
         - as always, you can reach off-screen matches with ; and ,
@@ -176,6 +199,11 @@ As always, you can:
 Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is invoked
       and streak-mode will _not_ be invoked.
 
+To force streak-mode (instead of passively letting Sneak decide when to enter
+streak-mode), you can create a mapping to <Plug>SneakStreak:
+>
+    nmap <leader>s <Plug>SneakStreak
+<
 ==============================================================================
 4. Configuration                                         *sneak-configuration*
 
@@ -313,6 +341,7 @@ Here are some examples: >
     xmap f       <Plug>VSneakForward
     nmap F       <Plug>SneakBackward
     xmap F       <Plug>VSneakBackward
+    nmap s       <Plug>SneakStreak
 
     nmap <enter> <Plug>SneakNext
     xmap <enter> <Plug>VSneakNext

@@ -1,6 +1,6 @@
 " sneak.vim - The missing motion
 " Author:       Justin M. Keyes
-" Version:      1.3
+" Version:      1.5
 " License:      MIT
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
@@ -141,7 +141,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
       endif
     endfor
 
-    if !a:repeatmotion && (a:streak || s:opt.streak)
+    if 2 == a:streak || (a:streak && s:opt.streak)
       "enter streak-mode iff there are >=2 _additional_ matches.
       let streak_mode = s.hasmatches(2)
     endif
@@ -272,25 +272,30 @@ func! s:cnt(...) "if an arg is passed, it means 'visual mode'
   return max([1, a:0 ? v:prevcount : v:count1])
 endf
 
-nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 0)<cr>
-nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 1, [0,0], 0)<cr>
+command! -bar -bang -nargs=1 Sneak          call sneak#to('', <sid>getnchars(<args>, ''), <sid>cnt(), 0, 0, [0,0], <bang>1)
+command! -bar -bang -nargs=1 SneakBackward  call sneak#to('', <sid>getnchars(<args>, ''), <sid>cnt(), 0, 1, [0,0], <bang>1)
+command! -bar -bang -nargs=1 SneakV         call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), <sid>cnt(1), 0, 0, [0,0], <bang>1)
+command! -bar -bang -nargs=1 SneakVBackward call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), <sid>cnt(1), 0, 1, [0,0], <bang>1)
+
+nnoremap <Plug>SneakForward   :<c-u>Sneak         2<cr>
+nnoremap <Plug>SneakBackward  :<c-u>SneakBackward 2<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', <sid>cnt(), 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', <sid>cnt(), 1)<cr>
 
-xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#to(visualmode(), <sid>getnchars(2, visualmode()), <sid>cnt(1), 0, 0, [0,0], 0)<cr>
-xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#to(visualmode(), <sid>getnchars(2, visualmode()), <sid>cnt(1), 0, 1, [0,0], 0)<cr>
+xnoremap <Plug>VSneakForward  <esc>:<c-u>SneakV 2<cr>
+xnoremap <Plug>VSneakBackward <esc>:<c-u>SneakVBackward 2<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 0)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 1)<cr>
 
 if s:opt.textobject_z
-  nnoremap <silent> yz :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 0, [0,0], 0)<cr>
-  nnoremap <silent> yZ :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 1, [0,0], 0)<cr>
-  onoremap <silent> z  :<c-u>call sneak#to(v:operator, <sid>getnchars(2, v:operator), <sid>cnt(), 0, 0, [0,0], 0)<cr>
-  onoremap <silent> Z  :<c-u>call sneak#to(v:operator, <sid>getnchars(2, v:operator), <sid>cnt(), 0, 1, [0,0], 0)<cr>
+  nnoremap yz :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 0, [0,0], 0)<cr>
+  nnoremap yZ :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 1, [0,0], 0)<cr>
+  onoremap z  :<c-u>call sneak#to(v:operator, <sid>getnchars(2, v:operator), <sid>cnt(), 0, 0, [0,0], 0)<cr>
+  onoremap Z  :<c-u>call sneak#to(v:operator, <sid>getnchars(2, v:operator), <sid>cnt(), 0, 1, [0,0], 0)<cr>
 endif
 
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
-nnoremap <silent> <Plug>SneakStreak :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 1)<cr>
+nnoremap <Plug>SneakStreak :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 2)<cr>
 
 if !hasmapto('<Plug>SneakForward') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>SneakForward
