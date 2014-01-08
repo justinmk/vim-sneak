@@ -33,7 +33,7 @@
 "     - easymotion edits the buffer, plans to create a new buffer
 "     - "the current way of highligthing is insanely slow"
 
-let s:matchkeys = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
+let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM")
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
@@ -56,7 +56,7 @@ endf
 
 func! s:do_streak(s)
   call s:before()
-  let maxmarks = len(s:matchkeys)
+  let maxmarks = len(g:sneak#target_labels)
   let w = winsaveview()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
@@ -78,7 +78,7 @@ func! s:do_streak(s)
     endif
 
     if i < maxmarks
-      let c = strpart(s:matchkeys, i, 1)
+      let c = strpart(g:sneak#target_labels, i, 1)
       call s:placematch(c, p)
     else "we have exhausted the target labels; grab the first non-labeled match.
       let overflow = p
@@ -96,13 +96,31 @@ func! s:do_streak(s)
 
   if choice == "\<Tab>" && overflow[0] > 0
     call cursor(overflow[0], overflow[1])
-    return 1
-  elseif choice != "\<Esc>" && has_key(s:matchmap, choice) "user can press _any_ invalid key to escape.
+    return 1 "overflow => decorate next N matches
+  elseif maparg(choice, 'n') =~# '<Plug>SneakNext'
+    exec "norm \<Plug>SneakNext"
+    return 0
+  elseif maparg(choice, 'n') =~# '<Plug>SneakPrevious'
+    exec "norm \<Plug>SneakPrevious"
+    return 0
+  elseif has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     let p = s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
 
-  return 0 "no overflow
+  return 0 "no overflow, or user canceled
+endf
+
+"returns 1 if the key does something other than jumping to a match target:
+"    - escape/cancel sneak-mode (<Space>, <C-c>, <Esc>)
+"    - highlight next batch of targets (<Tab>)
+"    - go to next/previous match (; and , by default)
+func! s:is_active_key(key)
+  return "\<Esc>" == a:key
+    \ || "\<C-c>" == a:key
+    \ || "\<Tab>" == a:key
+    \ || "\<Space>" == a:key
+    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(Next\|Previous\)'
 endf
 
 func! s:after()
@@ -131,3 +149,25 @@ func! s:before()
   hi! link SneakPluginTarget SneakStreakMask
 endf
 
+"we must do this because:
+"  - we don't know which keys the user assigned to SneakNext/Previous
+"  - we need to reserve special keys like <Esc> and <Tab>
+func! sneak#streak#sanitize_target_labels()
+  let nrkeys = len(g:sneak#target_labels)
+  let i = 0
+  while i < nrkeys
+    if s:is_active_key(strpart(g:sneak#target_labels, i, 1))
+      "remove the char at index i
+      let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
+      let nrkeys -= 1
+    else
+      let i += 1
+    endif
+  endwhile
+endf
+
+func! sneak#streak#init()
+  call sneak#streak#sanitize_target_labels()
+endf
+
+call sneak#streak#init()

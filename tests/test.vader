@@ -22,13 +22,22 @@ Expect:
 Do (tickle the autoloads):
   sab
 
-Execute (hl#links_to returns linked-to highlight group):
+Execute (hl#links_to() returns linked-to highlight group):
   hi! link Conceal SneakConceal
   Assert 'SneakConceal' ==# sneak#hl#links_to('Conceal')
 
-Execute (hl#links_to returns empty string if not linked):
+Execute (hl#links_to() returns empty string if not linked):
   hi! link Conceal NONE
   Assert empty(sneak#hl#links_to('Conceal'))
+
+Execute (streak#sanitize_target_labels()):
+  call sneak#streak#init()
+  let orig = g:sneak#target_labels
+  let g:sneak#target_labels = " \\ as  d\<Esc>fo\<Tab>ob\<Space>a;\\rASD"
+  call sneak#streak#sanitize_target_labels()
+  Assert g:sneak#target_labels ==#  "asdfoobarASD"
+  "cleanup
+  let g:sneak#target_labels = orig
 
 Given:
   abab
@@ -274,6 +283,22 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
+Do (invoke SneakNext during streak-mode):
+  sab;x
+
+Expect:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } bc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (invoke SneakPrevious during streak-mode):
+  jsab\x
+
+Expect:
+  abcdef ``=2Bd-a3/+ bCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
 Execute (cleanup):
   let g:sneak#streak = 0
   call sneak#init()
@@ -448,6 +473,7 @@ Expect:
 
 Execute (map to f):
   unmap s
+  unmap S
   nmap f <Plug>SneakForward
   nmap F <Plug>SneakBackward
   call sneak#init()
@@ -467,4 +493,6 @@ Expect:
 Execute (cleanup):
   unmap f
   unmap F
+  nmap s <Plug>SneakForward
+  nmap S <Plug>SneakBackward
   call sneak#init()
