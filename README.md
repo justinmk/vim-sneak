@@ -141,8 +141,8 @@ Use the `:Sneak` and `:SneakBackward` commands.
 ```
     nnoremap f :Sneak!         1<cr>
     nnoremap F :SneakBackward! 1<cr>
-    xnoremap f <esc>:<c-u>SneakV!         1<cr>
-    xnoremap F <esc>:<c-u>SneakVBackward! 1<cr>
+    xnoremap f :<c-u>SneakV!         1<cr>
+    xnoremap F :<c-u>SneakVBackward! 1<cr>
 ```
 (Bang `!` prevents streak-mode even if you have set `g:sneak#streak = 1`)
 

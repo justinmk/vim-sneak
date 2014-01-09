@@ -1,4 +1,6 @@
-
+func! sneak#util#isvisualop(op)
+  return a:op =~# "^[vV\<C-v>]"
+endf
 
 func! sneak#util#getchar()
   let c = getchar()

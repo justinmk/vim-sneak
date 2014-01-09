@@ -36,6 +36,7 @@ func! sneak#debug#report()
     call s:dbgflag('&ignorecase')
     call s:dbgflag('&smartcase')
     call s:dbgflag('&background')
+    call s:dbgflag('&keymap')
     call s:dbgflag('g:mapleader')
     silent echo ""
     call s:dbgfunc("sneak#to")
@@ -50,5 +51,5 @@ func! sneak#debug#report()
   enew
   silent put=vimversion
   silent put=output
-  "set nomodified
+  "setlocal nomodified
 endf

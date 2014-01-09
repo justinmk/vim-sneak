@@ -283,7 +283,7 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Do (invoke SneakNext during streak-mode):
+Do (SneakNext in streak-mode):
   sab;x
 
 Expect:
@@ -291,12 +291,26 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } bc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Do (invoke SneakPrevious during streak-mode):
+Do (SneakPrevious in streak-mode):
   jsab\x
 
 Expect:
   abcdef ``=2Bd-a3/+ bCDef ``=2Bd-a3/+
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (SneakNext in visual-mode + streak-mode):
+  vsab;x
+
+Expect:
+  bc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (SneakPrevious in visual-mode + streak-mode):
+  jvsab\x
+
+Expect:
+  abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Execute (cleanup):

@@ -42,8 +42,8 @@ func! s:placematch(c, pos)
 endf
 
 "TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
-func! sneak#streak#to(s)
-  while s:do_streak(a:s) | endwhile
+func! sneak#streak#to(s, st)
+  while s:do_streak(a:s, a:st) | endwhile
   call sneak#hl#removehl()
 endf
 
@@ -54,7 +54,7 @@ func! s:hl_cursor_pos()
   endif
 endf
 
-func! s:do_streak(s)
+func! s:do_streak(s, st)
   call s:before()
   let maxmarks = len(g:sneak#target_labels)
   let w = winsaveview()
@@ -98,11 +98,9 @@ func! s:do_streak(s)
     call cursor(overflow[0], overflow[1])
     return 1 "overflow => decorate next N matches
   elseif maparg(choice, 'n') =~# '<Plug>SneakNext'
-    exec "norm \<Plug>SneakNext"
-    return 0
+    call sneak#rpt(sneak#util#isvisualop(a:st.op), 1, 0)
   elseif maparg(choice, 'n') =~# '<Plug>SneakPrevious'
-    exec "norm \<Plug>SneakPrevious"
-    return 0
+    call sneak#rpt(sneak#util#isvisualop(a:st.op), 1, 1)
   elseif has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     let p = s:matchmap[choice]
     call cursor(p[0], p[1])

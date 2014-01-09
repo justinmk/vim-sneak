@@ -29,18 +29,24 @@ func! sneak#init()
       let s:opt[k.'_reset'] = 0
     endif
   endfor
+
+  let s:orig_scrolloff = [&scrolloff, &sidescrolloff]
 endf
 
 call sneak#init()
 
 func! sneak#opt()
-  return s:opt
+  return deepcopy(s:opt)
+endf
+
+func! sneak#state()
+  return deepcopy(s:st)
 endf
 
 "repeat *motion* (not operation)
 func! sneak#rpt(op, count, reverse) range abort
   if s:st.rst "reset by f/F/t/T
-    exec "norm! ".(s:isvisualop(a:op) ? "gv" : "").a:count.(a:reverse ? "," : ";")
+    exec "norm! ".(sneak#util#isvisualop(a:op) ? "gv" : "").a:count.(a:reverse ? "," : ";")
     return
   endif
 
@@ -49,14 +55,11 @@ func! sneak#rpt(op, count, reverse) range abort
 endf
 
 func! s:before()
-  let s:orig_scrolloff = &scrolloff
-  let s:orig_sidescrolloff = &sidescrolloff
   set scrolloff=0 sidescrolloff=0
 endf
 
 func! s:after()
-  let &scrolloff = s:orig_scrolloff
-  let &sidescrolloff = s:orig_sidescrolloff
+  let &scrolloff = s:orig_scrolloff[0] | let &sidescrolloff = s:orig_scrolloff[1]
 endf
 
 func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range abort "{{{
@@ -85,7 +88,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   let l:match_bounds  = ''
 
   "scope to a column of width 2*(v:count1) _unless_ this is a repeat-motion.
-  if ((!skip && a:count > 1) || max(l:bounds) > 0) && (empty(a:op) || s:isvisualop(a:op))
+  if ((!skip && a:count > 1) || max(l:bounds) > 0) && (empty(a:op) || sneak#util#isvisualop(a:op))
     " use provided bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
       "these are the _logical_ bounds highlighted in 'scope' mode
@@ -113,7 +116,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     call s:ft_hook()
   endif
 
-  if !empty(a:op) && !s:isvisualop(a:op) "operator-pending invocation
+  if !empty(a:op) && !sneak#util#isvisualop(a:op) "operator-pending invocation
     let l:histreg = @/
     let wrap = &wrapscan | let &wrapscan = 0
 
@@ -147,7 +150,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     endif
 
     "if the user was in visual mode, extend the selection.
-    if s:isvisualop(a:op)
+    if sneak#util#isvisualop(a:op)
       norm! gv
       if max(matchpos) > 0 | call cursor(matchpos) | endif
     endif
@@ -187,7 +190,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
         \ 2, get(w:, 'sneak_hl_id', -1))
 
   if streak_mode && 0 == max(l:bounds) "vertical-scope-mode takes precedence over streak-mode.
-    call sneak#streak#to(s)
+    call sneak#streak#to(s, s:st)
   endif
 
   return s:after()
@@ -239,22 +242,18 @@ func! s:repeat_last_op()
   call sneak#to(st.op, st.input, st.count, 0, st.reverse, st.bounds, 0)
 endf
 
-func! s:isvisualop(op)
-  return a:op =~# "^[vV\<C-v>]"
-endf
-
 func! s:getnchars(n, mode)
   let s = ''
   echo '>'
   for i in range(1, a:n)
     "preserve existing selection
-    if s:isvisualop(a:mode) | exe 'norm! gv' | endif
+    if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif
     let c = sneak#util#getchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
       return ""
     endif
     if c == "\<CR>"
-      if i > 1 "special case: accept the current input (feature #15)
+      if i > 1 "special case: accept the current input (#15)
         break
       else "special case: repeat the last search (useful for streak-mode).
         return s:st.input
