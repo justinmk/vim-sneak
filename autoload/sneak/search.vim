@@ -28,6 +28,9 @@ func! sneak#search#new()
   endf
 
   func! s.get_onscreen_searchpattern(w)
+    if &wrap || (has('breakindent') && &breakindent)
+      return ''
+    endif
     let wincol_lhs = a:w.leftcol "this is actually just to the _left_ of the first onscreen column.
     let wincol_rhs  = 2 + (winwidth(0) - sneak#util#wincol1()) + wincol_lhs
     "restrict search to window
