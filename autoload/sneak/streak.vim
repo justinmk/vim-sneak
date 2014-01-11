@@ -70,7 +70,7 @@ func! s:do_streak(s, st)
       break
     endif
 
-    let skippedfold = sneak#util#skipfold(p[0]) "Note: 'set foldopen-=search' does not affect search().
+    let skippedfold = sneak#util#skipfold(p[0], a:st.reverse) "Note: 'set foldopen-=search' does not affect search().
     if -1 == skippedfold
       break
     elseif 1 == skippedfold

@@ -12,10 +12,8 @@ func! sneak#search#new()
     " example: highlight string 'ab' after line 42, column 5 
     "          matchadd('foo', 'ab\%>42l\%5c', 1)
     let self.match_pattern = ''
-    " do not wrap
-    let self._search_options = 'W'
-    " search backwards
-    if a:reverse | let self._search_options .= 'b' | endif
+    " do not wrap                     search backwards
+    let self._search_options = 'W' . (a:reverse ? 'b' : '')
     let self.search_options_no_s = self._search_options
     " save the jump on the initial invocation, _not_ repeats.
     if !a:repeatmotion | let self._search_options .= 's' | endif
@@ -40,7 +38,7 @@ func! sneak#search#new()
     return self._reverse ? line("w0") : line("w$")
   endf
 
-  " returns 1 if there are n visible matches in the direction of the current search.
+  " returns 1 if there are n _on-screen_ matches in the search direction.
   func! s.hasmatches(n)
     let w = winsaveview()
     let searchpattern = (self._searchpattern).(self.get_onscreen_searchpattern(w))
@@ -50,7 +48,7 @@ func! sneak#search#new()
       let matchpos = searchpos(searchpattern, self.search_options_no_s, self.get_stopline())
       if 0 == matchpos[0] "no more matches
         break
-      elseif 1 == sneak#util#skipfold(matchpos[0])
+      elseif 0 != sneak#util#skipfold(matchpos[0], self._reverse)
         continue
       endif
       let visiblematches += 1

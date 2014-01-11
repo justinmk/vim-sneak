@@ -37,14 +37,16 @@ endf
 "Returns:
 "     1  if the cursor was moved
 "     0  if the cursor is not in a fold
-"    -1  if the end of the fold is at/below the bottom of the window
-func! sneak#util#skipfold(current_line)
-  let foldend = foldclosedend(a:current_line)
-  if -1 != foldend
-    if foldend >= line("w$") "fold ends at/below bottom of window.
+"    -1  if the start/end of the fold is at/above/below the edge of the window
+func! sneak#util#skipfold(current_line, reverse)
+  let foldedge = a:reverse ? foldclosed(a:current_line) : foldclosedend(a:current_line)
+  if -1 != foldedge
+    if (a:reverse && foldedge <= line("w0")) "fold starts at/above top of window.
+                \ || foldedge >= line("w$")  "fold ends at/below bottom of window.
       return -1
     endif
-    call cursor(foldend + 1, 1)
+    call line(foldedge)
+    call col(a:reverse ? 1 : '$')
     return 1
   endif
   return 0
