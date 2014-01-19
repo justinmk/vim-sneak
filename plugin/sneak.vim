@@ -295,6 +295,7 @@ endif
 
 nnoremap <silent> <Plug>SneakRepeat :<c-u>call <sid>repeat_last_op()<cr>
 nnoremap <Plug>SneakStreak :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 0, [0,0], 2)<cr>
+nnoremap <Plug>SneakStreakBackward :<c-u>call sneak#to('', <sid>getnchars(2, ''), <sid>cnt(), 0, 1, [0,0], 2)<cr>
 
 if !hasmapto('<Plug>SneakForward') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>SneakForward
