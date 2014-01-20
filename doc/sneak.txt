@@ -185,15 +185,18 @@ To enable "passive" or "smart" streak-mode:                   *g:sneak#streak*
 >
 Streak-mode:
 
-    - is invoked _only_ if there are ≥2 visible (not off-screen) matches
-        - as always, you can reach off-screen matches with ; and ,
+    - is invoked _only_ if there are ≥2 visible (on-screen) matches
+        - matches within |folds| do not invoke streak-mode
+        - as always, you can reach folded/off-screen matches with |;| and |,|
     - automatically jumps to the first match
         - press <Space> or <Esc> to escape streak-mode
         - press <Tab> to skip to the next 52 matches
+        - press any key that is _not_ displayed as a target label to exit
+          streak-mode and perform that key's normal-mode function
     - can be repeated at any time with s<Enter>
 
 As always, you can:
-    - skip to the next or previous match with ; or ,
+    - skip to the next or previous match with |;| or |,|
     - return to your original location via |CTRL-O| or |``|
 
 Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is invoked
