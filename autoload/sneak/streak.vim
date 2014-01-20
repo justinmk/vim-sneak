@@ -47,13 +47,6 @@ func! sneak#streak#to(s, st)
   call sneak#hl#removehl()
 endf
 
-" highlight the cursor location (else the cursor is not visible during getchar())
-func! s:hl_cursor_pos()
-  if hlexists('Cursor')
-    let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 2, -1)
-  endif
-endf
-
 func! s:do_streak(s, st)
   call s:before()
   let maxmarks = len(g:sneak#target_labels)
@@ -131,7 +124,9 @@ endf
 
 func! s:before()
   let s:matchmap = {}
-  call s:hl_cursor_pos()
+
+  " highlight the cursor location (else the cursor is not visible during getchar())
+  let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 2, -1)
 
   set concealcursor=ncv
   set conceallevel=2

@@ -30,5 +30,11 @@ if 0 == hlID("SneakPluginScope")
 endif
 
 if 0 == hlID("SneakStreakTarget")
-  hi SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=bold
+  highlight SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=bold
+endif
+
+if hlexists('Cursor')
+  highlight link SneakStreakCursor Cursor
+else
+  highlight link SneakStreakCursor SneakPluginScope
 endif
