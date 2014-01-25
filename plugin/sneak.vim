@@ -29,8 +29,6 @@ func! sneak#init()
       let s:opt[k.'_reset'] = 0
     endif
   endfor
-
-  let s:orig_scrolloff = [&scrolloff, &sidescrolloff]
 endf
 
 call sneak#init()
@@ -54,20 +52,10 @@ func! sneak#rpt(op, count, reverse) range abort
         \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.bounds, 0)
 endf
 
-func! s:before()
-  set scrolloff=0 sidescrolloff=0
-endf
-
-func! s:after()
-  let &scrolloff = s:orig_scrolloff[0] | let &sidescrolloff = s:orig_scrolloff[1]
-endf
-
 func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range abort "{{{
   if empty(a:input) "user canceled
     redraw | echo '' | return
   endif
-
-  call s:before()
 
   "highlight tasks:
   "  - highlight actual matches at or below (above) the cursor position
@@ -130,7 +118,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
         silent! call repeat#set("\<Plug>SneakRepeat")
       endif
     catch E486
-      call sneak#util#echo('not found: '.a:input) | return s:after()
+      call sneak#util#echo('not found: '.a:input) | return
     finally
       call histdel("/", histnr("/")) "delete the last search from the history
       let @/ = l:histreg
@@ -157,7 +145,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
 
     if 0 == max(matchpos)
       call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : ': '.a:input))
-      return s:after()
+      return
     endif
   endif
   "search succeeded
@@ -193,7 +181,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     call sneak#streak#to(s, s:st)
   endif
 
-  return s:after()
+  return
 endf "}}}
 
 func! s:attach_autocmds()
