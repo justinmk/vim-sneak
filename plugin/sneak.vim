@@ -25,7 +25,7 @@ func! sneak#init()
       \ }
 
   for k in ['f', 't'] "if user mapped f/t to Sneak, then disable f/t reset.
-    if maparg(k, 'n') =~# '<Plug>Sneak'
+    if maparg(k, 'n') =~# 'Sneak'
       let s:opt[k.'_reset'] = 0
     endif
   endfor
@@ -39,6 +39,23 @@ endf
 
 func! sneak#state()
   return deepcopy(s:st)
+endf
+
+func! s:is_sneaking()
+  return exists("#SneakPlugin#CursorMoved#<buffer>")
+endf
+
+" convenience wrapper for key bindings/mappings
+func! sneak#wrap(op, input_length, count, reverse, streak) range abort
+  " don't repeat the last 's' search if this is an 'f' search, etc.
+  "TODO: check inclusive/exclusive when we add support for that
+  let is_similar_invocation = (((v:version >= 703) ? strwidth(s:st.input) : len(s:st.input)) == a:input_length)
+
+  if s:is_sneaking() && is_similar_invocation " 's' goes to next match
+    call sneak#rpt(a:op, a:count, a:reverse)
+  else " 's' invokes new search
+    call sneak#to(a:op, s:getnchars(a:input_length, a:op), a:count, 0, a:reverse, [0,0], a:streak)
+  endif
 endf
 
 "repeat *motion* (not operation)
@@ -259,20 +276,37 @@ func! s:cnt(...) "if an arg is passed, it means 'visual mode'
   return max([1, a:0 ? v:prevcount : v:count1])
 endf
 
+" DEPRECATED: these four commands will be removed in v2.0
 command! -bar -bang -nargs=1 Sneak          call sneak#to('', <sid>getnchars(<args>, ''), <sid>cnt(), 0, 0, [0,0], <bang>1)
 command! -bar -bang -nargs=1 SneakBackward  call sneak#to('', <sid>getnchars(<args>, ''), <sid>cnt(), 0, 1, [0,0], <bang>1)
 command! -bar -bang -nargs=1 SneakV         call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), <sid>cnt(1), 0, 0, [0,0], <bang>1)
 command! -bar -bang -nargs=1 SneakVBackward call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), <sid>cnt(1), 0, 1, [0,0], <bang>1)
 
-nnoremap <Plug>SneakForward   :<c-u>Sneak         2<cr>
-nnoremap <Plug>SneakBackward  :<c-u>SneakBackward 2<cr>
+" 2-char sneak
+nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#wrap('', 2, <sid>cnt(), 0, 1)<cr>
+nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#wrap('', 2, <sid>cnt(), 1, 1)<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', <sid>cnt(), 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', <sid>cnt(), 1)<cr>
-
-xnoremap <Plug>VSneakForward  <esc>:<c-u>SneakV 2<cr>
-xnoremap <Plug>VSneakBackward <esc>:<c-u>SneakVBackward 2<cr>
+xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 0, 0)<cr>
+xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 1, 0)<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 0)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 1)<cr>
+
+" 1-char sneak, inclusive
+nnoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 0, 0)<cr>
+nnoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 1, 0)<cr>
+xnoremap <silent> <Plug>Sneakf <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 0, 0)<cr>
+xnoremap <silent> <Plug>SneakF <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 1, 0)<cr>
+onoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 0, 0)<cr>
+onoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 1, 0)<cr>
+
+" 1-char sneak, exclusive
+nnoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 0, 0)<cr>
+nnoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 1, 0)<cr>
+xnoremap <silent> <Plug>Sneakt <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 0, 0)<cr>
+xnoremap <silent> <Plug>SneakT <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 1, 0)<cr>
+onoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 0, 0)<cr>
+onoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 1, 0)<cr>
 
 if s:opt.textobject_z
   nnoremap yz :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 0, [0,0], 0)<cr>

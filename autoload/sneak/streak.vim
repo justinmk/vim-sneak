@@ -29,7 +29,9 @@
 "       and highlight the next 52 matches.
 " 
 " cf. EASYMOTION:
-"   https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
+"   - because sneak targets 2 chars, there is never a problem discerning
+"     target labels. https://github.com/Lokaltog/vim-easymotion/pull/47#issuecomment-10919205
+"   - https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
 "     - easymotion edits the buffer, plans to create a new buffer
 "     - "the current way of highligthing is insanely slow"
 
@@ -87,15 +89,17 @@ func! s:do_streak(s, st)
 
   call s:after()
 
+  let v = sneak#util#isvisualop(a:st.op)
+
   if choice == "\<Tab>" && overflow[0] > 0
     call cursor(overflow[0], overflow[1])
     return 1 "overflow => decorate next N matches
   elseif -1 != index(["\<Esc>", "\<Space>", "\<CR>"], choice)
     return 0 "exit streak-mode.
-  elseif maparg(choice, 'n') =~# '<Plug>SneakNext'
-    call sneak#rpt(sneak#util#isvisualop(a:st.op), 1, 0)
-  elseif maparg(choice, 'n') =~# '<Plug>SneakPrevious'
-    call sneak#rpt(sneak#util#isvisualop(a:st.op), 1, 1)
+  elseif maparg(choice, v ? 'x' : 'n') =~# '<Plug>V\?Sneak.\?\(Fwd\|Next\|Forward\)'
+    call sneak#rpt(v, 1, 0)
+  elseif maparg(choice, v ? 'x' : 'n') =~# '<Plug>V\?Sneak.\?\(Bck\|Previous\|Backward\)'
+    call sneak#rpt(v, 1, 1)
   elseif !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
   else "valid target was selected
@@ -115,7 +119,7 @@ func! s:is_active_key(key)
     \ || "\<C-c>" == a:key
     \ || "\<Tab>" == a:key
     \ || "\<Space>" == a:key
-    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(Next\|Previous\)'
+    \ || maparg(a:key, 'n') =~# '<Plug>V\?Sneak'
 endf
 
 func! s:after()

@@ -96,19 +96,24 @@ Sneak default VISUAL-mode mappings:
 (previous) match. Additional matches are highlighted until the cursor is
 moved. Works across multiple lines.
 
-`[count]s` enters |sneak-vertical-scope| mode.
+Immediately after invoking Sneak, you can move to the next match by pressing
+'s', or the previous match by pressing 'S'. If you move the cursor or do
+some other action, then the next 's' invokes a new Sneak search. In that case,
+you can repeat the most recent Sneak search by pressing 's<Enter>'.
 
-`;` and `,` repeat the last `s` and `S`. They also work correctly with `f` and `t`,
-unless you or another plugin have mapped `f` or `t` to a custom mapping.
-`[count];` and `[count],` skip to the [count]'th match, similar to the
-behavior of `[count]f` and `[count]t`.
+[count]s enters |sneak-vertical-scope| mode.
+
+`;` and `,` repeat the last `s` and `S`. They also work correctly with `f` and `t`
+(unless you or another plugin have mapped `f` or `t` to a custom mapping).
+[count]; and [count], skip to the [count]'th match, similar to the
+behavior of [count]f and [count]t.
 
     Note: If your mapleader is `,` then Sneak maps `\` instead of `,`.
     You can override this by specifying some other mapping, eg: >
 
     nmap ? <Plug>SneakPrevious
 <
-Sneak adds to the |jumplist| only on the initial invocation; so after hopping
+Sneak adds to the |jumplist| only on the initial invocation; so after moving
 around with ; and , you can easily go back via |CTRL-O| or |``|.
 
 s<Enter> ("s" followed by Enter) always repeats the last search, even if `;`
