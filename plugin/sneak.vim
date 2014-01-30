@@ -46,15 +46,17 @@ func! s:is_sneaking()
 endf
 
 " convenience wrapper for key bindings/mappings
-func! sneak#wrap(op, input_length, count, reverse, streak) range abort
+func! sneak#wrap(op, input_length, reverse, streak) range abort
   " don't repeat the last 's' search if this is an 'f' search, etc.
   "TODO: check inclusive/exclusive when we add support for that
   let is_similar_invocation = a:input_length == ((v:version >= 703) ? strwidth(s:st.input) : len(s:st.input))
+  "TRICKY: use v:prevcount for visual mapping because we <esc> before the ex command.
+  let l:count = max([1, sneak#util#isvisualop(a:op) ? v:prevcount : v:count1])
 
   if s:is_sneaking() && is_similar_invocation " 's' goes to next match
-    call sneak#rpt(a:op, a:count, a:reverse)
+    call sneak#rpt(a:op, l:count, a:reverse)
   else " 's' invokes new search
-    call sneak#to(a:op, s:getnchars(a:input_length, a:op), a:count, 0, a:reverse, [0,0], a:streak)
+    call sneak#to(a:op, s:getnchars(a:input_length, a:op), l:count, 0, a:reverse, [0,0], a:streak)
   endif
 endf
 
@@ -205,7 +207,8 @@ func! s:attach_autocmds()
   augroup SneakPlugin
     autocmd!
     autocmd InsertEnter,WinLeave,BufLeave <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
-    "set up *nested* CursorMoved autocmd to skip the _first_ CursorMoved event.
+    "*nested* CursorMoved autocmd to skip the _first_ CursorMoved event.
+    "NOTE: CursorMoved is _not_ triggered if there is 'typeahead', which means during a macro or other script...
     autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
   augroup END
 endf
@@ -272,7 +275,6 @@ func! s:getnchars(n, mode)
 endf
 
 func! s:cnt(...) "if an arg is passed, it means 'visual mode'
-  "TRICKY: use v:prevcount for visual mapping because we <esc> before the ex command.
   return max([1, a:0 ? v:prevcount : v:count1])
 endf
 
@@ -283,30 +285,30 @@ command! -bar -bang -nargs=1 SneakV         call sneak#to(visualmode(), <sid>get
 command! -bar -bang -nargs=1 SneakVBackward call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), <sid>cnt(1), 0, 1, [0,0], <bang>1)
 
 " 2-char sneak
-nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#wrap('', 2, <sid>cnt(), 0, 1)<cr>
-nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#wrap('', 2, <sid>cnt(), 1, 1)<cr>
+nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#wrap('', 2, 0, 1)<cr>
+nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#wrap('', 2, 1, 1)<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', <sid>cnt(), 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', <sid>cnt(), 1)<cr>
-xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 0, 1)<cr>
-xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 1, 1)<cr>
+xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#wrap(visualmode(), 2, 0, 1)<cr>
+xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#wrap(visualmode(), 2, 1, 1)<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 0)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 1)<cr>
 
 " 1-char sneak, inclusive
-nnoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 0, 0)<cr>
-nnoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 1, 0)<cr>
-xnoremap <silent> <Plug>Sneakf <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 0, 0)<cr>
-xnoremap <silent> <Plug>SneakF <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 1, 0)<cr>
-onoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 0, 0)<cr>
-onoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 1, 0)<cr>
+nnoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap('', 1, 0, 0)<cr>
+nnoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap('', 1, 1, 0)<cr>
+xnoremap <silent> <Plug>Sneakf <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0)<cr>
+xnoremap <silent> <Plug>SneakF <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0)<cr>
+onoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
+onoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
 
 " 1-char sneak, exclusive
-nnoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 0, 0)<cr>
-nnoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap('', 1, <sid>cnt(), 1, 0)<cr>
-xnoremap <silent> <Plug>Sneakt <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 0, 0)<cr>
-xnoremap <silent> <Plug>SneakT <esc>:<c-u>call sneak#wrap(visualmode(), 1, <sid>cnt(1), 1, 0)<cr>
-onoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 0, 0)<cr>
-onoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap(v:operator, 1, <sid>cnt(), 1, 0)<cr>
+nnoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap('', 1, 0, 0)<cr>
+nnoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap('', 1, 1, 0)<cr>
+xnoremap <silent> <Plug>Sneakt <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0)<cr>
+xnoremap <silent> <Plug>SneakT <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0)<cr>
+onoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
+onoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
 
 if s:opt.textobject_z
   nnoremap yz :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 0, [0,0], 0)<cr>
