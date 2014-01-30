@@ -49,7 +49,7 @@ endf
 func! sneak#wrap(op, input_length, count, reverse, streak) range abort
   " don't repeat the last 's' search if this is an 'f' search, etc.
   "TODO: check inclusive/exclusive when we add support for that
-  let is_similar_invocation = (((v:version >= 703) ? strwidth(s:st.input) : len(s:st.input)) == a:input_length)
+  let is_similar_invocation = a:input_length == ((v:version >= 703) ? strwidth(s:st.input) : len(s:st.input))
 
   if s:is_sneaking() && is_similar_invocation " 's' goes to next match
     call sneak#rpt(a:op, a:count, a:reverse)
@@ -287,8 +287,8 @@ nnoremap <silent> <Plug>SneakForward   :<c-u>call sneak#wrap('', 2, <sid>cnt(), 
 nnoremap <silent> <Plug>SneakBackward  :<c-u>call sneak#wrap('', 2, <sid>cnt(), 1, 1)<cr>
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', <sid>cnt(), 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', <sid>cnt(), 1)<cr>
-xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 0, 0)<cr>
-xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 1, 0)<cr>
+xnoremap <silent> <Plug>VSneakForward  <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 0, 1)<cr>
+xnoremap <silent> <Plug>VSneakBackward <esc>:<c-u>call sneak#wrap(visualmode(), 2, <sid>cnt(1), 1, 1)<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 0)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 1)<cr>
 
