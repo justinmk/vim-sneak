@@ -2,12 +2,12 @@ Execute (Clean up test environment):
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious
   let mapleader = ','
-  let sneak#streak = 0
+  let g:sneak#streak = 0
   call sneak#init()
 
 ###########################################################
 
-# this must be the first test, because it tests f-repeat
+# this must be the first test, because it tests built-in f-repeat
 # for the case where s has not ever been invoked.
 Given:
   ababAbABababaB
@@ -35,7 +35,7 @@ Execute (streak#sanitize_target_labels()):
   let orig = g:sneak#target_labels
   let g:sneak#target_labels = " \\ as  d\<Esc>fo\<Tab>ob\<Space>a;\\rASD"
   call sneak#streak#sanitize_target_labels()
-  Assert g:sneak#target_labels ==#  "asdfoobarASD"
+  Assert g:sneak#target_labels ==#  "adfoobarAD"
   "cleanup
   let g:sneak#target_labels = orig
 
@@ -89,8 +89,13 @@ Expect:
   111 22 333 44442555 6666 7 88888
   1111 2 33 444 555 66 77a 8
 
+# CursorMoved is not triggered in scripts/macros, so we must force it.
+#   https://github.com/junegunn/vader.vim/issues/2
 Do (visual mode forwards):
-  vwjs42los55;d
+  vwjs42lo
+  :\<C-U>doautocmd CursorMoved\<CR>
+  :\<C-U>doautocmd CursorMoved\<CR>
+  gvs55;d
 
 Expect:
   1 22222 33 444 555 6666 7 888
@@ -180,7 +185,10 @@ Given ruby:
 
 
 Do (search for backticks, then backslashes):
-  llls``S\\i:)
+  llls``
+  :\<C-U>doautocmd CursorMoved\<CR>
+  :\<C-U>doautocmd CursorMoved\<CR>
+  S\\i:)
 
 Expect ruby:
   xyz="abc=def"
@@ -259,7 +267,7 @@ Expect:
 ###########################################################
 
 Execute (streak-mode):
-  let sneak#streak = 1
+  let g:sneak#streak = 1
   call sneak#init()
 
 Given:
@@ -268,7 +276,7 @@ Given:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Do (basic streak motion):
-  sabsD
+  sabdD
 
 Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
@@ -276,7 +284,7 @@ Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Do (backwards streak motion):
-  jj$Sefdix
+  jj$Seffix
 
 Expect:
   abcdxef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
@@ -497,7 +505,10 @@ Given:
 
 # issue #35
 Do (sneak 'f', then Vim default 't', then sneak 'f'):
-  fderxtcrxfderx;rx
+  fderxtcrx
+  :\<C-U>doautocmd CursorMoved\<CR>
+  :\<C-U>doautocmd CursorMoved\<CR>
+  fderx;rx
 
 Expect:
   abcxef axcxef abcxef
