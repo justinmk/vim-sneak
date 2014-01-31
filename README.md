@@ -138,17 +138,26 @@ You can specify any mapping for Sneak (see [`:help sneak`](doc/sneak.txt)).
     omap F <Plug>SneakBackward
 ```
 
-#### How can I replace `f` with *one-character* Sneak?
+#### How can I replace `f` and/or `t` with *one-character* Sneak?
 
-Sneak provides `<Plug>` convenience-mappings for 1-character-sneak.
+Sneak provides `<Plug>` convenience-mappings for "inclusive" (`f`)
+and "exclusive" (`t`) 1-character-sneak.
 These mappings do *not* invoke streak-mode, even if you have it enabled.
 ```
-    nmap f <Plug>Sneakf
-    nmap F <Plug>SneakF
-    xmap f <Plug>Sneakf
-    xmap F <Plug>SneakF
-    omap f <Plug>Sneakf
-    omap F <Plug>SneakF
+    "replace 'f' with inclusive 1-char Sneak
+    nmap f <Plug>Sneak_f
+    nmap F <Plug>Sneak_F
+    xmap f <Plug>Sneak_f
+    xmap F <Plug>Sneak_F
+    omap f <Plug>Sneak_f
+    omap F <Plug>Sneak_F
+    "replace 't' with exclusive 1-char Sneak
+    nmap t <Plug>Sneak_t
+    nmap T <Plug>Sneak_T
+    xmap t <Plug>Sneak_t
+    xmap T <Plug>Sneak_T
+    omap t <Plug>Sneak_t
+    omap T <Plug>Sneak_T
 ```
 
 #### I want to use an "f-enhancement" plugin simultaneously with Sneak

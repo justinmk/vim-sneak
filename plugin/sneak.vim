@@ -295,20 +295,20 @@ xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), <
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), <sid>cnt(1), 1)<cr>
 
 " 1-char sneak, inclusive
-nnoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap('', 1, 0, 0)<cr>
-nnoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap('', 1, 1, 0)<cr>
-xnoremap <silent> <Plug>Sneakf <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0)<cr>
-xnoremap <silent> <Plug>SneakF <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0)<cr>
-onoremap <silent> <Plug>Sneakf      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
-onoremap <silent> <Plug>SneakF      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
+nnoremap <silent> <Plug>Sneak_f      :<c-u>call sneak#wrap('', 1, 0, 0)<cr>
+nnoremap <silent> <Plug>Sneak_F      :<c-u>call sneak#wrap('', 1, 1, 0)<cr>
+xnoremap <silent> <Plug>Sneak_f <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0)<cr>
+xnoremap <silent> <Plug>Sneak_F <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0)<cr>
+onoremap <silent> <Plug>Sneak_f      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
+onoremap <silent> <Plug>Sneak_F      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
 
 " 1-char sneak, exclusive
-nnoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap('', 1, 0, 0)<cr>
-nnoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap('', 1, 1, 0)<cr>
-xnoremap <silent> <Plug>Sneakt <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0)<cr>
-xnoremap <silent> <Plug>SneakT <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0)<cr>
-onoremap <silent> <Plug>Sneakt      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
-onoremap <silent> <Plug>SneakT      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
+nnoremap <silent> <Plug>Sneak_t      :<c-u>call sneak#wrap('', 1, 0, 0)<cr>
+nnoremap <silent> <Plug>Sneak_T      :<c-u>call sneak#wrap('', 1, 1, 0)<cr>
+xnoremap <silent> <Plug>Sneak_t <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0)<cr>
+xnoremap <silent> <Plug>Sneak_T <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0)<cr>
+onoremap <silent> <Plug>Sneak_t      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
+onoremap <silent> <Plug>Sneak_T      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
 
 if s:opt.textobject_z
   nnoremap yz :<c-u>call sneak#to('y',        <sid>getnchars(2, 'y'), <sid>cnt(), 0, 0, [0,0], 0)<cr>

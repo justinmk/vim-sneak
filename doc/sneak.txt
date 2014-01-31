@@ -370,20 +370,20 @@ your |vimrc|: >
     xmap ? <Plug>VSneakPrevious
 
     " 1-character _inclusive_ Sneak (for enhanced 'f')
-    nmap ? <Plug>Sneakf
-    nmap ? <Plug>SneakF
-    xmap ? <Plug>Sneakf
-    xmap ? <Plug>SneakF
-    omap ? <Plug>Sneakf
-    omap ? <Plug>SneakF
+    nmap ? <Plug>Sneak_f
+    nmap ? <Plug>Sneak_F
+    xmap ? <Plug>Sneak_f
+    xmap ? <Plug>Sneak_F
+    omap ? <Plug>Sneak_f
+    omap ? <Plug>Sneak_F
 
     " 1-character _exclusive_ Sneak (for enhanced 't')
-    nmap ? <Plug>Sneakt
-    nmap ? <Plug>SneakT
-    xmap ? <Plug>Sneakt
-    xmap ? <Plug>SneakT
-    omap ? <Plug>Sneakt
-    omap ? <Plug>SneakT
+    nmap ? <Plug>Sneak_t
+    nmap ? <Plug>Sneak_T
+    xmap ? <Plug>Sneak_t
+    xmap ? <Plug>Sneak_T
+    omap ? <Plug>Sneak_t
+    omap ? <Plug>Sneak_T
 <
 Here are some examples: >
 
@@ -400,12 +400,12 @@ Here are some examples: >
 
     " by default, Sneak does not touch 'f' or 't', so if you want
     " 1-character Sneak for 'f' or 't', do the following.
-    nmap f <Plug>Sneakf
-    nmap F <Plug>SneakF
-    xmap f <Plug>Sneakf
-    xmap F <Plug>SneakF
-    omap f <Plug>Sneakf
-    omap F <Plug>SneakF
+    nmap f <Plug>Sneak_f
+    nmap F <Plug>Sneak_F
+    xmap f <Plug>Sneak_f
+    xmap F <Plug>Sneak_F
+    omap f <Plug>Sneak_f
+    omap F <Plug>Sneak_F
 <
 ==============================================================================
 5. Contributing                                           *sneak-contributing*
