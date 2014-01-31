@@ -1,4 +1,4 @@
-*sneak.txt*  motion improved - Version 1.5
+*sneak.txt*  motion improved - Version 1.6.1
 
                     Sneak - the missing motion for Vim
 
@@ -38,7 +38,7 @@ Type ssi to go to the beginning of the word "sit": >
 
     Lorem ipsum dolor [s]it amet, consectetur adipisicing elit
 <
-Type ; to go to the next match: >
+Type ; (or 's' again!) to go to the next match: >
 
     Lorem ipsum dolor sit amet, consectetur adipi[s]icing elit
 <
@@ -65,12 +65,18 @@ Sneak default NORMAL-mode mappings:
     S<Enter>                 | Repeat the last Sneak, in reverse direction.
     ;                        | Go to the [count]'th next match
     , or \                   | Go to the [count]'th previous match
+    s                        | Go to the [count]'th next match (see NOTE)
+    S                        | Go to the [count]'th previous match (see NOTE)
     {range}s{char}{char}     | Invoke |sneak-vertical-scope|
     {range}S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
                              | occurrence of {char}{char}
     {operator}Z{char}{char}  | Perform {operator} from the cursor to the 
                              | previous occurrence of {char}{char}
+
+    NOTE: s and S go to the next/previous match only immediately after
+          invoking Sneak; moving the cursor resets this behavior.
+          |sneak-clever-s|
 
 Sneak default VISUAL-mode mappings:
 
@@ -96,11 +102,6 @@ Sneak default VISUAL-mode mappings:
 (previous) match. Additional matches are highlighted until the cursor is
 moved. Works across multiple lines.
 
-Immediately after invoking Sneak, you can move to the next match by pressing
-'s', or the previous match by pressing 'S'. If you move the cursor or do
-some other action, then the next 's' invokes a new Sneak search. In that case,
-you can repeat the most recent Sneak search by pressing 's<Enter>'.
-
 [count]s enters |sneak-vertical-scope| mode.
 
 `;` and `,` repeat the last `s` and `S`. They also work correctly with `f` and `t`
@@ -113,8 +114,15 @@ behavior of [count]f and [count]t.
 
     nmap ? <Plug>SneakPrevious
 <
+                                                              *sneak-clever-s*
+Similar to the clever-f[3] plugin, immediately after invoking Sneak, you can
+move to the next match by simply pressing 's' (or 'S') again. If you instead
+move the cursor or do something else, then 's' starts a new Sneak search. In
+that case, you can repeat the most recent Sneak search by pressing 's<Enter>'
+or whatever (if any) key you mapped to <Plug>SneakNext.
+
 Sneak adds to the |jumplist| only on the initial invocation; so after moving
-around with ; and , you can easily go back via |CTRL-O| or |``|.
+around with ; and , (or s/S) you can easily go back via |CTRL-O| or |``|.
 
 s<Enter> ("s" followed by Enter) always repeats the last search, even if `;`
 and `,` were reset by `f` or `t`. This is especially useful for re-invoking
@@ -123,8 +131,11 @@ and `,` were reset by `f` or `t`. This is especially useful for re-invoking
 ------------------------------------------------------------------------------
 3.2 Commands                                                  *sneak-commands*
 
-Sneak provides commands for additional flexibility.
+NOTE: Sneak commands are deprecated and will be removed in version 2.0. Use
+Sneak <Plug> mappings instead, or if you need additional flexibility,
+call the |sneak#wrap()| and |sneak#rpt()| functions directly.
 
+NOTE: deprecated, see above.
 :Sneak[!] {max}
 :SneakBackward[!] {max}
                     Invoke Sneak and perform the search when {max} characters
@@ -138,6 +149,7 @@ Sneak provides commands for additional flexibility.
                     If [!] is given then |g:sneak#streak| is ignored and
                     "normal" Sneak is performed.
 
+NOTE: deprecated, see above.
 :SneakV[!] {max}
 :SneakVBackward[!] {max}
                     Same as :Sneak and :SneakBackward, but preserve the
@@ -275,6 +287,19 @@ g:sneak#streak = 0
 
     1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
 
+g:sneak#target_labels = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
+
+        List of 1-character "labels" to be used by streak-mode to decorate the
+        target locations.
+
+        Note: Sneak automatically removes invalid characters from this list.
+              The following keys are invalid:
+              - Any key mapped to <Plug>SneakForward or <Plug>SneakBackward
+                (because it is used for |sneak-clever-s|)
+              - Any key mapped to <Plug>SneakNext or <Plug>SneakPrevious
+              - <Esc>, <Tab>, <Space>, <Enter>, all of which have special
+                uses during streak-mode.
+
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*
 
@@ -331,9 +356,10 @@ Keep in mind, however, that motion mappings should absolutely be the
 least-friction mappings in your editor, because motion is the most common
 editor task. Remapping Sneak to something like `<leader>s` is not recommended.
 
-You can remap any Sneak feature (except the "text object" mappings) by 
-defining any of these <Plug> mappings in your |vimrc| as shown: >
+You can remap any Sneak feature by defining any of these <Plug> mappings in
+your |vimrc|: >
 
+    " 2-character Sneak (default)
     nmap ? <Plug>SneakForward
     nmap ? <Plug>SneakBackward
     nmap ? <Plug>SneakNext
@@ -342,19 +368,44 @@ defining any of these <Plug> mappings in your |vimrc| as shown: >
     xmap ? <Plug>VSneakBackward
     xmap ? <Plug>VSneakNext
     xmap ? <Plug>VSneakPrevious
+
+    " 1-character _inclusive_ Sneak (for enhanced 'f')
+    nmap ? <Plug>Sneakf
+    nmap ? <Plug>SneakF
+    xmap ? <Plug>Sneakf
+    xmap ? <Plug>SneakF
+    omap ? <Plug>Sneakf
+    omap ? <Plug>SneakF
+
+    " 1-character _exclusive_ Sneak (for enhanced 't')
+    nmap ? <Plug>Sneakt
+    nmap ? <Plug>SneakT
+    xmap ? <Plug>Sneakt
+    xmap ? <Plug>SneakT
+    omap ? <Plug>Sneakt
+    omap ? <Plug>SneakT
 <
 Here are some examples: >
 
-    nmap f       <Plug>SneakForward
-    xmap f       <Plug>VSneakForward
-    nmap F       <Plug>SneakBackward
-    xmap F       <Plug>VSneakBackward
-    nmap s       <Plug>SneakStreak
+    nmap <Space> <Plug>SneakForward
+    xmap <Space> <Plug>VSneakForward
+    nmap <Space> <Plug>SneakBackward
+    xmap <Space> <Plug>VSneakBackward
+    nmap <Space> <Plug>SneakStreak
 
     nmap <enter> <Plug>SneakNext
     xmap <enter> <Plug>VSneakNext
     nmap <bs>    <Plug>SneakPrevious
     xmap <bs>    <Plug>VSneakPrevious
+
+    " by default, Sneak does not touch 'f' or 't', so if you want
+    " 1-character Sneak for 'f' or 't', do the following.
+    nmap f <Plug>Sneakf
+    nmap F <Plug>SneakF
+    xmap f <Plug>Sneakf
+    xmap F <Plug>SneakF
+    omap f <Plug>Sneakf
+    omap F <Plug>SneakF
 <
 ==============================================================================
 5. Contributing                                           *sneak-contributing*
@@ -377,7 +428,7 @@ run Vim without any plugins except sneak.vim like this: >
 
 Author: Justin M. Keyes <justinkz+vim@gmail.com>
 
-Sneak was inspired by vim-seek[1] and vim-easymotion[2].
+Sneak was inspired by vim-seek[1], vim-easymotion[2], and clever-f[3].
 
 Tim Pope's plugin sources were used for reference and best practices.
 
@@ -385,6 +436,7 @@ easymotion.txt was used for the initial version of this document.
 
 [1] https://github.com/goldfeld/vim-seek
 [2] https://github.com/Lokaltog/vim-easymotion
+[3] https://github.com/rhysd/clever-f.vim
 
 ==============================================================================
 vim:tw=78:sw=4:ts=8:ft=help:norl:

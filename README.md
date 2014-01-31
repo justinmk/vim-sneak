@@ -4,7 +4,9 @@
 *Sneak* is a Vim plugin that enables you to move to any location specified by two characters. 
 It works across **multiple lines**; with **operators** (including **repeat** `.`);
 and in **visual mode**. Move to the next or previous match via `;`
-or `,`. Move to the *nth* match by prefixing `;` or `,` with a
+or `,` (*or* by pressing `s` again immediately after a Sneak-search, similar to
+[clever-f](https://github.com/rhysd/clever-f.vim)).
+Move to the *nth* match by prefixing `;` or `,` with a
 [**`[count]`**](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
 
 The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings.
@@ -26,12 +28,13 @@ characters:
 
 * Press `sab` to **move the cursor** immediately to the next instance of the text "ab".
     * Additional matches, if any, are highlighted until the cursor is moved.
-* Press `;` to go to the next match.
-* Press `3;` to skip to the third match from the current position.
-* Press `ctrl-o` or `` to go back to the starting point.
+* Press `s` *or* `;` to go to the next match.
+* Press `3s` *or* `3;` to skip to the third match from the current position.
+* Press `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'') to go back to the starting point.
     * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
       *only* on `s` invocation—not repeats—so you can 
-      abandon a trail of `;` or `,` by a single `ctrl-o` or ``.
+      abandon a trail of `;` or `,` by a single `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'').
+* Later on, press `s<Enter>` to repeat the last Sneak-search.
 
 Sneak can be **scoped** to a column of width 2×[number] by prefixing `s`
 with a number.
@@ -63,15 +66,13 @@ motion.
 
 Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
-  - move to any location with `s` followed by exactly two characters
+  - minimum of **3 keystrokes** (EasyMotion is at least 5)
   - move anywhere, even offscreen (unlike EasyMotion)
   - jump immediately to first match (unlike EasyMotion)
-  - jump back to the point of `s` invocation via `ctrl-o` or `` (backtick backtick)
+  - jump back to the point of `s` invocation via `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'')
     - only the initial invocation adds to the jumplist; repeat-motion
       via `;` or `,` does *not* add to the jumplist
-  - EasyMotion by default requires five (5) keystrokes (example: `,,fab`),
-    while the common case for Sneak is **three (3) keystrokes**.
-  - repeat the motion via `;` or `,` (unlike EasyMotion)
+  - repeat the motion (unlike EasyMotion)
   - does not break default behavior of `f t F T ; ,`
   - does not add noise to `/` history
   - *vertical scope* with `[count]s{char}{char}` restricts the search to 2× `count` size
@@ -119,32 +120,36 @@ This is why Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#
 * Sneak moves vertically
 * Sneak remembers the initial position in the Vim jumplist
   * This allows you to explore a trail of matches via `;`,
-    then return to the initial position via `ctrl-o` or ``
+    then return to the initial position via `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'')
 * Sneak highlights matches *only in the direction of your search* 
 
 #### How dare you remap `s`?
 
-You can specify any mapping for Sneak (see [help doc](doc/sneak.txt)).
+You can specify any mapping for Sneak (see [`:help sneak`](doc/sneak.txt)).
 
 #### How can I replace `f` with Sneak?
 
 ```
     nmap f <Plug>SneakForward
     nmap F <Plug>SneakBackward
-    xmap f <Plug>VSneakForward
-    xmap F <Plug>VSneakBackward
+    xmap f <Plug>SneakForward
+    xmap F <Plug>SneakBackward
+    omap f <Plug>SneakForward
+    omap F <Plug>SneakBackward
 ```
 
-#### How can I make `f` do a *one-character* Sneak?
+#### How can I replace `f` with *one-character* Sneak?
 
-Use the `:Sneak` and `:SneakBackward` commands.
+Sneak provides `<Plug>` convenience-mappings for 1-character-sneak.
+These mappings do *not* invoke streak-mode, even if you have it enabled.
 ```
-    nnoremap f :Sneak!         1<cr>
-    nnoremap F :SneakBackward! 1<cr>
-    xnoremap f :<c-u>SneakV!         1<cr>
-    xnoremap F :<c-u>SneakVBackward! 1<cr>
+    nmap f <Plug>Sneakf
+    nmap F <Plug>SneakF
+    xmap f <Plug>Sneakf
+    xmap F <Plug>SneakF
+    omap f <Plug>Sneakf
+    omap F <Plug>SneakF
 ```
-(Bang `!` prevents streak-mode even if you have set `g:sneak#streak = 1`)
 
 #### I want to use an "f-enhancement" plugin simultaneously with Sneak
 
