@@ -119,7 +119,8 @@ func! s:is_active_key(key)
     \ || "\<C-c>" == a:key
     \ || "\<Tab>" == a:key
     \ || "\<Space>" == a:key
-    \ || maparg(a:key, 'n') =~# '<Plug>V\?Sneak'
+    \ || maparg(a:key, 'n') =~# '<Plug>Sneak'
+    \ || maparg(a:key, 'x') =~# '<Plug>V\?Sneak'
 endf
 
 func! s:after()
