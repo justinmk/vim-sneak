@@ -23,9 +23,37 @@ func! sneak#util#isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
 endf
 
-func! sneak#util#getchar()
+func! s:getc()
   let c = getchar()
   return type(c) == type(0) ? nr2char(c) : c
+endf
+
+func! sneak#util#getchar()
+  let input = s:getc()
+  if !&iminsert
+    return input
+  endif
+  "a language keymap is activated, so input must be resolved to the mapped values.
+  let partial_keymap_seq = mapcheck(input, "l")
+  while partial_keymap_seq !=# ""
+    let full_keymap = maparg(input, "l")
+    if full_keymap ==# "" && len(input) >= 3 "HACK: assume there are no keymaps longer than 3.
+      return input
+    elseif full_keymap ==# partial_keymap_seq
+      return full_keymap
+    endif
+    let c = s:getc()
+    if c == "\<Esc>" || c == "\<CR>"
+      "if the short sequence has a valid mapping, return that.
+      if !empty(full_keymap)
+        return full_keymap
+      endif
+      return input
+    endif
+    let input .= c
+    let partial_keymap_seq = mapcheck(input, "l")
+  endwhile
+  return input
 endf
 
 "returns 1 if the string contains an uppercase char. [unicode-compatible]

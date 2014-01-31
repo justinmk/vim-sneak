@@ -741,6 +741,38 @@ Do:
 Expect:
   foo æfïïooæ ïoòôõïo ïïofoo fïxïooïo
 
+###########################################################
+# test language keymap
+
+Execute (activate language keymap):
+  set keymap=bulgarian-phonetic
+
+Given:
+  abcdef abcdef abcdef
+  абцдеф АБЦДЕФ абцдеф
+  абцдёё еёееёП ЯВЕРПО
+  абцдёё еёееёП ЯВЕРПО
+
+Do (search for multi-keymap):
+  se::e::x
+
+Expect:
+  abcdef abcdef abcdef
+  абцдеф АБЦДЕФ абцдеф
+  абцдё еёееёП ЯВЕРПО
+  абцдёё еёееёП ЯВЕРПО
+
+Do (repeat search for multi-keymap):
+  se::e::;x
+
+Expect:
+  abcdef abcdef abcdef
+  абцдеф АБЦДЕФ абцдеф
+  абцдёё еёееёП ЯВЕРПО
+  абцдё еёееёП ЯВЕРПО
+
+Execute (deactivate language keymap):
+  set keymap=
 
 ###########################################################
 # test sneak mapped to 'f' (instead of default 's')
@@ -764,7 +796,6 @@ Do (sneak 'f', then Vim default 't', then sneak 'f'):
 
 Expect:
   abcxef axcxef abcxef
-
 
 ###########################################################
 Execute (cleanup):

@@ -3,6 +3,7 @@
 
 *Sneak* is a Vim plugin that enables you to move to any location specified by two characters. 
 It works across **multiple lines**; with **operators** (including **repeat** `.`);
+with [keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap);
 and in **visual mode**. Move to the next or previous match via `;`
 or `,` (*or* by pressing `s` again immediately after a Sneak-search, similar to
 [clever-f](https://github.com/rhysd/clever-f.vim)).
@@ -70,6 +71,8 @@ motion.
 Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
   - minimum of **3 keystrokes** (EasyMotion is at least 5)
+  - Sneak supports [multibyte language keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)!
+    (see [issue #47](https://github.com/justinmk/vim-sneak/issues/47))
   - move anywhere, even offscreen (unlike EasyMotion)
   - jump immediately to first match (unlike EasyMotion)
   - jump back to the point of `s` invocation via `ctrl-o` or ``` `` ```

@@ -242,6 +242,14 @@ func! s:getnchars(n, mode)
       endif
     else
       let s .= c
+      if &iminsert && (v:version >= 703) && strwidth(s) >= a:n
+        "HACK: this can happen if the user entered multiple characters while we
+        "were waiting to resolve a multi-char keymap.
+        "example for keymap 'bulgarian-phonetic':
+        "    e:: => ё    | resolved, strwidth=1
+        "    eo  => eo   | unresolved, strwidth=2
+        break
+      endif
     endif
     redraw | echo '>'.s
   endfor
