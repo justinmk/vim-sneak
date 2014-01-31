@@ -248,6 +248,38 @@ Expect:
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
 ###########################################################
+# clever-s _not_ in streak-mode
+
+Given:
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+
+Do (clever-s):
+  sabsax
+
+Expect:
+  abcdef abcdef axbcdef
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+
+Do (clever-s):
+  sab3sax
+
+Expect:
+  abcdef abcdef abcdef
+  abcdef axbcdef abcdef
+  abcdef abcdef abcdef
+
+Do (clever-s):
+  sabsssssssSSax
+
+Expect:
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+  axbcdef abcdef abcdef
+
+###########################################################
 
 Given:
   abcdef abcdef abcdef
@@ -320,6 +352,30 @@ Do (SneakPrevious in visual-mode + streak-mode):
 Expect:
   abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+# sadly we must force-exit via <Space> because feedkeys() in do_streak()
+# breaks macros/Vader
+Do (clever-s, streak-mode):
+  sab\<Space>2six
+
+Expect:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  `=QWEOIJ/+     ~~~!!! ! { } abc AAaxab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (clever-s, visual-mode, streak-mode):
+  vsabsd
+
+Expect:
+  bc AAaab
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Do (clever-s, backwards clever-s, visual-mode, streak-mode):
+  jvsabsssZd
+
+Expect:
+  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+  bcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Execute (cleanup):
   let g:sneak#streak = 0

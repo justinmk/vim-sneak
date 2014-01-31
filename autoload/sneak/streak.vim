@@ -90,15 +90,16 @@ func! s:do_streak(s, st)
   call s:after()
 
   let v = sneak#util#isvisualop(a:st.op)
+  let mappedto = maparg(choice, v ? 'x' : 'n')
 
   if choice == "\<Tab>" && overflow[0] > 0
     call cursor(overflow[0], overflow[1])
     return 1 "overflow => decorate next N matches
   elseif -1 != index(["\<Esc>", "\<Space>", "\<CR>"], choice)
     return 0 "exit streak-mode.
-  elseif maparg(choice, v ? 'x' : 'n') =~# '<Plug>V\?Sneak.\?\(Fwd\|Next\|Forward\)'
+  elseif mappedto =~# '<Plug>V\?Sneak.\?\(Fwd\|Next\|Forward\)'
     call sneak#rpt(v, 1, 0)
-  elseif maparg(choice, v ? 'x' : 'n') =~# '<Plug>V\?Sneak.\?\(Bck\|Previous\|Backward\)'
+  elseif mappedto =~# '<Plug>V\?Sneak.\?\(Bck\|Previous\|Backward\)'
     call sneak#rpt(v, 1, 1)
   elseif !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
