@@ -43,6 +43,16 @@ func! s:placematch(c, pos)
   exec "syntax match SneakStreakTarget '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."c' conceal cchar=".a:c
 endf
 
+func! s:decorate_statusline() "highlight statusline to indicate streak-mode.
+  highlight! link StatusLine SneakStreakStatusLine
+  " redraw!
+endf
+
+func! s:restore_statusline() "restore normal statusline highlight.
+  highlight! link StatusLine NONE
+  " redraw!
+endf
+
 "TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
 func! sneak#streak#to(s, st)
   while s:do_streak(a:s, a:st) | endwhile
@@ -129,6 +139,7 @@ func! s:after()
   "remove temporary highlight links
   if !empty(s:orig_hl_conceal) | exec 'hi! link Conceal '.s:orig_hl_conceal | else | hi! link Conceal NONE | endif
   if !empty(s:orig_hl_sneaktarget) | exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget | else | hi! link SneakPluginTarget NONE | endif
+  call s:restore_statusline()
   let &syntax=s:syntax_orig
 endf
 
@@ -150,6 +161,8 @@ func! s:before()
   hi! link Conceal SneakStreakTarget
   "set temporary link to hide the sneak search targets
   hi! link SneakPluginTarget SneakStreakMask
+
+  call s:decorate_statusline()
 endf
 
 "we must do this because:

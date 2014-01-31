@@ -33,6 +33,10 @@ if 0 == hlID("SneakStreakTarget")
   highlight SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=bold
 endif
 
+if 0 == hlID("SneakStreakStatusLine")
+  highlight link SneakStreakStatusLine SneakStreakTarget
+endif
+
 if hlexists('Cursor')
   highlight link SneakStreakCursor Cursor
 else
