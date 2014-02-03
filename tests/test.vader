@@ -156,6 +156,23 @@ Expect:
   Ringo Starr 1940mm
   Pete Best 1941
 
+Do (delete [count]):
+  d3zar
+
+Expect:
+  arr 1940mm
+  Pete Best 1941
+
+Do (delete ;]):
+  dzar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  d;
+
+Expect:
+  arrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
 Do (change):
   llczar
 
@@ -171,6 +188,23 @@ Do (change backwards):
 Expect:
   Paul McCartney 1942
   George Hngo Starr 1940mm
+  Pete Best 1941
+
+Do (change [count]):
+  c3zar
+
+Expect:
+  arr 1940mm
+  Pete Best 1941
+
+Do (change ;):
+  czarfoo\<Esc>l
+  :\<C-U>doautocmd CursorMoved\<CR>
+  c;bar
+
+Expect:
+  foobararrison 1943mmdd
+  Ringo Starr 1940mm
   Pete Best 1941
 
 Do (yank):
@@ -189,6 +223,17 @@ Expect:
   Paul McCartney 1942
   George Haarrison 1943mmdd
   Rirrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (yank [count]):
+  y3zarP
+
+Expect:
+  Paul McCartney 1942
+  George Harrison 1943mmdd
+  Ringo StPaul McCartney 1942
+  George Harrison 1943mmdd
   Ringo Starr 1940mm
   Pete Best 1941
 
@@ -266,6 +311,49 @@ Do (repeat backwards delete operation twice / issue #7):
 Expect:
   Paul McCt
   Pete Best 1941
+
+###########################################################
+# [count]repeat and repeat [count]op
+
+Given:
+  Paul McCartney 1942
+  George Harrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Babbar 1941
+
+Do (repeat [count] delete operation):
+  2dzar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  ar 1941
+
+Do (repeat [count] delete operation):
+  2czarfoo\<Esc>l
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  foofooar 1941
+
+Do ([count]repeat delete):
+  dzar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  2.
+
+Expect:
+  arr 1940mm
+  Pete Babbar 1941
+
+Do ([count]repeat change):
+  czarfoo\<Esc>l
+  :\<C-U>doautocmd CursorMoved\<CR>
+  2.
+
+Expect:
+  foofooarr 1940mm
+  Pete Babbar 1941
 
 ###########################################################
 

@@ -85,9 +85,9 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   call s.init(s:opt, a:input, a:repeatmotion, a:reverse)
   let streak_mode = 0
 
-  " [count] means 'skip this many' (_only_ on repeat-motion).
+  " [count] means 'skip this many' (_only_ for operators and repeat-motion).
   "   sanity check: max out at 999, to avoid searchpos() OOM.
-  let skip = a:repeatmotion ? min([999, a:count]) : 0
+  let skip = (!empty(a:op) || a:repeatmotion) ? min([999, a:count]) : 0
 
   let l:gt_lt = a:reverse ? '<' : '>'
   let l:bounds = deepcopy(a:bounds) " [left_bound, right_bound]
@@ -95,7 +95,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   let l:scope_pattern = ''
   let l:match_bounds  = ''
 
-  "scope to a column of width 2*(v:count1) _unless_ this is a repeat-motion.
+  "scope to a column of width 2*(v:count1) _except_ for operators and repeat-motion.
   if ((!skip && a:count > 1) || max(l:bounds) > 0) && (empty(a:op) || sneak#util#isvisualop(a:op))
     " use provided bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
@@ -135,8 +135,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     endif
   endif
 
-    "jump to the first match, or exit
-    for i in range(1, max([1, skip]))
+    for i in range(1, max([1, skip])) "jump to the [count]th match
       let matchpos = s.dosearch()
       if 0 == max(matchpos)
         break
@@ -279,6 +278,8 @@ nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', v:count1, 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', v:count1, 1)<cr>
 xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 0)<cr>
 xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 1)<cr>
+onoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt(v:operator, v:count1, 0)<cr>
+onoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt(v:operator, v:count1, 1)<cr>
 
 if s:opt.textobject_z
   omap z  <Plug>Sneak_s
@@ -311,14 +312,25 @@ if !hasmapto('<Plug>SneakBackward') && !hasmapto('<Plug>Sneak_S', 'n') && mapche
   nmap S <Plug>Sneak_S
 endif
 
-if !hasmapto('<Plug>SneakNext') && mapcheck(';', 'n') ==# ''
+if !hasmapto('<Plug>SneakNext', 'n') && mapcheck(';', 'n') ==# ''
   nmap ; <Plug>SneakNext
 endif
-if !hasmapto('<Plug>SneakPrevious')
+if !hasmapto('<Plug>SneakPrevious', 'n')
   if mapcheck(',', 'n') ==# ''
     nmap , <Plug>SneakPrevious
   elseif mapcheck('\', 'n') ==# '' || mapcheck('\', 'n') ==# ','
     nmap \ <Plug>SneakPrevious
+  endif
+endif
+
+if !hasmapto('<Plug>SneakNext', 'o') && mapcheck(';', 'o') ==# ''
+  omap ; <Plug>SneakNext
+endif
+if !hasmapto('<Plug>SneakPrevious', 'o')
+  if mapcheck(',', 'o') ==# ''
+    omap , <Plug>SneakPrevious
+  elseif mapcheck('\', 'o') ==# '' || mapcheck('\', 'o') ==# ','
+    omap \ <Plug>SneakPrevious
   endif
 endif
 
