@@ -1,3 +1,13 @@
+if v:version >= 703
+  func! sneak#util#strlen(s)
+    return strwidth(a:s)
+  endf
+else
+  func! sneak#util#strlen(s)
+    return len(a:s)
+  endf
+endif
+
 func! sneak#util#isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
 endf

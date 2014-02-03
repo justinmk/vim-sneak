@@ -1,4 +1,4 @@
-*sneak.txt*  motion improved - Version 1.6.2
+*sneak.txt*  motion improved - Version 1.7.0
 
                     Sneak - the missing motion for Vim
 
@@ -90,6 +90,8 @@ Sneak default VISUAL-mode mappings:
     Z<Enter>                 | Repeat the last Sneak, in reverse direction.
     ;                        | Go to the [count]'th next match
     , or \                   | Go to the [count]'th previous match
+    s                        | Go to the [count]'th next match (NOTE above)
+    S                        | Go to the [count]'th previous match (NOTE above)
 
 
 ==============================================================================
@@ -133,7 +135,7 @@ and `,` were reset by `f` or `t`. This is especially useful for re-invoking
 
 NOTE: Sneak commands are deprecated and will be removed in version 2.0. Use
 Sneak <Plug> mappings instead, or if you need additional flexibility,
-call the |sneak#wrap()| and |sneak#rpt()| functions directly.
+call the |sneak#wrap()| or |sneak#to()| functions directly.
 
 NOTE: deprecated, see above.
 :Sneak[!] {max}
@@ -168,6 +170,9 @@ work in visual mode as they do in normal mode.
 Use `z` for operations; for example, `dzab` deletes from the cursor to the next
 instance of "ab". `dZab` deletes backwards to the previous instance.
 `czab` `cZab` `yzab` and `yZab` also work as expected.
+
+You can easily map to something other than the default "z" for
+operator-pending behavior. |sneak-mappings|
 
 Repeat the operation with |.|
 
@@ -263,10 +268,10 @@ g:sneak#t_reset = 1
 
 g:sneak#textobject_z = 1
 
-    0 : Disables "operator" support, so Sneak will not map {operator}z
+    0 : Prevent the default {operator}z mapping. You can map to something
+        else, see |sneak-mappings|.
 
-    1 : Enables "operator" support, so operations like dzab, dZab, 
-        czab, cZab, yzab, and yZab invoke Sneak.
+    1 : Allow the default {operator}z mapping.
 
 g:sneak#use_ic_scs = 0
 
@@ -294,8 +299,9 @@ g:sneak#target_labels = "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM"
 
         Note: Sneak automatically removes invalid characters from this list.
               The following keys are invalid:
-              - Any key mapped to <Plug>SneakForward or <Plug>SneakBackward
-                (because it is used for |sneak-clever-s|)
+              - Any key mapped to <Plug>Sneak_s, <Plug>Sneak_S, <Plug>Sneak_f,
+                <Plug>Sneak_F, <Plug>Sneak_t, or <Plug>Sneak_T
+                (because they are used for |sneak-clever-s|)
               - Any key mapped to <Plug>SneakNext or <Plug>SneakPrevious
               - <Esc>, <Tab>, <Space>, <Enter>, all of which have special
                 uses during streak-mode.
@@ -355,43 +361,51 @@ decreasing elegance):
 Sneak provides <Plug> mappings for you to specify alternative key maps.
 Keep in mind, however, that motion mappings should absolutely be the
 least-friction mappings in your editor, because motion is the most common
-editor task. Remapping Sneak to something like `<leader>s` is not recommended.
+editor task; mapping Sneak to something like <leader>s is not recommended.
 
 You can remap any Sneak feature by defining any of these <Plug> mappings in
 your |vimrc|: >
 
     " 2-character Sneak (default)
-    nmap ? <Plug>SneakForward
-    nmap ? <Plug>SneakBackward
+    nmap ? <Plug>Sneak_s
+    nmap ? <Plug>Sneak_S
+    " visual-mode
+    xmap ? <Plug>Sneak_s
+    xmap ? <Plug>Sneak_S
+
+    " explicit repeat (as opposed to automatic 'clever-s' repeat)
     nmap ? <Plug>SneakNext
     nmap ? <Plug>SneakPrevious
-    xmap ? <Plug>VSneakForward
-    xmap ? <Plug>VSneakBackward
     xmap ? <Plug>VSneakNext
     xmap ? <Plug>VSneakPrevious
 
     " 1-character _inclusive_ Sneak (for enhanced 'f')
     nmap ? <Plug>Sneak_f
     nmap ? <Plug>Sneak_F
+    " visual-mode
     xmap ? <Plug>Sneak_f
     xmap ? <Plug>Sneak_F
+    " operator-pending-mode
     omap ? <Plug>Sneak_f
     omap ? <Plug>Sneak_F
 
     " 1-character _exclusive_ Sneak (for enhanced 't')
     nmap ? <Plug>Sneak_t
     nmap ? <Plug>Sneak_T
+    " visual-mode
     xmap ? <Plug>Sneak_t
     xmap ? <Plug>Sneak_T
+    " operator-pending-mode
     omap ? <Plug>Sneak_t
     omap ? <Plug>Sneak_T
 <
 Here are some examples: >
 
-    nmap <Space> <Plug>SneakForward
-    xmap <Space> <Plug>VSneakForward
-    nmap <Space> <Plug>SneakBackward
-    xmap <Space> <Plug>VSneakBackward
+    nmap <leader>s <Plug>Sneak_s
+    nmap <leader>S <Plug>Sneak_S
+    xmap <leader>s <Plug>Sneak_s
+    xmap <leader>S <Plug>Sneak_S
+
     nmap <Space> <Plug>SneakStreak
 
     nmap <enter> <Plug>SneakNext

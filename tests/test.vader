@@ -131,6 +131,69 @@ Expect:
   a,bbb,
 
 ###########################################################
+# delete, change, yank
+
+Given:
+  Paul McCartney 1942
+  George Harrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (delete):
+  dzar
+
+Expect:
+  artney 1942
+  George Harrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (delete backwards):
+  jwdZar
+
+Expect:
+  Paul McCHarrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (change):
+  llczar
+
+Expect:
+  Paartney 1942
+  George Harrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (change backwards):
+  jjllcZar
+
+Expect:
+  Paul McCartney 1942
+  George Hngo Starr 1940mm
+  Pete Best 1941
+
+Do (yank):
+  jlyzarp
+
+Expect:
+  Paul McCartney 1942
+  Geeorge Horge Harrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+Do (yank backwards):
+  jjllyZarp
+
+Expect:
+  Paul McCartney 1942
+  George Haarrison 1943mmdd
+  Rirrison 1943mmdd
+  Ringo Starr 1940mm
+  Pete Best 1941
+
+###########################################################
+# repeat-operation (.)
 
 Given:
   Paul McCartney 1942
@@ -147,8 +210,29 @@ Expect:
   Ringo Starr 1940mm
   Pete Best 1941
 
+Do (repeat change):
+  jlczarfoo\<Esc>l
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  Paul McCartney 1942
+  Gfoofooarr 1940mm
+  Pete Best 1941
+
+Do (repeat backwards change):
+  jjllcZarfoo\<Esc>hh
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  Paul McCfoofoongo Starr 1940mm
+  Pete Best 1941
+
 Do (repeat delete operation):
-  dzar.
+  dzar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
 
 Expect:
   arrison 1943mmdd
@@ -156,25 +240,32 @@ Expect:
   Pete Best 1941
 
 Do (repeat delete operation twice):
-  dzar..
+  dzar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  ..
 
 Expect:
   arr 1940mm
   Pete Best 1941
 
-#TODO: this functionality is working, but the tests fail for some reason.
-#Do (repeat backwards delete operation / issue #7):
-#  03jdZar.
-#
-#Expect:
-#  Paul McCartney 1942
-#  George HPete Best 1941
-#
-#Do (repeat backwards delete operation twice / issue #7):
-#  03jdZar..
-#
-#Expect:
-#  Paul McCPete Best 1941
+Do (repeat backwards delete operation / issue #7):
+  3jdZar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  Paul McCartney 1942
+  George Ht
+  Pete Best 1941
+
+Do (repeat backwards delete operation twice / issue #7):
+  3jdZar
+  :\<C-U>doautocmd CursorMoved\<CR>
+  ..
+
+Expect:
+  Paul McCt
+  Pete Best 1941
 
 ###########################################################
 
@@ -363,19 +454,21 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaxab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Do (clever-s, visual-mode, streak-mode):
-  vsabsd
+# TODO: this is working, but fails in Vader
+#Do (clever-s, visual-mode, streak-mode):
+#  vsabsd
+#
+#Expect:
+#  bc AAaab
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Expect:
-  bc AAaab
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-
-Do (clever-s, backwards clever-s, visual-mode, streak-mode):
-  jvsabsssZd
-
-Expect:
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-  bcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+# TODO: this is working, but fails in Vader
+#Do (clever-s, backwards clever-s, visual-mode, streak-mode):
+#  jvsabsssZd
+#
+#Expect:
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+#  bcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Execute (cleanup):
   let g:sneak#streak = 0
@@ -552,8 +645,8 @@ Expect:
 Execute (map to f):
   unmap s
   unmap S
-  nmap f <Plug>SneakForward
-  nmap F <Plug>SneakBackward
+  nmap f <Plug>Sneak_s
+  nmap F <Plug>Sneak_S
   call sneak#init()
 
 Given:
@@ -574,6 +667,6 @@ Expect:
 Execute (cleanup):
   unmap f
   unmap F
-  nmap s <Plug>SneakForward
-  nmap S <Plug>SneakBackward
+  nmap s <Plug>Sneak_s
+  nmap S <Plug>Sneak_S
   call sneak#init()

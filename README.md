@@ -130,12 +130,12 @@ You can specify any mapping for Sneak (see [`:help sneak`](doc/sneak.txt)).
 #### How can I replace `f` with Sneak?
 
 ```
-    nmap f <Plug>SneakForward
-    nmap F <Plug>SneakBackward
-    xmap f <Plug>SneakForward
-    xmap F <Plug>SneakBackward
-    omap f <Plug>SneakForward
-    omap F <Plug>SneakBackward
+    nmap f <Plug>Sneak_s
+    nmap F <Plug>Sneak_S
+    xmap f <Plug>Sneak_s
+    xmap F <Plug>Sneak_S
+    omap f <Plug>Sneak_s
+    omap F <Plug>Sneak_S
 ```
 
 #### How can I replace `f` and/or `t` with *one-character* Sneak?
