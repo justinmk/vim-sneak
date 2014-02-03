@@ -53,6 +53,23 @@ func! s:restore_statusline() "restore normal statusline highlight.
   " redraw!
 endf
 
+" the indentLine plugin uses the Conceal group as well, to avoid
+" highlighting stuff we don't want to, we need to disable it temporarily
+" and restore its state afterwards
+func! s:disable_indentLine()
+  if exists('b:indentLine_enabled') && b:indentLine_enabled
+    IndentLinesToggle
+    let s:indentLine_state_toggled = 1
+  endif
+endf
+
+func! s:restore_indentLine()
+  if exists('s:indentLine_state_toggled') && s:indentLine_state_toggled
+    IndentLinesToggle
+    let s:indentLine_state_toggled = 0
+  endif
+endf
+
 "TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
 func! sneak#streak#to(s, st)
   while s:do_streak(a:s, a:st) | endwhile
@@ -140,6 +157,7 @@ func! s:after()
   if !empty(s:orig_hl_conceal) | exec 'hi! link Conceal '.s:orig_hl_conceal | else | hi! link Conceal NONE | endif
   if !empty(s:orig_hl_sneaktarget) | exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget | else | hi! link SneakPluginTarget NONE | endif
   call s:restore_statusline()
+  call s:restore_indentLine()
   let &syntax=s:syntax_orig
 endf
 
@@ -154,6 +172,8 @@ func! s:before()
 
   let s:syntax_orig=&syntax
   setlocal syntax=OFF
+
+  call s:disable_indentLine()
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
   let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakPluginTarget')
