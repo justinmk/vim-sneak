@@ -105,7 +105,7 @@ func! s:do_streak(s, st)
   if choice == "\<Tab>" && overflow[0] > 0
     call cursor(overflow[0], overflow[1])
     return 1 "overflow => decorate next N matches
-  elseif -1 != index(["\<Esc>", "\<Space>", "\<CR>"], choice)
+  elseif -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>"], choice)
     return 0 "exit streak-mode.
   elseif mappedto =~# '<Plug>V\?Sneak.\?\(Fwd\|Next\|Forward\)'
     call sneak#rpt(v, 1, 0)
