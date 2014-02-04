@@ -107,10 +107,6 @@ func! s:do_streak(s, st)
     return 1 "overflow => decorate next N matches
   elseif -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>"], choice)
     return 0 "exit streak-mode.
-  elseif mappedto =~# '<Plug>V\?Sneak.\?\(Fwd\|Next\|Forward\)'
-    call sneak#rpt(v, 1, 0)
-  elseif mappedto =~# '<Plug>V\?Sneak.\?\(Bck\|Previous\|Backward\)'
-    call sneak#rpt(v, 1, 1)
   elseif !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
   else "valid target was selected

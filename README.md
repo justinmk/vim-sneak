@@ -12,14 +12,14 @@ Move to the *nth* match by prefixing `;` or `,` with a
 The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings.
 See [`:help sneak`](doc/sneak.txt) for full options and details.
 
-**New (Experimental) Option:** Use Sneak as an elegant, streamlined alternative
+**New Option:** Use Sneak as an elegant, streamlined alternative
 to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 
     let g:sneak#streak = 1
 
-<a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
-
 ### Usage (Default)
+
+<a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
 Sneak is invoked with `s` (sneak forward) or `S` (sneak backwards), followed by exactly two 
 characters:
@@ -46,8 +46,11 @@ with a number.
 Sneak is invoked with [**operators**](http://vimdoc.sourceforge.net/htmldoc/motion.html#operator)
 via `z` (because `s` is taken by surround.vim).
 
-* Press `dzqt` to delete from the cursor up to the next instance of "qt".
-    * Press `.` to repeat the `dzqt` operation.
+* Press `3dzqt` to delete up to the *third* instance of "qt".
+    * Press `.` to repeat the `3dzqt` operation.
+    * Press `2.` to repeat twice.
+    * Press `d;` to delete up to the next match.
+    * Press `4d;` to delete up to the *fourth* next match.
 * Press `gUz\}` to upper-case the text from the cursor until the next instance
   of the literal text `\}`
     * Press `.` to repeat the `gUz\}` operation.

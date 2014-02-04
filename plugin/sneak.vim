@@ -57,7 +57,7 @@ func! sneak#wrap(op, input_length, reverse, streak) range abort
   if (v || empty(a:op)) && s:is_sneaking() && is_similar_invocation " 's' goes to next match
     call sneak#rpt(a:op, l:count, a:reverse)
   else " 's' invokes new search
-    call sneak#to(a:op, s:getnchars(a:input_length, a:op), l:count, 0, a:reverse, [0,0], a:streak)
+    call sneak#to(a:op, s:getnchars(a:input_length, a:op), l:count, 0, a:reverse, a:streak)
   endif
 endf
 
@@ -69,35 +69,30 @@ func! sneak#rpt(op, count, reverse) range abort
   endif
 
   call sneak#to(a:op, s:st.input, a:count, 1,
-        \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.bounds, 0)
+        \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), 0)
 endf
 
-func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range abort "{{{
+func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   if empty(a:input) "user canceled
     redraw | echo '' | return
   endif
 
-  "highlight tasks:
-  "  - highlight actual matches at or below (above) the cursor position
-  "  - highlight the vertical 'tunnel' that the search is scoped-to
-
+  let is_op = !empty(a:op) && !sneak#util#isvisualop(a:op) "operator-pending invocation
   let s = g:sneak#search#instance
   call s.init(s:opt, a:input, a:repeatmotion, a:reverse)
-  let streak_mode = 0
 
-  " [count] means 'skip this many' (_only_ for operators and repeat-motion).
+  " [count] means 'skip this many' _only_ for operators and repeat-motion.
   "   sanity check: max out at 999, to avoid searchpos() OOM.
-  let skip = (!empty(a:op) || a:repeatmotion) ? min([999, a:count]) : 0
+  let skip = (is_op || a:repeatmotion) ? min([999, a:count]) : 0
 
   let l:gt_lt = a:reverse ? '<' : '>'
-  let l:bounds = deepcopy(a:bounds) " [left_bound, right_bound]
-  " pattern used to highlight the vertical 'scope'
-  let l:scope_pattern = ''
+  let l:bounds = a:repeatmotion ? s:st.bounds : [0,0] " [left_bound, right_bound]
+  let l:scope_pattern = '' " pattern used to highlight the vertical 'scope'
   let l:match_bounds  = ''
 
   "scope to a column of width 2*(v:count1) _except_ for operators and repeat-motion.
-  if ((!skip && a:count > 1) || max(l:bounds) > 0) && (empty(a:op) || sneak#util#isvisualop(a:op))
-    " use provided bounds if any, otherwise derive bounds from range
+  if ((!skip && a:count > 1) || max(l:bounds) > 0) && !is_op
+    " use current bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
       "these are the _logical_ bounds highlighted in 'scope' mode
       let l:bounds[0] =  max([0, (virtcol('.') - a:count - 1)])
@@ -124,15 +119,13 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
     call s:ft_hook()
   endif
 
-  if !empty(a:op) && !sneak#util#isvisualop(a:op) "operator-pending invocation
-    if a:op !=# 'y'
+  if is_op && a:op !=# 'y'
       let plugmap = "\<Plug>Sneak_"
       "TODO: account for 't'
       let mapsuffix = (2 == sneak#util#strlen(a:input)) ? "s" : "f"
       let mapsuffix = a:reverse ? toupper(mapsuffix) : mapsuffix
       let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
       silent! call repeat#set(a:op.plugmap.mapsuffix.a:input.change)
-    endif
   endif
 
     for i in range(1, max([1, skip])) "jump to the [count]th match
@@ -141,11 +134,6 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
         break
       endif
     endfor
-
-    if 2 == a:streak || (a:streak && s:opt.streak)
-      "enter streak-mode iff there are >=2 _additional_ matches.
-      let streak_mode = s.hasmatches(2)
-    endif
 
     "if the user was in visual mode, extend the selection.
     if sneak#util#isvisualop(a:op)
@@ -173,20 +161,22 @@ func! sneak#to(op, input, count, repeatmotion, reverse, bounds, streak) range ab
   let s.match_pattern .= l:restrict_top_bot
   let l:curln_pattern  = l:match_bounds.'\%'.l:curlin.'l\%'.l:gt_lt.l:curcol.'v'
 
+  "highlight the vertical 'tunnel' that the search is scoped-to
   if max(l:bounds) > 0 "perform the scoped highlight...
     let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern, 1, get(w:, 'sneak_sc_hl', -1))
   endif
 
   call s:attach_autocmds()
 
-  "perform the match highlight...
+  "highlight actual matches at or below the cursor position
   "  - store in w: because matchadd() highlight is per-window.
   "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search),
         \ 2, get(w:, 'sneak_hl_id', -1))
 
-  if streak_mode && 0 == max(l:bounds) "vertical-scope-mode takes precedence over streak-mode.
+  "enter streak-mode iff there are >=2 _additional_ on-screen matches.
+  if (2 == a:streak || (a:streak && s:opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
     call sneak#streak#to(s, s:st)
   endif
 
@@ -239,8 +229,7 @@ func! s:getnchars(n, mode)
   let s = ''
   echo '>'
   for i in range(1, a:n)
-    "preserve existing selection
-    if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif
+    if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
     let c = sneak#util#getchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
       return ""
@@ -260,18 +249,18 @@ func! s:getnchars(n, mode)
 endf
 
 " DEPRECATED: these four commands will be removed in v2.0
-command! -bar -bang -nargs=1 Sneak          call sneak#to('', <sid>getnchars(<args>, ''), v:count1, 0, 0, [0,0], <bang>1)
-command! -bar -bang -nargs=1 SneakBackward  call sneak#to('', <sid>getnchars(<args>, ''), v:count1, 0, 1, [0,0], <bang>1)
-command! -bar -bang -nargs=1 SneakV         call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), max([1, v:prevcount]), 0, 0, [0,0], <bang>1)
-command! -bar -bang -nargs=1 SneakVBackward call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), max([1, v:prevcount]), 0, 1, [0,0], <bang>1)
+command! -bar -bang -nargs=1 Sneak          call sneak#to('', <sid>getnchars(<args>, ''), v:count1, 0, 0, <bang>1)
+command! -bar -bang -nargs=1 SneakBackward  call sneak#to('', <sid>getnchars(<args>, ''), v:count1, 0, 1, <bang>1)
+command! -bar -bang -nargs=1 SneakV         call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), max([1, v:prevcount]), 0, 0, <bang>1)
+command! -bar -bang -nargs=1 SneakVBackward call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), max([1, v:prevcount]), 0, 1, <bang>1)
 
 " 2-char sneak
 nnoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap('', 2, 0, 1)<cr>
 nnoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap('', 2, 1, 1)<cr>
 xnoremap <silent> <Plug>Sneak_s <esc>:<c-u>call sneak#wrap(visualmode(), 2, 0, 1)<cr>
 xnoremap <silent> <Plug>Sneak_S <esc>:<c-u>call sneak#wrap(visualmode(), 2, 1, 1)<cr>
-onoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap(v:operator, 2, 0, 0)<cr>
-onoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(v:operator, 2, 1, 0)<cr>
+onoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap(v:operator, 2, 0, 1)<cr>
+onoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(v:operator, 2, 1, 1)<cr>
 
 " explicit repeat (as opposed to 'clever-s' feature)
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', v:count1, 0)<cr>
@@ -302,8 +291,8 @@ xnoremap <silent> <Plug>Sneak_T <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0
 onoremap <silent> <Plug>Sneak_t      :<c-u>call sneak#wrap(v:operator, 1, 0, 0)<cr>
 onoremap <silent> <Plug>Sneak_T      :<c-u>call sneak#wrap(v:operator, 1, 1, 0)<cr>
 
-nnoremap <Plug>SneakStreak :<c-u>call sneak#to('', <sid>getnchars(2, ''), v:count1, 0, 0, [0,0], 2)<cr>
-nnoremap <Plug>SneakStreakBackward :<c-u>call sneak#to('', <sid>getnchars(2, ''), v:count1, 0, 1, [0,0], 2)<cr>
+nnoremap <Plug>SneakStreak :<c-u>call sneak#to('', <sid>getnchars(2, ''), v:count1, 0, 0, 2)<cr>
+nnoremap <Plug>SneakStreakBackward :<c-u>call sneak#to('', <sid>getnchars(2, ''), v:count1, 0, 1, 2)<cr>
 
 if !hasmapto('<Plug>SneakForward') && !hasmapto('<Plug>Sneak_s', 'n') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>Sneak_s

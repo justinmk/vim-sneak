@@ -1,8 +1,11 @@
 Execute (Clean up test environment):
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious
+  silent! unmap f
+  silent! unmap t
   let mapleader = ','
   let g:sneak#streak = 0
+  let g:sneak#use_ic_scs = 0
   call sneak#init()
 
 ###########################################################
@@ -476,6 +479,7 @@ Expect:
   abcdef abcdef abcdef
 
 ###########################################################
+# streak-mode
 
 Execute (streak-mode):
   let g:sneak#streak = 1
@@ -502,38 +506,31 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Do (SneakNext in streak-mode):
-  sab;x
+#TODO: feedkeys() in do_streak() breaks macros/Vader
+#Do (SneakNext in streak-mode):
+#  sab;x
+#Expect:
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+#  `=QWEOIJ/+     ~~~!!! ! { } bc AAaab
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+#Do (SneakPrevious in streak-mode):
+#  jsab\x
+#Expect:
+#  abcdef ``=2Bd-a3/+ bCDef ``=2Bd-a3/+
+#  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+#Do (SneakNext in visual-mode + streak-mode):
+#  vsab;x
+#Expect:
+#  bc AAaab
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+#Do (SneakPrevious in visual-mode + streak-mode):
+#  jvsab\x
+#Expect:
+#  abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab
+#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Expect:
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-  `=QWEOIJ/+     ~~~!!! ! { } bc AAaab
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-
-Do (SneakPrevious in streak-mode):
-  jsab\x
-
-Expect:
-  abcdef ``=2Bd-a3/+ bCDef ``=2Bd-a3/+
-  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-
-Do (SneakNext in visual-mode + streak-mode):
-  vsab;x
-
-Expect:
-  bc AAaab
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-
-Do (SneakPrevious in visual-mode + streak-mode):
-  jvsab\x
-
-Expect:
-  abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab
-  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-
-# sadly we must force-exit via <Space> because feedkeys() in do_streak()
-# breaks macros/Vader
+# force-exit via <Space> because feedkeys() in do_streak() breaks macros/Vader
 Do (clever-s, streak-mode):
   sab\<Space>2six
 
@@ -557,6 +554,24 @@ Expect:
 #Expect:
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 #  bcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
+
+Given:
+  | Option     | Type    | Default | Description                                    |
+  | --         | --      | --      | --                                             |
+  | threads    | Fixnum  | 1       | number of threads in the thread pool           |
+  | queues     | Fixnum  | 1       | number of concurrent queues                    |
+  | queue_size | Fixnum  | 1000    | size of each queue                             |
+  | interval   | Numeric | 0       | dispatcher interval for batch processing       |
+  | batch      | Boolean | false   | enables batch processing mode                  |
+  | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
+  | logger     | Logger  | nil     | logger instance for debug logs                 |
+
+Do (delete + streak):
+  dznuj
+
+Expect:
+  number of maximum items to be assigned at once |
+  | logger     | Logger  | nil     | logger instance for debug logs                 |
 
 Execute (cleanup):
   let g:sneak#streak = 0
