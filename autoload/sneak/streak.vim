@@ -153,7 +153,7 @@ func! s:before()
   set conceallevel=2
 
   let s:syntax_orig=&syntax
-  setlocal syntax=OFF
+  syntax clear
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
   let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakPluginTarget')
