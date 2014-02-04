@@ -212,7 +212,7 @@ Streak-mode:
         - as always, you can reach folded/off-screen matches with |;| and |,|
     - automatically jumps to the first match
         - press <Space> or <Esc> to escape streak-mode
-        - press <Tab> to skip to the next 52 matches
+        - press <Tab> to skip to the next 56 matches
         - press any key that is _not_ displayed as a target label to exit
           streak-mode and perform that key's normal-mode function
     - can be repeated at any time with s<Enter>

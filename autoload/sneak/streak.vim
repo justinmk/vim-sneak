@@ -25,8 +25,8 @@
 "   - if no visible matches, does not invoke streak-mode
 "   - there is no 'grouping'
 "     - this minimizes the steps for the common case
-"     - If your search has >52 matches, press <tab> to jump to the 53rd match
-"       and highlight the next 52 matches.
+"     - If your search has >56 matches, press <tab> to jump to the 57th match
+"       and label the next 56 matches.
 " 
 " cf. EASYMOTION:
 "   - because sneak targets 2 chars, there is never a problem discerning
@@ -34,6 +34,7 @@
 "   - https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
 "     - easymotion edits the buffer, plans to create a new buffer
 "     - "the current way of highligthing is insanely slow"
+"   - sneak handles long lines https://github.com/Lokaltog/vim-easymotion/issues/82
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
 
@@ -118,8 +119,8 @@ func! s:do_streak(s, st)
   return 0 "no overflow, or user canceled
 endf
 
-"returns 1 if the key does something other than jumping to a match target:
-"    - escape/cancel sneak-mode (<Space>, <C-c>, <Esc>)
+"returns 1 if a:key does something other than jumping to a target label:
+"    - escape/cancel streak-mode (<Space>, <C-c>, <Esc>)
 "    - highlight next batch of targets (<Tab>)
 "    - go to next/previous match (; and , by default)
 func! s:is_active_key(key)
@@ -127,7 +128,7 @@ func! s:is_active_key(key)
     \ || "\<C-c>" == a:key
     \ || "\<Tab>" == a:key
     \ || "\<Space>" == a:key
-    \ || maparg(a:key, 'n') =~# '<Plug>Sneak'
+    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\|Next\|Previous\)'
 endf
 
 func! s:after()

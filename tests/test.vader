@@ -38,7 +38,7 @@ Execute (streak#sanitize_target_labels()):
   let orig = g:sneak#target_labels
   let g:sneak#target_labels = " \\ as  d\<Esc>fo\<Tab>ob\<Space>a;\\rASD"
   call sneak#streak#sanitize_target_labels()
-  Assert g:sneak#target_labels ==#  "sadfoobarAD"
+  Assert g:sneak#target_labels ==#  "sadfoobarASD"
   "cleanup
   let g:sneak#target_labels = orig
 
