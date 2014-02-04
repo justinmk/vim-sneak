@@ -4,9 +4,20 @@ if v:version >= 703
   endf
 else
   func! sneak#util#strlen(s)
-    return len(a:s)
+    return strlen(substitute(a:string, ".", "x", "g"))
   endf
 endif
+
+" if v:version >= 703 "credit Tom Link: https://github.com/tomtom/tcomment_vim/compare/a5b1a36749f2f95d...48f5d46a15aaffb4#diff-e593e39d5b7b465fce98ea684adf2f6dR774
+"   function! sneak#util#strdisplaywidth(...)
+"     return call('strdisplaywidth', a:000)
+"   endf
+" else
+"   function! sneak#util#strdisplaywidth(string, ...)
+"     " NOTE: Col argument is ignored
+"     return strlen(substitute(a:string, ".", "x", "g"))
+"   endf
+" endif
 
 func! sneak#util#isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
