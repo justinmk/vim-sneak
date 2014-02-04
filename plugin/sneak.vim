@@ -104,9 +104,9 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   endif
 
   if max(l:bounds) > 0
-    "adjust logical left-bound for the _match_ pattern by -len(s) so that if _any_
+    "adjust logical left-bound for the _match_ pattern by -length(s) so that if _any_
     "char is within the logical bounds, it is considered a match.
-    let l:leftbound = max([0, (bounds[0] - len(a:input)) + 1])
+    let l:leftbound = max([0, (bounds[0] - sneak#util#strlen(a:input)) + 1])
     let l:match_bounds   = '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
     let s.match_pattern .= l:match_bounds
   endif

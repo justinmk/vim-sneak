@@ -35,7 +35,7 @@
 "     - easymotion edits the buffer, plans to create a new buffer
 "     - "the current way of highligthing is insanely slow"
 
-let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjklqwertyuiopzxcvbnmASDFGHJKLQWERTYUIOPZXCVBNM")
+let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
@@ -61,7 +61,7 @@ endf
 
 func! s:do_streak(s, st)
   call s:before()
-  let maxmarks = len(g:sneak#target_labels)
+  let maxmarks = sneak#util#strlen(g:sneak#target_labels)
   let w = winsaveview()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
@@ -101,16 +101,17 @@ func! s:do_streak(s, st)
 
   let v = sneak#util#isvisualop(a:st.op)
   let mappedto = maparg(choice, v ? 'x' : 'n')
+  let mappedtoNext = mappedto =~# '<Plug>SneakNext'
 
   if choice == "\<Tab>" && overflow[0] > 0
     call cursor(overflow[0], overflow[1])
     return 1 "overflow => decorate next N matches
   elseif -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>"], choice)
     return 0 "exit streak-mode.
-  elseif !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
+  elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
   else "valid target was selected
-    let p = s:matchmap[choice]
+    let p = mappedtoNext ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
 
@@ -127,7 +128,6 @@ func! s:is_active_key(key)
     \ || "\<Tab>" == a:key
     \ || "\<Space>" == a:key
     \ || maparg(a:key, 'n') =~# '<Plug>Sneak'
-    \ || maparg(a:key, 'x') =~# '<Plug>V\?Sneak'
 endf
 
 func! s:after()
@@ -165,16 +165,21 @@ endf
 "  - we don't know which keys the user assigned to SneakNext/Previous
 "  - we need to reserve special keys like <Esc> and <Tab>
 func! sneak#streak#sanitize_target_labels()
-  let nrkeys = len(g:sneak#target_labels)
+  let nrkeys = sneak#util#strlen(g:sneak#target_labels)
   let i = 0
   while i < nrkeys
-    if s:is_active_key(strpart(g:sneak#target_labels, i, 1))
+    let k = strpart(g:sneak#target_labels, i, 1)
+    if s:is_active_key(k)
       "remove the char at index i
       let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
-      let nrkeys -= 1
-    else
-      let i += 1
+      if maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)' "special case: move 's' to the front (clever-s)
+        let g:sneak#target_labels = k . g:sneak#target_labels
+      else
+        let nrkeys -= 1
+        continue
+      endif
     endif
+    let i += 1
   endwhile
 endf
 
