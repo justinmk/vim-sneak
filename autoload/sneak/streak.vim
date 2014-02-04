@@ -137,6 +137,7 @@ func! s:after()
   if !empty(s:orig_hl_conceal) | exec 'hi! link Conceal '.s:orig_hl_conceal | else | hi! link Conceal NONE | endif
   if !empty(s:orig_hl_sneaktarget) | exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget | else | hi! link SneakPluginTarget NONE | endif
   call s:restore_statusline()
+  let &synmaxcol=s:synmaxcol_orig
   let &syntax=s:syntax_orig
 endf
 
@@ -151,6 +152,7 @@ func! s:before()
 
   let s:syntax_orig=&syntax
   syntax clear
+  let s:synmaxcol_orig=&synmaxcol | set synmaxcol=0
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
   let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakPluginTarget')
