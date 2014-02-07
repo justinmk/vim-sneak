@@ -30,10 +30,10 @@ characters:
     * Additional matches, if any, are highlighted until the cursor is moved.
 * Press `s` *or* `;` to go to the next match.
 * Press `3s` *or* `3;` to skip to the third match from the current position.
-* Press `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'') to go back to the starting point.
+* Press `ctrl-o` or ``` `` ``` to go back to the starting point.
     * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
       *only* on `s` invocation—not repeats—so you can 
-      abandon a trail of `;` or `,` by a single `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'').
+      abandon a trail of `;` or `,` by a single `ctrl-o` or ``` `` ```.
 * Later on, press `s<Enter>` to repeat the last Sneak-search.
 
 Sneak can be **scoped** to a column of width 2×[number] by prefixing `s`
@@ -72,7 +72,7 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
   - minimum of **3 keystrokes** (EasyMotion is at least 5)
   - move anywhere, even offscreen (unlike EasyMotion)
   - jump immediately to first match (unlike EasyMotion)
-  - jump back to the point of `s` invocation via `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'')
+  - jump back to the point of `s` invocation via `ctrl-o` or ``` `` ```
     - only the initial invocation adds to the jumplist; repeat-motion
       via `;` or `,` does *not* add to the jumplist
   - repeat the motion (unlike EasyMotion)
@@ -123,7 +123,7 @@ This is why Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#
 * Sneak moves vertically
 * Sneak remembers the initial position in the Vim jumplist
   * This allows you to explore a trail of matches via `;`,
-    then return to the initial position via `ctrl-o` or [``](http://vimdoc.sourceforge.net/htmldoc/motion.html#'')
+    then return to the initial position via `ctrl-o` or ``` `` ```
 * Sneak highlights matches *only in the direction of your search* 
 
 #### How dare you remap `s`?
