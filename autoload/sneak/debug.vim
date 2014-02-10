@@ -28,7 +28,6 @@ func! sneak#debug#report()
   redir END
   let vimversion = join(split(vimversion, "\n")[0:3], "\n")
   redir => output
-    " silent exec 'echo sneak#state = '
     call s:dbgfeat('autocmd')
     call s:dbgflag('&magic')
     call s:dbgflag('&buftype')
@@ -46,7 +45,6 @@ func! sneak#debug#report()
     call s:dbgfunc("sneak#util#echo")
     silent echo ""
     echo "sneak#opt: ".string(sneak#opt())
-    echo "sneak#state: ".string(sneak#state())
     silent exec 'verbose map f | map F | map t | map T | map s | map S | map z | map Z | map ; '
   redir END
   enew

@@ -14,7 +14,7 @@
 "   strategy: make fg/bg the same color, then conceal the other char.
 " 
 "   problem:  keyword highlighting always takes priority over conceal.
-"   strategy: syntax clear | [do the conceal] | syntax enable
+"   strategy: syntax clear | [do the conceal] | let &syntax=s:syntax_orig
 "
 " PROFILING:
 "   - the search should be 'warm' before profiling
@@ -33,7 +33,7 @@
 "     target labels. https://github.com/Lokaltog/vim-easymotion/pull/47#issuecomment-10919205
 "   - https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
 "     - easymotion edits the buffer, plans to create a new buffer
-"     - "the current way of highligthing is insanely slow"
+"     - 'the current way of highligthing is insanely slow'
 "   - sneak handles long lines https://github.com/Lokaltog/vim-easymotion/issues/82
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
@@ -54,10 +54,13 @@ func! s:restore_statusline() "restore normal statusline highlight.
   " redraw!
 endf
 
-"TODO: may need to deal with 'offset' for getpos()/cursor() if virtualedit=all
 func! sneak#streak#to(s, st)
-  while s:do_streak(a:s, a:st) | endwhile
-  call sneak#hl#removehl()
+  let seq = ""
+  while 1
+    let choice = s:do_streak(a:s, a:st)
+    let seq .= choice
+    if choice != "\<Tab>" | return seq | endif
+  endwhile
 endf
 
 func! s:do_streak(s, st)
@@ -69,7 +72,7 @@ func! s:do_streak(s, st)
   let i = 0
   let overflow = [0, 0] "position of the next match (if any) after we have run out of target labels.
   while 1
-    " searchpos() is faster than "norm! /m\<cr>", see profile.3.log
+    " searchpos() is faster than 'norm! /'
     let p = searchpos(search_pattern, a:s.search_options_no_s, a:s.get_stopline())
 
     if 0 == p[0]
@@ -84,6 +87,7 @@ func! s:do_streak(s, st)
     endif
 
     if i < maxmarks
+      "TODO: multibyte-aware substring: matchstr('asdfäöü', '.\{4\}\zs.')
       let c = strpart(g:sneak#target_labels, i, 1)
       call s:placematch(c, p)
     else "we have exhausted the target labels; grab the first non-labeled match.
@@ -104,19 +108,19 @@ func! s:do_streak(s, st)
   let mappedto = maparg(choice, v ? 'x' : 'n')
   let mappedtoNext = mappedto =~# '<Plug>SneakNext'
 
-  if choice == "\<Tab>" && overflow[0] > 0
+  if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
     call cursor(overflow[0], overflow[1])
-    return 1 "overflow => decorate next N matches
   elseif -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>"], choice)
-    return 0 "exit streak-mode.
+    "exit streak-mode.
   elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
+    return ""
   else "valid target was selected
     let p = mappedtoNext ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
 
-  return 0 "no overflow, or user canceled
+  return choice
 endf
 
 "returns 1 if a:key does something other than jumping to a target label:
@@ -124,10 +128,7 @@ endf
 "    - highlight next batch of targets (<Tab>)
 "    - go to next/previous match (; and , by default)
 func! s:is_active_key(key)
-  return "\<Esc>" == a:key
-    \ || "\<C-c>" == a:key
-    \ || "\<Tab>" == a:key
-    \ || "\<Space>" == a:key
+  return -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>", "\<Tab>"], a:key)
     \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\|Next\|Previous\)'
 endf
 

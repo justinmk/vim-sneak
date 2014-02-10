@@ -1,6 +1,6 @@
 " sneak.vim - The missing motion
 " Author:       Justin M. Keyes
-" Version:      1.7.0
+" Version:      1.7.1
 " License:      MIT
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
@@ -35,10 +35,6 @@ call sneak#init()
 
 func! sneak#opt()
   return deepcopy(s:opt)
-endf
-
-func! sneak#state()
-  return deepcopy(s:st)
 endf
 
 func! s:is_sneaking()
@@ -119,15 +115,6 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
     call s:ft_hook()
   endif
 
-  if is_op && a:op !=# 'y'
-      let plugmap = "\<Plug>Sneak_"
-      "TODO: account for 't'
-      let mapsuffix = (2 == sneak#util#strlen(a:input)) ? "s" : "f"
-      let mapsuffix = a:reverse ? toupper(mapsuffix) : mapsuffix
-      let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
-      silent! call repeat#set(a:op.plugmap.mapsuffix.a:input.change)
-  endif
-
     for i in range(1, max([1, skip])) "jump to the [count]th match
       let matchpos = s.dosearch()
       if 0 == max(matchpos)
@@ -176,11 +163,14 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
         \ 2, get(w:, 'sneak_hl_id', -1))
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
-  if (2 == a:streak || (a:streak && s:opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
-    call sneak#streak#to(s, s:st)
-  endif
+  let target = (2 == a:streak || (a:streak && s:opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
+        \ ? sneak#streak#to(s, s:st): ""
 
-  return
+  if is_op && a:op !=# 'y'
+    "TODO: account for 't'/inclusive/exclusive
+    let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
+    silent! call repeat#set(a:op."\<Plug>SneakRepeat".sneak#util#strlen(a:input).a:reverse.(sneak#util#strlen(target) ? 2 : 0).a:input.target.change, a:count)
+  endif
 endf "}}}
 
 func! s:attach_autocmds()
@@ -270,6 +260,8 @@ xnoremap <silent> <Plug>Sneak_S <esc>:<c-u>call sneak#wrap(visualmode(), 2, 1, 1
 onoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap(v:operator, 2, 0, 1)<cr>
 onoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(v:operator, 2, 1, 1)<cr>
 
+onoremap <silent> <Plug>SneakRepeat :<c-u>call sneak#wrap(v:operator, sneak#util#getc(), sneak#util#getc(), sneak#util#getc())<cr>
+
 " explicit repeat (as opposed to 'clever-s' feature)
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', v:count1, 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', v:count1, 1)<cr>
@@ -349,7 +341,7 @@ if !hasmapto('<Plug>VSneakPrevious')
   endif
 endif
 
-" reundant legacy mappings for backwards compatibility (must come _after_ the hasmapto('<Plug>Sneak_S') checks above)
+" redundant legacy mappings for backwards compatibility (must come _after_ the hasmapto('<Plug>Sneak_S') checks above)
 nmap <Plug>SneakForward   <Plug>Sneak_s
 nmap <Plug>SneakBackward  <Plug>Sneak_S
 xmap <Plug>VSneakForward  <Plug>Sneak_s

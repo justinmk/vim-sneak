@@ -23,13 +23,13 @@ func! sneak#util#isvisualop(op)
   return a:op =~# "^[vV\<C-v>]"
 endf
 
-func! s:getc()
+func! sneak#util#getc()
   let c = getchar()
   return type(c) == type(0) ? nr2char(c) : c
 endf
 
 func! sneak#util#getchar()
-  let input = s:getc()
+  let input = sneak#util#getc()
   if !&iminsert
     return input
   endif
@@ -42,7 +42,7 @@ func! sneak#util#getchar()
     elseif full_keymap ==# partial_keymap_seq
       return full_keymap
     endif
-    let c = s:getc()
+    let c = sneak#util#getc()
     if c == "\<Esc>" || c == "\<CR>"
       "if the short sequence has a valid mapping, return that.
       if !empty(full_keymap)

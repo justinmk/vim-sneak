@@ -166,7 +166,7 @@ Expect:
   arr 1940mm
   Pete Best 1941
 
-Do (delete ;]):
+Do (delete ;):
   dzar
   :\<C-U>doautocmd CursorMoved\<CR>
   d;
@@ -572,6 +572,67 @@ Do (delete + streak):
 Expect:
   number of maximum items to be assigned at once |
   | logger     | Logger  | nil     | logger instance for debug logs                 |
+
+Given:
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (streak + delete):
+  dzabs
+
+Expect:
+  ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (streak + delete + repeat):
+  dzaba
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (streak + 2-delete + repeat):
+  2dzab\<Space>
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (streak: repeat does NOT invoke streak-mode if streak-mode was not triggered on the original operation):
+  2j3wdzab2k3b
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab5cdef ab6cdef
+
+Do (streak/target/backwards/delete/repeat):
+  2j2wdZefd
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+
+Expect:
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (streak/target/change/repeat):
+  jwczefaFOO\<Esc>
+  :\<C-U>doautocmd CursorMoved\<CR>
+  jb.
+
+Expect:
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef FOOef ab1cdef ab2cdef
+  ab1cdef FOOef ab5cdef ab6cdef
 
 Execute (cleanup):
   let g:sneak#streak = 0
