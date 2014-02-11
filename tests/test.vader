@@ -9,6 +9,11 @@ Execute (Clean up test environment):
   call sneak#init()
 
 ###########################################################
+Execute (autoloaded functions should not exist):
+  Assert !exists("*sneak#streak#to")
+  Assert !exists("*sneak#hl#removehl")
+  Assert !exists("*sneak#search#new")
+  Assert !exists("*sneak#util#strlen")
 
 # this must be the first test, because it tests built-in f-repeat
 # for the case where s has not ever been invoked.
@@ -25,13 +30,16 @@ Expect:
 Do (tickle the autoloads):
   sab
 
+Execute ('streak' functions should not exist after vanilla-sneak):
+  Assert exists("*sneak#streak#to")
+
 Execute (hl#links_to() returns linked-to highlight group):
   hi! link Conceal SneakConceal
   Assert 'SneakConceal' ==# sneak#hl#links_to('Conceal')
 
-Execute (hl#links_to() returns empty string if not linked):
+Execute (hl#links_to() returns NONE if not linked):
   hi! link Conceal NONE
-  Assert empty(sneak#hl#links_to('Conceal'))
+  Assert "NONE" ==# sneak#hl#links_to('Conceal')
 
 Execute (streak#sanitize_target_labels()):
   call sneak#streak#init()
@@ -56,6 +64,12 @@ Execute (s.hasmatches()):
   Assert s.hasmatches(1)
   Assert s.hasmatches(2)
   Assert !s.hasmatches(3)
+
+Execute (autoloaded functions should exist):
+  Assert exists("*sneak#streak#to")
+  Assert exists("*sneak#hl#removehl")
+  Assert exists("*sneak#search#new")
+  Assert exists("*sneak#util#strlen")
 
 ###########################################################
 
