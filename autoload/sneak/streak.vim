@@ -64,9 +64,8 @@ func! sneak#streak#to(s, st)
 endf
 
 func! s:do_streak(s, st)
-  call s:before()
-  let maxmarks = sneak#util#strlen(g:sneak#target_labels)
   let w = winsaveview()
+  call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
   let i = 0
@@ -74,19 +73,15 @@ func! s:do_streak(s, st)
   while 1
     " searchpos() is faster than 'norm! /'
     let p = searchpos(search_pattern, a:s.search_options_no_s, a:s.get_stopline())
-
-    if 0 == p[0]
-      break
-    endif
-
     let skippedfold = sneak#util#skipfold(p[0], a:st.reverse) "Note: 'set foldopen-=search' does not affect search().
-    if -1 == skippedfold
+
+    if 0 == p[0] || -1 == skippedfold
       break
     elseif 1 == skippedfold
       continue
     endif
 
-    if i < maxmarks
+    if i < s:maxmarks
       "TODO: multibyte-aware substring: matchstr('asdfäöü', '.\{4\}\zs.')
       let c = strpart(g:sneak#target_labels, i, 1)
       call s:placematch(c, p)
@@ -99,9 +94,7 @@ func! s:do_streak(s, st)
   endwhile
 
   call winrestview(w) | redraw
-
   let choice = sneak#util#getchar()
-
   call s:after()
 
   let v = sneak#util#isvisualop(a:st.op)
@@ -133,10 +126,11 @@ func! s:is_active_key(key)
 endf
 
 func! s:after()
+  autocmd! sneak_streak_cleanup * <buffer>
   silent! call matchdelete(w:sneak_cursor_hl)
   "remove temporary highlight links
-  if !empty(s:orig_hl_conceal) | exec 'hi! link Conceal '.s:orig_hl_conceal | else | hi! link Conceal NONE | endif
-  if !empty(s:orig_hl_sneaktarget) | exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget | else | hi! link SneakPluginTarget NONE | endif
+  exec 'hi! link Conceal '.s:orig_hl_conceal
+  exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
   call s:restore_statusline()
   let &synmaxcol=s:synmaxcol_orig
   let &syntax=s:syntax_orig
@@ -163,6 +157,11 @@ func! s:before()
   hi! link SneakPluginTarget SneakStreakMask
 
   call s:decorate_statusline()
+
+  augroup sneak_streak_cleanup
+    autocmd!
+    autocmd CursorMoved <buffer> call <sid>after()
+  augroup END
 endf
 
 "we must do this because:
@@ -189,6 +188,7 @@ endf
 
 func! sneak#streak#init()
   call sneak#streak#sanitize_target_labels()
+  let s:maxmarks = sneak#util#strlen(g:sneak#target_labels)
 endf
 
 call sneak#streak#init()

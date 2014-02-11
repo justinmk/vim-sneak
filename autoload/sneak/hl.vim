@@ -10,7 +10,8 @@ func! sneak#hl#links_to(hlgroup)
   redir => hl
   exec 'silent highlight '.a:hlgroup
   redir END
-  return substitute(matchstr(hl, 'links to \zs.*'), '\s', '', 'g')
+  let s = substitute(matchstr(hl, 'links to \zs.*'), '\s', '', 'g')
+  return empty(s) ? 'NONE' : s
 endf
 
 if 0 == hlID("SneakPluginTarget")
