@@ -70,15 +70,15 @@ motion.
 
 Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
-  - minimum of **3 keystrokes** (EasyMotion is at least 5)
+  - minimum of **3 keystrokes**
   - Sneak supports [multibyte language keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)!
     (see [issue #47](https://github.com/justinmk/vim-sneak/issues/47))
-  - move anywhere, even offscreen (unlike EasyMotion)
-  - jump immediately to first match (unlike EasyMotion)
+  - move anywhere, even offscreen
+  - jump immediately to first match
   - jump back to the point of `s` invocation via `ctrl-o` or ``` `` ```
     - only the initial invocation adds to the jumplist; repeat-motion
       via `;` or `,` does *not* add to the jumplist
-  - repeat the motion (unlike EasyMotion)
+  - repeat the motion
   - does not break default behavior of `f t F T ; ,`
   - does not add noise to `/` history
   - *vertical scope* with `[count]s{char}{char}` restricts the search to 2× `count` size
