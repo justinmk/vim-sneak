@@ -44,7 +44,7 @@ func! sneak#debug#report()
     call s:dbgfunc("sneak#hl#removehl")
     call s:dbgfunc("sneak#util#echo")
     silent echo ""
-    echo "sneak#opt: ".string(sneak#opt())
+    echo "sneak#opt: ".string(g:sneak#opt)
     silent exec 'verbose map f | map F | map t | map T | map s | map S | map z | map Z | map ; '
   redir END
   enew

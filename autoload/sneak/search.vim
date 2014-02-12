@@ -3,10 +3,10 @@
 func! sneak#search#new()
   let s = {}
 
-  func! s.init(opt, input, repeatmotion, reverse)
+  func! s.init(input, repeatmotion, reverse)
     let self._reverse = a:reverse
     " search pattern modifiers (case-sensitivity, magic)
-    let self.prefix = sneak#search#get_cs(a:input, a:opt.use_ic_scs).'\V'
+    let self.prefix = sneak#search#get_cs(a:input, g:sneak#opt.use_ic_scs).'\V'
     " the escaped user input to search for
     let self.search = escape(a:input, '"\')
     " example: highlight string 'ab' after line 42, column 5 

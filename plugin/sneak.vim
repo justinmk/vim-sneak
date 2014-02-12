@@ -15,8 +15,9 @@ set cpo&vim
 let s:st = { 'rst':1, 'input':'', 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0] }
 
 func! sneak#init()
+  unlockvar g:sneak#opt
   "options                                 v-- for backwards-compatibility
-  let s:opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
+  let g:sneak#opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
@@ -26,16 +27,13 @@ func! sneak#init()
 
   for k in ['f', 't'] "if user mapped f/t to Sneak, then disable f/t reset.
     if maparg(k, 'n') =~# 'Sneak'
-      let s:opt[k.'_reset'] = 0
+      let g:sneak#opt[k.'_reset'] = 0
     endif
   endfor
+  lockvar g:sneak#opt
 endf
 
 call sneak#init()
-
-func! sneak#opt()
-  return deepcopy(s:opt)
-endf
 
 func! s:is_sneaking()
   return exists("#SneakPlugin#CursorMoved#<buffer>")
@@ -76,7 +74,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   let is_op = !empty(a:op) && !sneak#util#isvisualop(a:op) "operator-pending invocation
   let inputlen = sneak#util#strlen(a:input)
   let s = g:sneak#search#instance
-  call s.init(s:opt, a:input, a:repeatmotion, a:reverse)
+  call s.init(a:input, a:repeatmotion, a:reverse)
 
   " [count] means 'skip this many' _only_ for operators and repeat-motion.
   "   sanity check: max out at 999, to avoid searchpos() OOM.
@@ -165,7 +163,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
         \ 2, get(w:, 'sneak_hl_id', -1))
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
-  let target = (2 == a:streak || (a:streak && s:opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
+  let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
         \ ? sneak#streak#to(s, s:st): ""
 
   if is_op && a:op !=# 'y'
@@ -191,7 +189,7 @@ func! sneak#reset(key)
   let s:st.rst = 1
   let s:st.reverse = 0
   for k in ['f', 't'] "unmap the temp mappings
-    if s:opt[k.'_reset']
+    if g:sneak#opt[k.'_reset']
       silent! exec 'unmap '.k
       silent! exec 'unmap '.toupper(k)
     endif
@@ -210,7 +208,7 @@ func! s:ft_hook() "set up temporary mappings to 'hook' into f/F/t/T
     for m in ['n', 'x']
       "if user mapped anything to f or t, do not map over it; unfortunately this
       "also means we cannot reset ; or , when f or t is invoked.
-      if s:opt[k.'_reset'] && maparg(k, m) ==# ''
+      if g:sneak#opt[k.'_reset'] && maparg(k, m) ==# ''
         call s:map_reset_key(k, m) | call s:map_reset_key(toupper(k), m)
       endif
     endfor
@@ -272,7 +270,7 @@ xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), m
 onoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt(v:operator, v:count1, 0)<cr>
 onoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt(v:operator, v:count1, 1)<cr>
 
-if s:opt.textobject_z
+if g:sneak#opt.textobject_z
   omap z  <Plug>Sneak_s
   omap Z  <Plug>Sneak_S
 endif
@@ -349,7 +347,7 @@ nmap <Plug>SneakBackward  <Plug>Sneak_S
 xmap <Plug>VSneakForward  <Plug>Sneak_s
 xmap <Plug>VSneakBackward <Plug>Sneak_S
 
-if s:opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
+if g:sneak#opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
   func! s:map_netrw_key(key)
     if -1 != stridx(maparg(a:key,"n"), "_Net")
       exec 'nnoremap <buffer> <silent> <leader>'.a:key.' '.maparg(a:key,'n')

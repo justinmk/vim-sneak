@@ -57,7 +57,7 @@ Given:
 Execute (s.hasmatches()):
   norm! jll
   let s = g:sneak#search#instance
-  call s.init(sneak#opt(), "ab", 0, 0)
+  call s.init("ab", 0, 0)
   Assert !s.hasmatches(2)
   Assert !s.hasmatches(1)
   norm! k

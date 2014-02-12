@@ -4,7 +4,7 @@ if v:version >= 703
   endf
 else
   func! sneak#util#strlen(s)
-    return strlen(substitute(a:string, ".", "x", "g"))
+    return strlen(substitute(a:s, ".", "x", "g"))
   endf
 endif
 
