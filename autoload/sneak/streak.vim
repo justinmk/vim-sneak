@@ -63,7 +63,7 @@ func! sneak#streak#to(s, st)
   endwhile
 endf
 
-func! s:do_streak(s, st)
+func! s:do_streak(s, st) "{{{
   let w = winsaveview()
   call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
@@ -114,7 +114,7 @@ func! s:do_streak(s, st)
   endif
 
   return choice
-endf
+endf "}}}
 
 "returns 1 if a:key does something other than jumping to a target label:
 "    - escape/cancel streak-mode (<Space>, <C-c>, <Esc>)

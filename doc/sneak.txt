@@ -104,9 +104,9 @@ Sneak default VISUAL-mode mappings:
 (previous) match. Additional matches are highlighted until the cursor is
 moved. Works across multiple lines.
 
-If a language keymap is activated ('iminsert', |mbyte-keymap|), the Sneak
-input prompt waits for keymap sequences as needed, and keymapped characters
-are matched instead of the literal input characters. Requires Vim 7.3+.
+If a |language-mapping| is activated, Sneak waits for keymapped sequences as
+needed and searches for the keymapped result as expected. (Requires Vim 7.3+)
+'keymap' 'iminsert' |mbyte-keymap|
 
 [count]s enters |sneak-vertical-scope| mode.
 

@@ -3,7 +3,7 @@
 
 *Sneak* is a Vim plugin that enables you to move to any location specified by two characters. 
 It works across **multiple lines**; with **operators** (including **repeat** `.`);
-with [keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap);
+with [language keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap);
 and in **visual mode**. Move to the next or previous match via `;`
 or `,` (*or* by pressing `s` again immediately after a Sneak-search, similar to
 [clever-f](https://github.com/rhysd/clever-f.vim)).

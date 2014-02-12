@@ -74,6 +74,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   endif
 
   let is_op = !empty(a:op) && !sneak#util#isvisualop(a:op) "operator-pending invocation
+  let inputlen = sneak#util#strlen(a:input)
   let s = g:sneak#search#instance
   call s.init(s:opt, a:input, a:repeatmotion, a:reverse)
 
@@ -102,7 +103,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   if max(l:bounds) > 0
     "adjust logical left-bound for the _match_ pattern by -length(s) so that if _any_
     "char is within the logical bounds, it is considered a match.
-    let l:leftbound = max([0, (bounds[0] - sneak#util#strlen(a:input)) + 1])
+    let l:leftbound = max([0, (bounds[0] - inputlen) + 1])
     let l:match_bounds   = '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
     let s.match_pattern .= l:match_bounds
   endif
@@ -129,7 +130,8 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
     endif
 
     if 0 == max(matchpos)
-      call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : ': '.a:input))
+      let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
+      call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(km.' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : km.': '.a:input))
       return
     endif
   "search succeeded
@@ -169,7 +171,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   if is_op && a:op !=# 'y'
     "TODO: account for 't'/inclusive/exclusive
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
-    silent! call repeat#set(a:op."\<Plug>SneakRepeat".sneak#util#strlen(a:input).a:reverse.(sneak#util#strlen(target) ? 2 : 0).a:input.target.change, a:count)
+    silent! call repeat#set(a:op."\<Plug>SneakRepeat".inputlen.a:reverse.(sneak#util#strlen(target) ? 2 : 0).a:input.target.change, a:count)
   endif
 endf "}}}
 
@@ -232,7 +234,7 @@ func! s:getnchars(n, mode)
       endif
     else
       let s .= c
-      if &iminsert && (v:version >= 703) && strwidth(s) >= a:n
+      if &iminsert && sneak#util#strlen(s) >= a:n
         "HACK: this can happen if the user entered multiple characters while we
         "were waiting to resolve a multi-char keymap.
         "example for keymap 'bulgarian-phonetic':
