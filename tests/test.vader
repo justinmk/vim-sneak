@@ -374,7 +374,7 @@ Expect:
 
 ###########################################################
 
-Given ruby:
+Given:
   xyz="abc=def"
   a=b#=c
   \\\\  \ \ ? !--``.ago_		*$&()[]{}
@@ -386,14 +386,14 @@ Do (search for backticks, then backslashes):
   :\<C-U>doautocmd CursorMoved\<CR>
   S\\i:)
 
-Expect ruby:
+Expect:
   xyz="abc=def"
   a=b#=c
   \\:)\\  \ \ ? !--``.ago_		*$&()[]{}
 
 ###########################################################
 
-Given javascript:
+Given:
   var jdbc = {
     // JDBC driver for MySQL database:
     driver: "com.mysql.jdbc.Driver",
@@ -406,7 +406,7 @@ Given javascript:
 Do (vertical scope and count-prefixed repeat-motion):
   wwjl3spa2;i:
 
-Expect javascript:
+Expect:
   var jdbc = {
     // JDBC driver for MySQL database:
     driver: "com.mysql.jdbc.Driver",

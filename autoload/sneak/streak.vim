@@ -35,6 +35,7 @@
 "     - easymotion edits the buffer, plans to create a new buffer
 "     - 'the current way of highligthing is insanely slow'
 "   - sneak handles long lines https://github.com/Lokaltog/vim-easymotion/issues/82
+"   - sneak can find and highlight concealed characters
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
 
@@ -136,6 +137,23 @@ func! s:after()
   let &syntax=s:syntax_orig
   let &concealcursor=s:cc_orig
   let &conceallevel=s:cl_orig
+  call s:restore_conceal_in_other_windows()
+endf
+
+func! s:disable_conceal_in_other_windows()
+  for w in range(1, winnr('$'))
+    if 'help' !=# getwinvar(w, '&buftype') && w != winnr()
+      call setwinvar(w, 'sneak_orig_cl', getwinvar(w, '&conceallevel'))
+      call setwinvar(w, '&conceallevel', 0)
+    endif
+  endfor
+endf
+func! s:restore_conceal_in_other_windows()
+  for w in range(1, winnr('$'))
+    if 'help' !=# getwinvar(w, '&buftype') && w != winnr()
+      call setwinvar(w, '&conceallevel', getwinvar(w, 'sneak_orig_cl'))
+    endif
+  endfor
 endf
 
 func! s:before()
@@ -144,11 +162,12 @@ func! s:before()
   " highlight the cursor location (else the cursor is not visible during getchar())
   let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 2, -1)
 
-  let s:cc_orig=&concealcursor | set concealcursor=ncv
-  let s:cl_orig=&conceallevel  | set conceallevel=2
+  let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
+  let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2
 
   let s:syntax_orig=&syntax
   syntax clear
+  " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
   let s:synmaxcol_orig=&synmaxcol | set synmaxcol=0
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
@@ -158,6 +177,7 @@ func! s:before()
   "set temporary link to hide the sneak search targets
   hi! link SneakPluginTarget SneakStreakMask
 
+  call s:disable_conceal_in_other_windows()
   call s:decorate_statusline()
 
   augroup sneak_streak_cleanup
