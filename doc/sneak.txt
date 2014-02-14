@@ -269,6 +269,15 @@ g:sneak#t_reset = 1
         you invoke f or t. See the README.md FAQ regarding "f-enhancement"
         plugins.
 
+g:sneak#s_next = 1
+
+    0 : Disable "clever-s" behavior. Use |;| and |,| to go to the next or
+        previous match.
+
+    1 : Immediately after invoking Sneak, press "s" _again_ to go to the
+        next match (or "S" for the previous match); this behavior persists
+        until you do anything else. This feature is called "clever-s"
+        because it originated in another plugin called clever-f[3].
 
 g:sneak#textobject_z = 1
 

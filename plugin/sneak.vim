@@ -19,6 +19,7 @@ func! sneak#init()
   "options                                 v-- for backwards-compatibility
   let g:sneak#opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
+      \ ,'s_next'       : get(g:, 'sneak#s_next', 1)
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
@@ -48,9 +49,9 @@ func! sneak#wrap(op, input_length, reverse, streak) range abort
   "TRICKY: use v:prevcount for visual mapping because we <esc> before the ex command.
   let l:count = max([1, v ? v:prevcount : v:count1])
 
-  if (v || empty(a:op)) && s:is_sneaking() && is_similar_invocation " 's' goes to next match
-    call sneak#rpt(a:op, l:count, a:reverse)
-  else " 's' invokes new search
+  if g:sneak#opt.s_next && (v || empty(a:op)) && s:is_sneaking() && is_similar_invocation
+    call sneak#rpt(a:op, l:count, a:reverse) " s goes to next match
+  else " s invokes new search
     call sneak#to(a:op, s:getnchars(a:input_length, a:op), l:count, 0, a:reverse, a:streak)
   endif
 endf
