@@ -66,8 +66,7 @@ func! sneak#util#echo(msg)
   redraw | echo a:msg
   augroup SneakEcho
     autocmd!
-    autocmd InsertEnter,WinLeave,BufLeave * redraw | echo '' | autocmd! SneakEcho
-    autocmd CursorMoved * redraw | echo '' | autocmd! SneakEcho
+    autocmd CursorMoved,InsertEnter,WinLeave,BufLeave * redraw | echo '' | autocmd! SneakEcho
   augroup END
 endf
 

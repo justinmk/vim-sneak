@@ -31,7 +31,7 @@ Do (tickle the autoloads):
   sab
 
 Execute ('streak' functions should not exist after vanilla-sneak):
-  Assert exists("*sneak#streak#to")
+  Assert !exists("*sneak#streak#to")
 
 Execute (hl#links_to() returns linked-to highlight group):
   hi! link Conceal SneakConceal

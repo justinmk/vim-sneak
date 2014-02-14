@@ -150,7 +150,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
 
   "highlight the vertical 'tunnel' that the search is scoped-to
   if max(l:bounds) > 0 "perform the scoped highlight...
-    let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern, 1, get(w:, 'sneak_sc_hl', -1))
+    let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern)
   endif
 
   call s:attach_autocmds()
@@ -159,8 +159,7 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
   "  - store in w: because matchadd() highlight is per-window.
   "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
-        \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search),
-        \ 2, get(w:, 'sneak_hl_id', -1))
+        \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search))
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
