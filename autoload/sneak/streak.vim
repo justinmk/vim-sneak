@@ -83,7 +83,7 @@ func! s:do_streak(s, st) "{{{
     endif
 
     if i < s:maxmarks
-      "TODO: multibyte-aware substring: matchstr('asdfäöü', '.\{4\}\zs.')
+      "TODO: multibyte-aware substring: matchstr('asdfäöü', '.\{4\}\zs.') https://github.com/Lokaltog/vim-easymotion/issues/16#issuecomment-34595066
       let c = strpart(g:sneak#target_labels, i, 1)
       call s:placematch(c, p)
     else "we have exhausted the target labels; grab the first non-labeled match.
