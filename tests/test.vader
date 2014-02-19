@@ -1,3 +1,19 @@
+# BUG: highlight targets are bogus if &iminsert=1
+# BUG: sneak cannot find ёе: in this text
+# BUG: sneak cannot find е:а in this text
+# 
+# ёе:а
+# ёе:а
+# ёе:а
+# ёе:а
+# ёе:а
+# ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
+# ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
+# ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
+# ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
+# ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
+# ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
+
 Execute (Clean up test environment):
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious

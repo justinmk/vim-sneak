@@ -29,6 +29,9 @@
 "       and label the next 56 matches.
 " 
 " cf. EASYMOTION:
+"   - EasyMotion's 'single line' feature is superfluous because streak-mode
+"     isn't activated unless there are >=2 on-screen matches, and any key that
+"     isn't a target falls through to Vim.
 "   - because sneak targets 2 chars, there is never a problem discerning
 "     target labels. https://github.com/Lokaltog/vim-easymotion/pull/47#issuecomment-10919205
 "   - https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131

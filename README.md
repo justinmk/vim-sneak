@@ -1,28 +1,29 @@
 # sneak.vim :shoe:
 
+Sneak is a minimalist, versatile Vim *motion* plugin that enables you to move to any location specified by two characters.
+It works across **multiple lines**, with **operators** (including **repeat** `.`
+and [**surround**][surround]), with [**keymaps**][keymaps], in **visual mode**,
+and in **macros**. Many small details have been carefully considered to minimize
+friction between *intent* and *action*.
 
-*Sneak* is a Vim plugin that enables you to move to any location specified by two characters. 
-It works across **multiple lines**; with **operators** (including **repeat** `.`);
-with [language keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap);
-in **visual mode**; and in **macros**. Move to the next or previous match via `;`
-or `,` (*or* by pressing `s` again, like [clever-f](https://github.com/rhysd/clever-f.vim)).
-Move to the *nth* match by prefixing `;` or `,` with a
-[**`[count]`**](http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]).
-
-The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings.
-See [`:help sneak`](doc/sneak.txt) for full options and details.
+The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings
+(see [`:help sneak`](doc/sneak.txt)).
 
 **New Option:** Use Sneak as an elegant, streamlined alternative
 to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 
     let g:sneak#streak = 1
 
+[keymaps]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap
+[surround]: https://github.com/tpope/vim-surround
+[count]: http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]
+[cleverf]: https://github.com/rhysd/clever-f.vim
+
 ### Usage (Default)
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
-Sneak is invoked with `s` (sneak forward) or `S` (sneak backwards), followed by exactly two 
-characters:
+Sneak is invoked with `s` followed by exactly two characters:
 
     s{char}{char}
 
@@ -34,7 +35,8 @@ characters:
     * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
       *only* on `s` invocation—not repeats—so you can 
       abandon a trail of `;` or `,` by a single `ctrl-o` or ``` `` ```.
-* Later on, press `s<Enter>` to repeat the last Sneak-search.
+* Press `s<Enter>` at any time to repeat the last Sneak-search.
+* Press `S` to search backwards.
 
 Sneak can be **scoped** to a column of width 2×[number] by prefixing `s`
 with a number.
@@ -51,6 +53,8 @@ via `z` (because `s` is taken by surround.vim).
     * Press `2.` to repeat twice.
     * Press `d;` to delete up to the next match.
     * Press `4d;` to delete up to the *fourth* next match.
+* Press `ysz))]` to surround in brackets up to `))`.
+    * Press `s` *or* `;` to go to the next `))`.
 * Press `gUz\}` to upper-case the text from the cursor until the next instance
   of the literal text `\}`
     * Press `.` to repeat the `gUz\}` operation.
@@ -71,12 +75,11 @@ Here's how Sneak differs from Vim's built-in `/` search and other plugins:
 
   - minimum of **3 keystrokes**
   - Sneak supports [multibyte language keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)!
-    (see [issue #47](https://github.com/justinmk/vim-sneak/issues/47))
+    ([#47](https://github.com/justinmk/vim-sneak/issues/47))
   - move anywhere, even offscreen
   - jump immediately to first match
   - jump back to the point of `s` invocation via `ctrl-o` or ``` `` ```
-    - only the initial invocation adds to the jumplist; repeat-motion
-      via `;` or `,` does *not* add to the jumplist
+    - only the *initial* invocation adds to the jumplist, not repeat-motion
   - repeat the motion
   - does not break default behavior of `f t F T ; ,`
   - does not add noise to `/` history

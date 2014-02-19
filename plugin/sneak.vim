@@ -158,7 +158,6 @@ func! sneak#to(op, input, count, repeatmotion, reverse, streak) range abort "{{{
 
   "highlight actual matches at or below the cursor position
   "  - store in w: because matchadd() highlight is per-window.
-  "  - re-use w:sneak_hl_id if it exists (-1 lets matchadd() choose).
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search))
 
