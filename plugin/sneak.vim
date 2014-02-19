@@ -245,12 +245,6 @@ func! s:getnchars(n, mode)
   return s
 endf
 
-" DEPRECATED: these four commands will be removed in v2.0
-command! -bar -bang -nargs=1 Sneak          call sneak#to('', <sid>getnchars(<args>, ''), v:count1, 0, 0, <bang>1)
-command! -bar -bang -nargs=1 SneakBackward  call sneak#to('', <sid>getnchars(<args>, ''), v:count1, 0, 1, <bang>1)
-command! -bar -bang -nargs=1 SneakV         call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), max([1, v:prevcount]), 0, 0, <bang>1)
-command! -bar -bang -nargs=1 SneakVBackward call sneak#to(visualmode(), <sid>getnchars(<args>, visualmode()), max([1, v:prevcount]), 0, 1, <bang>1)
-
 " 2-char sneak
 nnoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap('', 2, 0, 1)<cr>
 nnoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap('', 2, 1, 1)<cr>
