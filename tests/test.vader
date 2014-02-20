@@ -491,6 +491,14 @@ Expect:
   abcdef abcdef abcdef
   axbcdef abcdef abcdef
 
+Do (clever-s with input truncated by <Enter> should still clever-repeat):
+  se\<Enter>sssix
+
+Expect:
+  abcdef abcdef abcdef
+  abcdxef abcdef abcdef
+  abcdef abcdef abcdef
+
 ###########################################################
 
 Given:
@@ -862,13 +870,56 @@ Execute (deactivate language keymap):
   set keymap=
 
 ###########################################################
+# test 1-char inclusive map Sneak_f
+
+Execute (map to Sneak_f):
+  silent! unmap f
+  silent! unmap F
+  nmap f <Plug>Sneak_f
+  nmap F <Plug>Sneak_F
+  let g:sneak#f_reset = 0
+  call sneak#init()
+
+Given:
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do ([count]f):
+  3feix
+
+Expect ([count]f should NOT invoke vertical-scope):
+  ab1cdef ab2cdef ab3cdxef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do ([count]f):
+  jj3Feix
+
+Expect ([count]F should NOT invoke vertical-scope):
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdxef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do ([count]s):
+  3sab;ax
+
+Expect ([count]s SHOULD invoke vertical-scope):
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  axb1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+###########################################################
 # test sneak mapped to 'f' (instead of default 's')
 
 Execute (map to f):
   unmap s
   unmap S
+  silent! unmap f
+  silent! unmap F
   nmap f <Plug>Sneak_s
   nmap F <Plug>Sneak_S
+  let g:sneak#f_reset = 1
   call sneak#init()
 
 Given:
