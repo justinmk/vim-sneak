@@ -40,6 +40,12 @@
 "   - sneak handles long lines https://github.com/Lokaltog/vim-easymotion/issues/82
 "   - sneak can find and highlight concealed characters
 
+" BUG?: steps: snu => first match is offscreen, no other matches onscreen => press ;
+"     Error detected while processing function sneak#wrap..sneak#to..sneak#streak#to..<SNR>201_do_streak:
+"     line   46:
+"     E716: Key not present in Dictionary: s
+"     E15: Invalid expression: mappedtoNext ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
+
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
 
 func! s:placematch(c, pos)

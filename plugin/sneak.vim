@@ -83,7 +83,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
 
   let l:gt_lt = a:reverse ? '<' : '>'
   let l:bounds = a:repeatmotion ? s:st.bounds : [0,0] " [left_bound, right_bound]
-  let l:scope_pattern = '' " pattern used to highlight the vertical 'scope'
+  let hl_scope = '' " pattern used to highlight the vertical 'scope'
   let l:match_bounds  = ''
 
   "scope to a column of width 2*(v:count1) _except_ for operators/repeat-motion/1-char-search
@@ -91,18 +91,17 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     " use current bounds if any, otherwise derive bounds from range
     if max(l:bounds) <= 0
       "these are the _logical_ bounds highlighted in 'scope' mode
-      let l:bounds[0] =  max([0, (virtcol('.') - a:count - 1)])
+      let l:bounds[0] =  max([1, (virtcol('.') - a:count)])
       let l:bounds[1] =  a:count + virtcol('.') + 1
     endif
-    "matches *all* chars in the scope.
-    "important: use \%<42v (virtual column) instead of \%<42c (byte column)
-    let l:scope_pattern .= '\%>'.l:bounds[0].'v\%<'.l:bounds[1].'v'
+    "Matches *all* chars in the scope. Use \%42v (virtual column), not \%42c (byte column).
+    let hl_scope .= '\%'.l:bounds[0].'v'.'.\{,'.(1 + 2*(max(l:bounds) <= 0 ? a:count : s:st.count)).'\}'
   endif
 
   if max(l:bounds) > 0
     "adjust logical left-bound for the _match_ pattern by -length(s) so that if _any_
     "char is within the logical bounds, it is considered a match.
-    let l:leftbound = max([0, (bounds[0] - a:inputlen) + 1])
+    let l:leftbound = max([0, (bounds[0] - a:inputlen - 1)])
     let l:match_bounds   = '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
     let s.match_pattern .= l:match_bounds
   endif
@@ -142,17 +141,21 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   let l:curlin = string(line('.'))
   let l:curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
 
-  "Might as well scope to window height (+/- 99).
-  let l:top = max([0, line('w0')-99])
-  let l:bot = line('w$')+99
-  let l:restrict_top_bot = '\%'.l:gt_lt.l:curlin.'l\%>'.l:top.'l\%<'.l:bot.'l'
-  let l:scope_pattern .= l:restrict_top_bot
-  let s.match_pattern .= l:restrict_top_bot
+  "scope to window height.
+  let top = max([0, line('w0')-1])
+  let bot = line('w$')+1
+  let restrict_top_bot = '\%'.l:gt_lt.l:curlin.'l\%>'.top.'l\%<'.bot.'l'
+  let hl_scope = restrict_top_bot.hl_scope
+  let s.match_pattern = restrict_top_bot.s.match_pattern
   let l:curln_pattern  = l:match_bounds.'\%'.l:curlin.'l\%'.l:gt_lt.l:curcol.'v'
 
   "highlight the vertical 'tunnel' that the search is scoped-to
-  if max(l:bounds) > 0 "perform the scoped highlight...
-    let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern)
+  if max(l:bounds) > 0
+    " let t = reltime()
+    " this call isn't slow, but _when_ redraw occurs it causes a bottleneck.
+    let w:sneak_sc_hl = matchadd('SneakPluginScope', hl_scope)
+    echom hl_scope
+    " echom 'time:' string(reltime(t))
   endif
 
   call s:attach_autocmds()
