@@ -116,24 +116,24 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     call s:ft_hook()
   endif
 
-    for i in range(1, max([1, skip])) "jump to the [count]th match
-      let matchpos = s.dosearch()
-      if 0 == max(matchpos)
-        break
-      endif
-    endfor
-
-    "if the user was in visual mode, extend the selection.
-    if sneak#util#isvisualop(a:op)
-      norm! gv
-      if max(matchpos) > 0 | call cursor(matchpos) | endif
-    endif
-
+  for i in range(1, max([1, skip])) "jump to the [count]th match
+    let matchpos = s.dosearch()
     if 0 == max(matchpos)
-      let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
-      call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(km.' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : km.': '.a:input))
-      return
+      break
     endif
+  endfor
+
+  "if the user was in visual mode, extend the selection.
+  if sneak#util#isvisualop(a:op)
+    norm! gv
+    if max(matchpos) > 0 | call cursor(matchpos) | endif
+  endif
+
+  if 0 == max(matchpos)
+    let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
+    call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(km.' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : km.': '.a:input))
+    return
+  endif
   "search succeeded
 
   call sneak#hl#removehl()

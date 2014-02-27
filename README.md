@@ -177,6 +177,7 @@ You can use both, but Sneak won't be able to "hook" into `f`, which means
 ### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion)
+* [smalls](https://github.com/t9md/vim-smalls)
 * [improvedft](https://github.com/chrisbra/improvedft)
 * [clever-f](https://github.com/rhysd/clever-f.vim)
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
