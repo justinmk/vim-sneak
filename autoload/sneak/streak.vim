@@ -58,16 +58,16 @@ func! s:restore_statusline() "restore normal statusline highlight.
   " redraw!
 endf
 
-func! sneak#streak#to(s, st)
+func! sneak#streak#to(s, v, reverse)
   let seq = ""
   while 1
-    let choice = s:do_streak(a:s, a:st)
+    let choice = s:do_streak(a:s, a:v, a:reverse)
     let seq .= choice
     if choice != "\<Tab>" | return seq | endif
   endwhile
 endf
 
-func! s:do_streak(s, st) "{{{
+func! s:do_streak(s, v, reverse) "{{{
   let w = winsaveview()
   call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
@@ -77,7 +77,7 @@ func! s:do_streak(s, st) "{{{
   while 1
     " searchpos() is faster than 'norm! /'
     let p = searchpos(search_pattern, a:s.search_options_no_s, a:s.get_stopline())
-    let skippedfold = sneak#util#skipfold(p[0], a:st.reverse) "Note: 'set foldopen-=search' does not affect search().
+    let skippedfold = sneak#util#skipfold(p[0], a:reverse) "Note: 'set foldopen-=search' does not affect search().
 
     if 0 == p[0] || -1 == skippedfold
       break
@@ -101,8 +101,7 @@ func! s:do_streak(s, st) "{{{
   let choice = sneak#util#getchar()
   call s:after()
 
-  let v = sneak#util#isvisualop(a:st.op)
-  let mappedto = maparg(choice, v ? 'x' : 'n')
+  let mappedto = maparg(choice, a:v ? 'x' : 'n')
   let mappedtoNext = mappedto =~# '<Plug>SneakNext'
 
   if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches

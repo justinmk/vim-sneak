@@ -12,7 +12,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 "persist state for repeat
-let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'op':'', 'reverse':0, 'count':0, 'bounds':[0,0], 'inclusive':0 }
+let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0], 'inclusive':0 }
 
 func! sneak#init()
   unlockvar g:sneak#opt
@@ -109,8 +109,8 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
 
   if !a:repeatmotion "this is a new (not repeat) invocation
     "persist even if the search fails, because the _reverse_ direction might have a match.
-    let s:st.rst = 0 | let s:st.input = a:input | let s:st.inputlen = a:inputlen | let s:st.op = a:op
-    let s:st.reverse = a:reverse | let s:st.count = a:count | let s:st.bounds = l:bounds | let s:st.inclusive = a:inclusive
+    let s:st.rst = 0 | let s:st.input = a:input | let s:st.inputlen = a:inputlen
+    let s:st.reverse = a:reverse | let s:st.bounds = l:bounds | let s:st.inclusive = a:inclusive
 
     "set temporary hooks on f/F/t/T so that we know when to reset Sneak.
     call s:ft_hook()
@@ -164,7 +164,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
-        \ ? sneak#streak#to(s, s:st): ""
+        \ ? sneak#streak#to(s, sneak#util#isvisualop(a:op), a:reverse): ""
 
   if is_op && a:op !=# 'y'
     "TODO: account for 't'/inclusive/exclusive
