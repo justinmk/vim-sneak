@@ -100,3 +100,11 @@ func! sneak#util#skipfold(current_line, reverse)
   return 0
 endf
 
+"Moves the cursor 1 char to the left or right; wraps at EOL.
+func! sneak#util#nudge(right)
+  let ww_orig = &whichwrap
+  set whichwrap+=h,l
+  exec 'norm! ' a:right ? 'l' : 'h'
+  let &whichwrap = ww_orig
+endf
+

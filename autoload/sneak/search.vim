@@ -19,10 +19,13 @@ func! sneak#search#new()
     if !a:repeatmotion | let self._search_options .= 's' | endif
   endf
 
-  func! s.dosearch()
+  func! s.initpattern()
     let self._searchpattern = (self.prefix).(self.match_pattern).'\zs'.(self.search)
+  endf
+
+  func! s.dosearch(...) " a:1 : extra search options
     return searchpos(self._searchpattern
-          \, self._search_options
+          \, self._search_options.(a:0 ? a:1 : '')
           \, 0
           \)
   endf
