@@ -212,10 +212,10 @@ With this setting, sneak with automatically enter streak-mode _only_ if there
 are ≥2 visible (on-screen) matches
 
 To force streak-mode always (instead of passively letting Sneak decide when
-to enter streak-mode), create a mapping to <Plug>SneakStreak. For example:
+to enter streak-mode), create a mapping to <Plug>(SneakStreak). For example:
 >
-    nmap s <Plug>SneakStreak
-    nmap S <Plug>SneakStreakBackward
+    nmap s <Plug>(SneakStreak)
+    nmap S <Plug>(SneakStreakBackward)
 <
 Streak-mode features:
 
@@ -418,6 +418,10 @@ your |vimrc|: >
     " operator-pending-mode
     omap ? <Plug>Sneak_t
     omap ? <Plug>Sneak_T
+
+    " force streak-mode always
+    nmap ? <Plug>(SneakStreak)
+    nmap ? <Plug>(SneakStreakBackward)
 <
 Here are some examples: >
 
@@ -428,7 +432,7 @@ Here are some examples: >
     omap <leader>s <Plug>Sneak_s
     omap <leader>S <Plug>Sneak_S
 
-    nmap <Space> <Plug>SneakStreak
+    nmap <Space> <Plug>(SneakStreak)
 
     nmap <enter> <Plug>SneakNext
     xmap <enter> <Plug>VSneakNext
