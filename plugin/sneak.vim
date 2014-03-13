@@ -73,7 +73,8 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     redraw | echo '' | return
   endif
 
-  let is_op = !empty(a:op) && !sneak#util#isvisualop(a:op) "operator-pending invocation
+  let is_v  = sneak#util#isvisualop(a:op)
+  let is_op = !empty(a:op) && !is_v "operator-pending invocation
   let s = g:sneak#search#instance
   call s.init(a:input, a:repeatmotion, a:reverse)
 
@@ -120,14 +121,14 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     call s:ft_hook()
   endif
 
-  if is_op && !sneak#util#isvisualop(a:op) && 2 != a:inclusive
+  if is_op && 2 != a:inclusive
     norm! v
   endif
 
   let nextchar = searchpos('\_.', 'n'.(s.search_options_no_s))
   let nudge = !a:inclusive && a:repeatmotion && nextchar == s.dosearch('n')
   if nudge
-    call sneak#util#nudge(!a:reverse) "special case for t
+    let nudge = sneak#util#nudge(!a:reverse) "special case for t
   endif
 
   for i in range(1, max([1, skip])) "jump to the [count]th match
@@ -139,13 +140,13 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     endif
   endfor
 
-  if nudge
-    call sneak#util#nudge(a:reverse) "undo nudge for t
-  endif
-
-  if sneak#util#isvisualop(a:op) "user was in visual mode, extend the selection.
+  if is_v "user was in visual mode, extend the selection.
     norm! gv
     if max(matchpos) > 0 | call cursor(matchpos) | endif
+  endif
+
+  if nudge && (!is_v || max(matchpos) > 0)
+    call sneak#util#nudge(a:reverse) "undo nudge for t
   endif
 
   if 0 == max(matchpos)
@@ -183,10 +184,9 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
-        \ ? sneak#streak#to(s, sneak#util#isvisualop(a:op), a:reverse): ""
+        \ ? sneak#streak#to(s, is_v, a:reverse): ""
 
   if is_op && a:op !=# 'y'
-    "TODO: account for 't'/inclusive/exclusive
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
     let rpt_input = a:input . (a:inputlen > sneak#util#strlen(a:input) ? "\<cr>" : "")
     silent! call repeat#set(a:op."\<Plug>SneakRepeat".a:inputlen.a:reverse.a:inclusive.(2*!empty(target)).rpt_input.target.change, a:count)
