@@ -1,6 +1,6 @@
 " sneak.vim - The missing motion
 " Author:       Justin M. Keyes
-" Version:      1.7.1
+" Version:      1.7.2
 " License:      MIT
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
