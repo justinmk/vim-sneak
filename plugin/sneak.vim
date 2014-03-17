@@ -73,6 +73,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     redraw | echo '' | return
   endif
 
+  let [curlin, curcol] = [line('.'), virtcol('.')] "initial position
   let is_v  = sneak#util#isvisualop(a:op)
   let is_op = !empty(a:op) && !is_v "operator-pending invocation
   let s = g:sneak#search#instance
@@ -83,28 +84,25 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   let skip = (is_op || a:repeatmotion || a:inputlen < 2) ? min([999, a:count]) : 0
 
   let l:gt_lt = a:reverse ? '<' : '>'
-  let l:bounds = a:repeatmotion ? s:st.bounds : [0,0] " [left_bound, right_bound]
+  let bounds = a:repeatmotion ? s:st.bounds : [0,0] " [left_bound, right_bound]
   let l:scope_pattern = '' " pattern used to highlight the vertical 'scope'
   let l:match_bounds  = ''
 
   "scope to a column of width 2*(v:count1) _except_ for operators/repeat-motion/1-char-search
-  if ((!skip && a:count > 1) || max(l:bounds) > 0) && !is_op
-    " use current bounds if any, otherwise derive bounds from range
-    if max(l:bounds) <= 0
-      "these are the _logical_ bounds highlighted in 'scope' mode
-      let l:bounds[0] =  max([0, (virtcol('.') - a:count - 1)])
-      let l:bounds[1] =  a:count + virtcol('.') + 1
+  if ((!skip && a:count > 1) || max(bounds)) && !is_op
+    if !max(bounds) "derive bounds from range (_logical_ bounds highlighted in 'scope')
+      let bounds[0] = max([0, (virtcol('.') - a:count - 1)])
+      let bounds[1] = a:count + virtcol('.') + 1
     endif
-    "matches *all* chars in the scope.
-    "important: use \%<42v (virtual column) instead of \%<42c (byte column)
-    let l:scope_pattern .= '\%>'.l:bounds[0].'v\%<'.l:bounds[1].'v'
+    "Match *all* chars in scope. Use \%<42v (virtual column) instead of \%<42c (byte column).
+    let l:scope_pattern .= '\%>'.bounds[0].'v\%<'.bounds[1].'v'
   endif
 
-  if max(l:bounds) > 0
+  if max(bounds)
     "adjust logical left-bound for the _match_ pattern by -length(s) so that if _any_
     "char is within the logical bounds, it is considered a match.
     let l:leftbound = max([0, (bounds[0] - a:inputlen) + 1])
-    let l:match_bounds   = '\%>'.l:leftbound.'v\%<'.l:bounds[1].'v'
+    let l:match_bounds   = '\%>'.l:leftbound.'v\%<'.bounds[1].'v'
     let s.match_pattern .= l:match_bounds
   endif
 
@@ -115,7 +113,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   if !a:repeatmotion "this is a new (not repeat) invocation
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let s:st.rst = 0 | let s:st.input = a:input | let s:st.inputlen = a:inputlen
-    let s:st.reverse = a:reverse | let s:st.bounds = l:bounds | let s:st.inclusive = a:inclusive
+    let s:st.reverse = a:reverse | let s:st.bounds = bounds | let s:st.inclusive = a:inclusive
 
     "set temporary hooks on f/F/t/T so that we know when to reset Sneak.
     call s:ft_hook()
@@ -151,27 +149,28 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
 
   if 0 == max(matchpos)
     let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
-    call sneak#util#echo('not found'.((max(l:bounds) > 0) ? printf(km.' (in columns %d-%d): %s', l:bounds[0], l:bounds[1], a:input) : km.': '.a:input))
+    call sneak#util#echo('not found'.(max(bounds) ? printf(km.' (in columns %d-%d): %s', bounds[0], bounds[1], a:input) : km.': '.a:input))
     return
   endif
   "search succeeded
 
   call sneak#hl#removehl()
 
-  "position _after_ completed search
-  let l:curlin = string(line('.'))
-  let l:curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
+  if (!is_op || a:op ==# 'y') "position _after_ search
+    let curlin = string(line('.'))
+    let curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
+  endif
 
   "Might as well scope to window height (+/- 99).
   let l:top = max([0, line('w0')-99])
   let l:bot = line('w$')+99
-  let l:restrict_top_bot = '\%'.l:gt_lt.l:curlin.'l\%>'.l:top.'l\%<'.l:bot.'l'
+  let l:restrict_top_bot = '\%'.l:gt_lt.curlin.'l\%>'.l:top.'l\%<'.l:bot.'l'
   let l:scope_pattern .= l:restrict_top_bot
   let s.match_pattern .= l:restrict_top_bot
-  let l:curln_pattern  = l:match_bounds.'\%'.l:curlin.'l\%'.l:gt_lt.l:curcol.'v'
+  let curln_pattern  = l:match_bounds.'\%'.curlin.'l\%'.l:gt_lt.curcol.'v'
 
   "highlight the vertical 'tunnel' that the search is scoped-to
-  if max(l:bounds) > 0 "perform the scoped highlight...
+  if max(bounds) "perform the scoped highlight...
     let w:sneak_sc_hl = matchadd('SneakPluginScope', l:scope_pattern)
   endif
 
@@ -180,10 +179,10 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   "highlight actual matches at or below the cursor position
   "  - store in w: because matchadd() highlight is per-window.
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
-        \ (s.prefix).s.match_pattern.'\zs'.(s.search).'\|'.l:curln_pattern.(s.search))
+        \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
-  let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && 0 == max(l:bounds) && s.hasmatches(2)
+  let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && !max(bounds) && s.hasmatches(2)
         \ ? sneak#streak#to(s, is_v, a:reverse): ""
 
   if is_op && a:op !=# 'y'
