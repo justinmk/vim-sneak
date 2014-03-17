@@ -1,14 +1,3 @@
-" TODO:
-"   janus
-"   YADR https://github.com/skwp/dotfiles
-"
-" KNOWN ISSUES:
-"   sneak basic mode has no known flaws with multibyte, but
-"   streak-mode target labeling is broken with multibyte
-" 
-" YADR easymotion settings:
-"   https://github.com/skwp/dotfiles/blob/master/vim/settings/easymotion.vim
-"
 " NOTES:
 "   problem:  cchar cannot be more than 1 character.
 "   strategy: make fg/bg the same color, then conceal the other char.
@@ -50,12 +39,10 @@ endf
 
 func! s:decorate_statusline() "highlight statusline to indicate streak-mode.
   highlight! link StatusLine SneakStreakStatusLine
-  " redraw!
 endf
 
 func! s:restore_statusline() "restore normal statusline highlight.
   highlight! link StatusLine NONE
-  " redraw!
 endf
 
 func! sneak#streak#to(s, v, reverse)
@@ -107,7 +94,7 @@ func! s:do_streak(s, v, reverse) "{{{
   if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
     call cursor(overflow[0], overflow[1])
   elseif -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>"], choice)
-    "exit streak-mode.
+    return "\<Esc>" "exit streak-mode.
   elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
     return ""
@@ -162,7 +149,7 @@ func! s:before()
   let s:matchmap = {}
 
   " highlight the cursor location (else the cursor is not visible during getchar())
-  let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 2, -1)
+  let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 11, -1)
 
   let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
   let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2
