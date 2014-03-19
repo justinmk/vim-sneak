@@ -278,8 +278,8 @@ onoremap <silent> <Plug>SneakRepeat :<c-u>call sneak#wrap(v:operator, sneak#util
 " explicit repeat (as opposed to 'clever-s' implicit repeat)
 nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', v:count1, 0)<cr>
 nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', v:count1, 1)<cr>
-xnoremap <silent> <Plug>VSneakNext     <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 0)<cr>
-xnoremap <silent> <Plug>VSneakPrevious <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 1)<cr>
+xnoremap <silent> <Plug>SneakNext      <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 0)<cr>
+xnoremap <silent> <Plug>SneakPrevious  <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 1)<cr>
 onoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt(v:operator, v:count1, 0)<cr>
 onoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt(v:operator, v:count1, 1)<cr>
 
@@ -343,14 +343,14 @@ if !hasmapto('<Plug>VSneakBackward') && !hasmapto('<Plug>Sneak_S', 'v') && mapch
   xmap Z <Plug>Sneak_S
 endif
 
-if !hasmapto('<Plug>VSneakNext') && mapcheck(';', 'x') ==# ''
-  xmap ; <Plug>VSneakNext
+if !hasmapto('<Plug>VSneakNext') && !hasmapto('<Plug>SneakNext', 'v') && mapcheck(';', 'x') ==# ''
+  xmap ; <Plug>SneakNext
 endif
-if !hasmapto('<Plug>VSneakPrevious')
+if !hasmapto('<Plug>VSneakPrevious') && !hasmapto('<Plug>SneakPrevious', 'v')
   if mapcheck(',', 'x') ==# ''
-    xmap , <Plug>VSneakPrevious
+    xmap , <Plug>SneakPrevious
   elseif mapcheck('\', 'x') ==# ''
-    xmap \ <Plug>VSneakPrevious
+    xmap \ <Plug>SneakPrevious
   endif
 endif
 
@@ -359,6 +359,9 @@ nmap <Plug>SneakForward   <Plug>Sneak_s
 nmap <Plug>SneakBackward  <Plug>Sneak_S
 xmap <Plug>VSneakForward  <Plug>Sneak_s
 xmap <Plug>VSneakBackward <Plug>Sneak_S
+
+xmap <Plug>VSneakNext     <Plug>SneakNext
+xmap <Plug>VSneakPrevious <Plug>SneakPrevious
 
 if g:sneak#opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
   func! s:map_netrw_key(key)
