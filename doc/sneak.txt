@@ -392,12 +392,8 @@ your |vimrc|: >
     omap ? <Plug>Sneak_S
 
     " explicit repeat (as opposed to implicit 'clever-s' repeat)
-    nmap ? <Plug>SneakNext
-    nmap ? <Plug>SneakPrevious
-    xmap ? <Plug>VSneakNext
-    xmap ? <Plug>VSneakPrevious
-    omap ? <Plug>SneakNext
-    omap ? <Plug>SneakPrevious
+    map ? <Plug>SneakNext
+    map ? <Plug>SneakPrevious
 
     " 1-character _inclusive_ Sneak (for enhanced 'f')
     nmap ? <Plug>Sneak_f
@@ -435,9 +431,9 @@ Here are some examples: >
     nmap <Space> <Plug>(SneakStreak)
 
     nmap <enter> <Plug>SneakNext
-    xmap <enter> <Plug>VSneakNext
+    xmap <enter> <Plug>SneakNext
     nmap <bs>    <Plug>SneakPrevious
-    xmap <bs>    <Plug>VSneakPrevious
+    xmap <bs>    <Plug>SneakPrevious
 
     " by default, Sneak does not touch 'f' or 't', so if you want
     " 1-character Sneak for 'f' or 't', do the following.
