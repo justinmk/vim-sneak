@@ -36,7 +36,7 @@ endf
 
 call sneak#init()
 
-func! s:is_sneaking()
+func! sneak#is_sneaking()
   return exists("#SneakPlugin#CursorMoved#<buffer>")
 endf
 
@@ -48,7 +48,7 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, streak) range abort
   "TRICKY: use v:prevcount for visual mapping because we <esc> before the ex command.
   let l:count = max([1, v ? v:prevcount : v:count1])
 
-  if g:sneak#opt.s_next && (v || empty(a:op)) && s:is_sneaking() && is_similar_invocation
+  if g:sneak#opt.s_next && (v || empty(a:op)) && sneak#is_sneaking() && is_similar_invocation
     call sneak#rpt(a:op, l:count, a:reverse) " s goes to next match
   else " s invokes new search
     call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, l:count, 0, a:reverse, a:inclusive, a:streak)
