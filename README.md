@@ -1,15 +1,15 @@
 # sneak.vim :shoe:
 
-Sneak is a minimalist, versatile Vim *motion* plugin that enables you to move to any location specified by two characters.
-It works across **multiple lines**, with **operators** (including **repeat** `.`
-and [**surround**][surround]), with [**keymaps**][keymaps], in **visual mode**,
-and in **macros**. Many small details have been carefully considered to minimize
+Sneak is a minimalist, versatile Vim *motion* plugin that flies you to any location specified by two characters.
+It works with **multiple lines**, **operators** (including **repeat** `.`
+and [**surround**][surround]), [**keymaps**][keymaps], **visual mode**,
+and **macros**. Many small details have been carefully considered to minimize
 friction between *intent* and *action*.
 
-The plugin chooses sane defaults, which are easily changed via `<Plug>` mappings
+The plugin chooses sane defaults, easily changed via `<Plug>` mappings
 (see [`:help sneak`](doc/sneak.txt)).
 
-**New Option:** Use Sneak as an elegant, streamlined alternative
+**New Option:** Use Sneak as a minimalist alternative
 to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 
     let g:sneak#streak = 1
@@ -66,33 +66,31 @@ via `z` (because `s` is taken by surround.vim).
                                      |
                                    sneak
 
-Vim's built-in motions cover many special cases, but it's not always easy to move across 
-several lines to an arbitrary position: the `f` motion is restricted to 
-the current line, and the `/` search is [clunky](#faq) for medium-distance 
-motion.
+Vim's built-in motions cover many special cases, but it's awkward to move across 
+several lines to an arbitrary position: `f` is restricted to the current line,
+and `/` is [clunky](#faq) for medium-distance motion.
 
-Here's how Sneak differs from Vim's built-in `/` search and other plugins:
+Compare Sneak to Vim's built-in `/` and other plugins:
 
   - minimum of **3 keystrokes**
-  - Sneak supports [multibyte language keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)!
-    ([#47](https://github.com/justinmk/vim-sneak/issues/47))
+  - repeat motion via `;` and `,`
+  - repeat operation via `.`
   - move anywhere, even offscreen
   - jump immediately to first match
   - jump back to the point of `s` invocation via `ctrl-o` or ``` `` ```
     - only the *initial* invocation adds to the jumplist, not repeat-motion
-  - repeat the motion
   - does not break default behavior of `f t F T ; ,`
   - does not add noise to `/` history
-  - *vertical scope* with `[count]s{char}{char}` restricts the search to 2× `count` size
+  - [count] prefix invokes *vertical scope*
   - always literal: `s\*` jumps to the literal `\*`
+  - supports [mbyte-keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)
+    ([#47](https://github.com/justinmk/vim-sneak/issues/47))
 
 ### Installation
 
-To install Sneak manually, just place the files directly in your `.vim` directory 
-(`_vimfiles` on Windows).
-
-Or, use a plugin manager:
-
+- Manual installation:
+  1. Copy the files to your `.vim` directory (`_vimfiles` on Windows).
+  2. Do a little dance. Be merry. Celebrate.
 - [Pathogen](https://github.com/tpope/vim-pathogen)
   - `cd ~/.vim/bundle && git clone git://github.com/justinmk/vim-sneak.git`
 - [Vundle](https://github.com/gmarik/vundle)
@@ -105,31 +103,30 @@ Or, use a plugin manager:
   1. Add `Plug 'justinmk/vim-sneak'` to .vimrc
   2. Run `:PlugInstall`
 
-If you want to be able to repeat Sneak *operations* (like `dzab`) with dot `.`,
-then [repeat.vim](https://github.com/tpope/vim-repeat) is required. However, to repeat 
-Sneak *motions* via `;` and `,` you don't need to install anything except Sneak.
+If you want to repeat Sneak *operations* (like `dzab`) with dot `.`,
+then [repeat.vim](https://github.com/tpope/vim-repeat) is required.
 
 ### FAQ
 
 #### Why not use `/`?
 
+For the same reason that Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#left-right-motions).
+
 * `/ab<cr>` requires 33% more keystrokes than `sab`
   * `f` and `t` exist for a similar reason
   * common operations should use as few keystrokes as possible
+* Sneak remembers *only* the initial position in the Vim jumplist
+  * Explore a trail of matches via `;`, then return to the start with a single `ctrl-o` or ``` `` ```
 * Sneak doesn't clutter your search history
 * Sneak is always literal (no need to escape special characters)
 * Sneak has smarter, subtler highlighting
-
-This is why Vim has [motions](http://vimdoc.sourceforge.net/htmldoc/motion.html#left-right-motions).
+* Sneak *Streak-Mode*
 
 #### Why not use `f`?
 
-* Sneak is fifty times (50×) *more precise* than `f` or `t`
+* Sneak is *fifty times* more precise than `f` or `t`
 * Sneak moves vertically
-* Sneak remembers the initial position in the Vim jumplist
-  * This allows you to explore a trail of matches via `;`,
-    then return to the initial position via `ctrl-o` or ``` `` ```
-* Sneak highlights matches *only in the direction of your search* 
+* Sneak highlights matches in the direction of your search
 
 #### How dare you remap `s`?
 
@@ -171,7 +168,7 @@ These mappings do *not* invoke streak-mode, even if you have it enabled.
 #### I want to use an "f-enhancement" plugin simultaneously with Sneak
 
 Sneak is intended to replace the so-called [f-enhancement plugins](#related).
-You can use both, but Sneak won't be able to "hook" into `f`, which means
+You can use both, but Sneak won't be able to hook into `f`, which means
 `;` and `,` will always repeat the last Sneak.
 
 ### Related
@@ -181,11 +178,11 @@ You can use both, but Sneak won't be able to "hook" into `f`, which means
 * [improvedft](https://github.com/chrisbra/improvedft)
 * [clever-f](https://github.com/rhysd/clever-f.vim)
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
-* [Fanf,ingTastic; ](https://github.com/dahu/vim-fanfingtastic)
+* [Fanf,ingTastic;](https://github.com/dahu/vim-fanfingtastic)
 
 ### Bugs
 
-Sneak is built to be well-behaved and annoyance-free. If you find a bug,
+Sneak tries to be well-behaved and annoyance-free. If you find a bug,
 please report it, and perhaps include the output of:
 
     :call sneak#debug#report()
