@@ -2,7 +2,7 @@
 
 Sneak is a minimalist, versatile Vim *motion* plugin that flies you to any location specified by two characters.
 It works with **multiple lines**, **operators** (including **repeat** `.`
-and [**surround**][surround]), [**keymaps**][keymaps], **visual mode**,
+and **[surround]**), **[keymaps]**, **visual mode**,
 and **macros**. Many small details have been carefully considered to minimize
 friction between *intent* and *action*.
 
@@ -17,7 +17,6 @@ to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 [keymaps]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap
 [surround]: https://github.com/tpope/vim-surround
 [count]: http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]
-[cleverf]: https://github.com/rhysd/clever-f.vim
 
 ### Usage (Default)
 
@@ -77,10 +76,9 @@ Compare Sneak to Vim's built-in `/` and other plugins:
   - repeat operation via `.`
   - move anywhere, even offscreen
   - jump immediately to first match
-  - jump back to the point of `s` invocation via `ctrl-o` or ``` `` ```
-    - only the *initial* invocation adds to the jumplist, not repeat-motion
-  - does not break default behavior of `f t F T ; ,`
-  - does not add noise to `/` history
+  - only the *initial* invocation adds to the jumplist
+  - preserves default behavior of `f t F T ; ,`
+  - avoids noise in `/` history
   - [count] prefix invokes *vertical scope*
   - always literal: `s\*` jumps to the literal `\*`
   - supports [mbyte-keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)
@@ -89,8 +87,7 @@ Compare Sneak to Vim's built-in `/` and other plugins:
 ### Installation
 
 - Manual installation:
-  1. Copy the files to your `.vim` directory (`_vimfiles` on Windows).
-  2. Do a little dance. Be merry. Celebrate.
+  - Copy the files to your `.vim` directory (`_vimfiles` on Windows).
 - [Pathogen](https://github.com/tpope/vim-pathogen)
   - `cd ~/.vim/bundle && git clone git://github.com/justinmk/vim-sneak.git`
 - [Vundle](https://github.com/gmarik/vundle)
