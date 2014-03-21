@@ -41,43 +41,45 @@ func! sneak#is_sneaking()
 endf
 
 " convenience wrapper for key bindings/mappings
-func! sneak#wrap(op, inputlen, reverse, inclusive, streak) range abort
-  " don't repeat the last 's' search if this is an 'f' search, etc.
+func! sneak#wrap(op, inputlen, reverse, inclusive, streak) abort
+  let cnt = v:count1 "get count before doing _anything_, else it gets overwritten.
+  " don't clever-repeat the last 's' search if this is an 'f' search, etc.
   let is_similar_invocation = a:inputlen == s:st.inputlen && a:inclusive == s:st.inclusive
-  let v = sneak#util#isvisualop(a:op)
-  "TRICKY: use v:prevcount for visual mapping because we <esc> before the ex command.
-  let l:count = max([1, v ? v:prevcount : v:count1])
 
-  if g:sneak#opt.s_next && (v || empty(a:op)) && sneak#is_sneaking() && is_similar_invocation
-    call sneak#rpt(a:op, l:count, a:reverse) " s goes to next match
+  if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
+    call sneak#rpt(a:op, a:reverse) " s goes to next match
   else " s invokes new search
-    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, l:count, 0, a:reverse, a:inclusive, a:streak)
+    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:streak)
   endif
 endf
 
 "repeat *motion* (not operation)
-func! sneak#rpt(op, count, reverse) range abort
+func! sneak#rpt(op, reverse) abort
   if s:st.rst "reset by f/F/t/T
-    exec "norm! ".(sneak#util#isvisualop(a:op) ? "gv" : "").a:count.(a:reverse ? "," : ";")
+    exec "norm! ".(sneak#util#isvisualop(a:op) ? "gv" : "").v:count1.(a:reverse ? "," : ";")
     return
   endif
 
-  call sneak#to(a:op, s:st.input, s:st.inputlen, a:count, 1,
+  call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, 1,
         \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.inclusive, 0)
 endf
 
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
 " inclusive:  0 => like t, 1 => like f, 2 => like /
-func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak) range abort "{{{
+func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak) abort "{{{
   if empty(a:input) "user canceled
     redraw | echo '' | return
   endif
 
-  let [curlin, curcol] = [line('.'), virtcol('.')] "initial position
   let is_v  = sneak#util#isvisualop(a:op)
+  let [curlin, curcol] = [line('.'), virtcol('.')] "initial position
   let is_op = !empty(a:op) && !is_v "operator-pending invocation
   let s = g:sneak#search#instance
   call s.init(a:input, a:repeatmotion, a:reverse)
+
+  if is_v && a:repeatmotion
+    norm! gv
+  endif
 
   " [count] means 'skip this many' _only_ for operators/repeat-motion/2-char-search
   "   sanity check: max out at 999, to avoid searchpos() OOM.
@@ -90,7 +92,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
 
   "scope to a column of width 2*(v:count1) _except_ for operators/repeat-motion/1-char-search
   if ((!skip && a:count > 1) || max(bounds)) && !is_op
-    if !max(bounds) "derive bounds from range (_logical_ bounds highlighted in 'scope')
+    if !max(bounds) "derive bounds from count (_logical_ bounds highlighted in 'scope')
       let bounds[0] = max([0, (virtcol('.') - a:count - 1)])
       let bounds[1] = a:count + virtcol('.') + 1
     endif
@@ -137,11 +139,6 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
       let nudge = !a:inclusive
     endif
   endfor
-
-  if is_v "user was in visual mode, extend the selection.
-    norm! gv
-    if max(matchpos) > 0 | call cursor(matchpos) | endif
-  endif
 
   if nudge && (!is_v || max(matchpos) > 0)
     call sneak#util#nudge(a:reverse) "undo nudge for t
@@ -268,20 +265,20 @@ endf
 " 2-char sneak
 nnoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap('', 2, 0, 2, 1)<cr>
 nnoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap('', 2, 1, 2, 1)<cr>
-xnoremap <silent> <Plug>Sneak_s <esc>:<c-u>call sneak#wrap(visualmode(), 2, 0, 2, 1)<cr>
-xnoremap <silent> <Plug>Sneak_S <esc>:<c-u>call sneak#wrap(visualmode(), 2, 1, 2, 1)<cr>
+xnoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap(visualmode(), 2, 0, 2, 1)<cr>
+xnoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(visualmode(), 2, 1, 2, 1)<cr>
 onoremap <silent> <Plug>Sneak_s :<c-u>call sneak#wrap(v:operator, 2, 0, 2, 1)<cr>
 onoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(v:operator, 2, 1, 2, 1)<cr>
 
 onoremap <silent> <Plug>SneakRepeat :<c-u>call sneak#wrap(v:operator, sneak#util#getc(), sneak#util#getc(), sneak#util#getc(), sneak#util#getc())<cr>
 
 " explicit repeat (as opposed to 'clever-s' implicit repeat)
-nnoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt('', v:count1, 0)<cr>
-nnoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt('', v:count1, 1)<cr>
-xnoremap <silent> <Plug>SneakNext      <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 0)<cr>
-xnoremap <silent> <Plug>SneakPrevious  <esc>:<c-u>call sneak#rpt(visualmode(), max([1, v:prevcount]), 1)<cr>
-onoremap <silent> <Plug>SneakNext      :<c-u>call sneak#rpt(v:operator, v:count1, 0)<cr>
-onoremap <silent> <Plug>SneakPrevious  :<c-u>call sneak#rpt(v:operator, v:count1, 1)<cr>
+nnoremap <silent> <Plug>SneakNext     :<c-u>call sneak#rpt('', 0)<cr>
+nnoremap <silent> <Plug>SneakPrevious :<c-u>call sneak#rpt('', 1)<cr>
+xnoremap <silent> <Plug>SneakNext     :<c-u>call sneak#rpt(visualmode(), 0)<cr>
+xnoremap <silent> <Plug>SneakPrevious :<c-u>call sneak#rpt(visualmode(), 1)<cr>
+onoremap <silent> <Plug>SneakNext     :<c-u>call sneak#rpt(v:operator, 0)<cr>
+onoremap <silent> <Plug>SneakPrevious :<c-u>call sneak#rpt(v:operator, 1)<cr>
 
 if g:sneak#opt.textobject_z
   omap z  <Plug>Sneak_s
@@ -289,20 +286,20 @@ if g:sneak#opt.textobject_z
 endif
 
 " 1-char sneak, inclusive
-nnoremap <silent> <Plug>Sneak_f      :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
-nnoremap <silent> <Plug>Sneak_F      :<c-u>call sneak#wrap('', 1, 1, 1, 0)<cr>
-xnoremap <silent> <Plug>Sneak_f <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 1, 0)<cr>
-xnoremap <silent> <Plug>Sneak_F <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 1, 0)<cr>
-onoremap <silent> <Plug>Sneak_f      :<c-u>call sneak#wrap(v:operator, 1, 0, 1, 0)<cr>
-onoremap <silent> <Plug>Sneak_F      :<c-u>call sneak#wrap(v:operator, 1, 1, 1, 0)<cr>
+nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
+nnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap('', 1, 1, 1, 0)<cr>
+xnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap(visualmode(), 1, 0, 1, 0)<cr>
+xnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap(visualmode(), 1, 1, 1, 0)<cr>
+onoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap(v:operator, 1, 0, 1, 0)<cr>
+onoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap(v:operator, 1, 1, 1, 0)<cr>
 
 " 1-char sneak, exclusive
-nnoremap <silent> <Plug>Sneak_t      :<c-u>call sneak#wrap('', 1, 0, 0, 0)<cr>
-nnoremap <silent> <Plug>Sneak_T      :<c-u>call sneak#wrap('', 1, 1, 0, 0)<cr>
-xnoremap <silent> <Plug>Sneak_t <esc>:<c-u>call sneak#wrap(visualmode(), 1, 0, 0, 0)<cr>
-xnoremap <silent> <Plug>Sneak_T <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0, 0)<cr>
-onoremap <silent> <Plug>Sneak_t      :<c-u>call sneak#wrap(v:operator, 1, 0, 0, 0)<cr>
-onoremap <silent> <Plug>Sneak_T      :<c-u>call sneak#wrap(v:operator, 1, 1, 0, 0)<cr>
+nnoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap('', 1, 0, 0, 0)<cr>
+nnoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap('', 1, 1, 0, 0)<cr>
+xnoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap(visualmode(), 1, 0, 0, 0)<cr>
+xnoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap(visualmode(), 1, 1, 0, 0)<cr>
+onoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap(v:operator, 1, 0, 0, 0)<cr>
+onoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap(v:operator, 1, 1, 0, 0)<cr>
 
 nnoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap('', 2, 0, 2, 2)<cr>
 nnoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap('', 2, 1, 2, 2)<cr>
