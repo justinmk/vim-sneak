@@ -304,8 +304,12 @@ xnoremap <silent> <Plug>Sneak_T <esc>:<c-u>call sneak#wrap(visualmode(), 1, 1, 0
 onoremap <silent> <Plug>Sneak_t      :<c-u>call sneak#wrap(v:operator, 1, 0, 0, 0)<cr>
 onoremap <silent> <Plug>Sneak_T      :<c-u>call sneak#wrap(v:operator, 1, 1, 0, 0)<cr>
 
-nnoremap <Plug>(SneakStreak) :call sneak#wrap('', 2, 0, 2, 2)<cr>
-nnoremap <Plug>(SneakStreakBackward) :call sneak#wrap('', 2, 1, 2, 2)<cr>
+nnoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap('', 2, 0, 2, 2)<cr>
+nnoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap('', 2, 1, 2, 2)<cr>
+xnoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap(visualmode(), 2, 0, 2, 2)<cr>
+xnoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap(visualmode(), 2, 1, 2, 2)<cr>
+onoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap(v:operator, 2, 0, 2, 2)<cr>
+onoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap(v:operator, 2, 1, 2, 2)<cr>
 
 if !hasmapto('<Plug>SneakForward') && !hasmapto('<Plug>Sneak_s', 'n') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>Sneak_s
@@ -359,7 +363,6 @@ nmap <Plug>SneakForward   <Plug>Sneak_s
 nmap <Plug>SneakBackward  <Plug>Sneak_S
 xmap <Plug>VSneakForward  <Plug>Sneak_s
 xmap <Plug>VSneakBackward <Plug>Sneak_S
-
 xmap <Plug>VSneakNext     <Plug>SneakNext
 xmap <Plug>VSneakPrevious <Plug>SneakPrevious
 
