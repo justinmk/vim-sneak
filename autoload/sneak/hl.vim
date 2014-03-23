@@ -13,6 +13,9 @@ func! sneak#hl#links_to(hlgroup)
 endf
 
 func! sneak#hl#is_valid(hlgroup) "avoid junk like 'Cursor xxx cleared'
+  if !hlexists(a:hlgroup)
+    return 0
+  endif
   redir => hl | exec 'silent highlight '.a:hlgroup | redir END
   return !empty(matchstr(hl, '\%(.*xxx\)\?\%(.*cleared\)\?\s*\zs.*'))
 endf
