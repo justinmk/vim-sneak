@@ -148,6 +148,9 @@ endf
 func! s:before()
   let s:matchmap = {}
 
+  " prevent highlighting in other windows showing the same buffer
+  ownsyntax sneak_streak
+
   " highlight the cursor location (else the cursor is not visible during getchar())
   let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 11, -1)
 
