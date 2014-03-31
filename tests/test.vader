@@ -465,6 +465,10 @@ Expect:
 ###########################################################
 # clever-s _not_ in streak-mode
 
+Execute (init clever-s):
+  let g:sneak#s_next = 1
+  call sneak#init()
+
 Given:
   abcdef abcdef abcdef
   abcdef abcdef abcdef
@@ -502,6 +506,9 @@ Expect:
   abcdxef abcdef abcdef
   abcdef abcdef abcdef
 
+Execute (unset clever-s):
+  let g:sneak#s_next = 0
+  call sneak#init()
 ###########################################################
 
 Given:
@@ -571,27 +578,11 @@ Expect:
 #  abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-# force-exit via <Space> because feedkeys() in do_streak() breaks macros/Vader
-Do (clever-s, streak-mode):
-  sab\<Space>2six
-
 Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaxab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-# TODO: this is working, but fails in Vader
-#Do (clever-s, visual-mode, streak-mode):
-#  vsabsd
-#
-#Expect:
-#  bc AAaab
-#  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-
-# TODO: this is working, but fails in Vader
-#Do (clever-s, backwards clever-s, visual-mode, streak-mode):
-#  jvsabsssZd
-#
 #Expect:
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 #  bcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+

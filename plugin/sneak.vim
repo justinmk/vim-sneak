@@ -19,7 +19,7 @@ func! sneak#init()
   "options                                 v-- for backwards-compatibility
   let g:sneak#opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
-      \ ,'s_next'       : get(g:, 'sneak#s_next', 1)
+      \ ,'s_next'       : get(g:, 'sneak#s_next', 0)
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)

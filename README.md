@@ -28,8 +28,8 @@ Sneak is invoked with `s` followed by exactly two characters:
 
 * Press `sab` to **move the cursor** immediately to the next instance of the text "ab".
     * Additional matches, if any, are highlighted until the cursor is moved.
-* Press `s` *or* `;` to go to the next match.
-* Press `3s` *or* `3;` to skip to the third match from the current position.
+* Press `;` to go to the next match (or `s` again, if `s_next` is enabled; see [`:help sneak`](doc/sneak.txt)).
+* Press `3;` to skip to the third match from the current position.
 * Press `ctrl-o` or ``` `` ``` to go back to the starting point.
     * This is a built-in Vim motion; Sneak adds to Vim's [jumplist](http://vimdoc.sourceforge.net/htmldoc/motion.html#jumplist)
       *only* on `s` invocation—not repeats—so you can 
@@ -53,7 +53,7 @@ via `z` (because `s` is taken by surround.vim).
     * Press `d;` to delete up to the next match.
     * Press `4d;` to delete up to the *fourth* next match.
 * Press `ysz))]` to surround in brackets up to `))`.
-    * Press `s` *or* `;` to go to the next `))`.
+    * Press `;` to go to the next `))`.
 * Press `gUz\}` to upper-case the text from the cursor until the next instance
   of the literal text `\}`
     * Press `.` to repeat the `gUz\}` operation.
