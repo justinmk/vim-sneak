@@ -182,7 +182,11 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && !max(bounds) && s.hasmatches(2)
         \ ? sneak#streak#to(s, is_v, a:reverse): ""
 
-  if is_op && a:op !=# 'y'
+  if !is_op
+    if "" != target && "\<Esc>" != target
+      call sneak#hl#removehl()
+    endif
+  elseif a:op !=# 'y'
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
     let rpt_input = a:input . (a:inputlen > sneak#util#strlen(a:input) ? "\<cr>" : "")
     silent! call repeat#set(a:op."\<Plug>SneakRepeat".a:inputlen.a:reverse.a:inclusive.(2*!empty(target)).rpt_input.target.change, a:count)
