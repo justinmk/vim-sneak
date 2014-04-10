@@ -1,9 +1,9 @@
 # sneak.vim :shoe:
 
-Sneak is a minimalist, versatile Vim *motion* plugin that flies you to any location specified by two characters.
+Sneak is a minimalist, versatile Vim *motion* plugin that jumps to any location specified by two characters.
 It works with **multiple lines**, **operators** (including **repeat** `.`
-and **[surround]**), **[keymaps]**, **visual mode**,
-and **macros**. Many small details have been carefully considered to minimize
+and **[surround]**), **[keymaps]**, **visual mode**, **[unicode]** ("multibyte"),
+and **macros**. Many details have been carefully balanced to minimize
 friction between *intent* and *action*.
 
 The plugin chooses sane defaults, easily changed via `<Plug>` mappings
@@ -14,6 +14,7 @@ to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 
     let g:sneak#streak = 1
 
+[unicode]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#UTF-8
 [keymaps]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap
 [surround]: https://github.com/tpope/vim-surround
 [count]: http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]

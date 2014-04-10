@@ -37,7 +37,7 @@ func! sneak#search#new()
     let wincol_lhs = a:w.leftcol "this is actually just to the _left_ of the first onscreen column.
     let wincol_rhs  = 2 + (winwidth(0) - sneak#util#wincol1()) + wincol_lhs
     "restrict search to window
-    return '\%>'.(wincol_lhs).'c'.'\%<'.wincol_rhs.'c'
+    return '\%>'.(wincol_lhs).'v'.'\%<'.(wincol_rhs+1).'v'
   endf
 
   func! s.get_stopline()

@@ -33,8 +33,7 @@ let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiop
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
-  "TODO: figure out why we must +1 the column...
-  exec "syntax match SneakStreakTarget '.\\%".a:pos[0]."l\\%".(a:pos[1]+1)."c' conceal cchar=".a:c
+  exec "syntax match SneakStreakTarget '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
 endf
 
 func! s:decorate_statusline() "highlight statusline to indicate streak-mode.
