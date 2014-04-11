@@ -57,8 +57,12 @@ Execute (hl#links_to() returns NONE if not linked):
   hi! link Conceal NONE
   Assert "NONE" ==# sneak#hl#links_to('Conceal')
 
-Execute (hl#is_valid() handles non-existent hl group):
-  Assert 0 == sneak#hl#is_valid('Derp')
+Execute (hl#get() handles non-existent hl group):
+  Assert '' == sneak#hl#get('Derp')
+
+Execute (hl#get() returns text definition of highlight group):
+  hi Cursor guifg=white guibg=#0a9dff ctermfg=16 ctermbg=253
+  Assert match(sneak#hl#get('Cursor'), '\Vctermbg=253')
 
 Execute (streak#sanitize_target_labels()):
   call sneak#streak#init()
