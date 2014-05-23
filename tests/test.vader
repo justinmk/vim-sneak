@@ -632,7 +632,7 @@ Expect:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
 Do (streak + 2-delete + repeat):
-  2dzab\<Space>
+  2dzab\<Esc>
   :\<C-U>doautocmd CursorMoved\<CR>
   .
 
