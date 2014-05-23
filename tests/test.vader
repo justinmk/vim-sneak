@@ -69,7 +69,7 @@ Execute (streak#sanitize_target_labels()):
   let orig = g:sneak#target_labels
   let g:sneak#target_labels = " \\ as  d\<Esc>fo\<Tab>ob\<Space>a;\\rASD"
   call sneak#streak#sanitize_target_labels()
-  Assert g:sneak#target_labels ==#  "sadfoobarASD"
+  Assert g:sneak#target_labels ==#  ";asdfoobarASD"
   "cleanup
   let g:sneak#target_labels = orig
 
@@ -551,7 +551,7 @@ Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Do (backwards streak motion):
-  jj$Sefdix
+  jj$Sefsix
 
 Expect:
   abcdxef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
@@ -603,7 +603,7 @@ Given:
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
 Do (delete + streak):
-  dznuh
+  dznug
 
 Expect:
   number of maximum items to be assigned at once |
@@ -615,7 +615,7 @@ Given:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
 Do (streak + delete):
-  dzabs
+  dzab;
 
 Expect:
   ab3cdef ab4cdef ab5cdef ab6cdef
@@ -652,7 +652,7 @@ Expect:
   ab1cdef ab2cdef ab3cdef ab5cdef ab6cdef
 
 Do (streak/target/backwards/delete/repeat):
-  2j2wdZefd
+  2j2wdZefs
   :\<C-U>doautocmd CursorMoved\<CR>
   .
 

@@ -311,11 +311,14 @@ g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM
         List of 1-character "labels" used by streak-mode to decorate the
         target locations.
 
-        Note: Sneak automatically removes invalid characters from this list.
-              The following keys are invalid:
-              - Any key mapped to <Plug>SneakNext or <Plug>SneakPrevious
-              - <Esc>, <Tab>, <Space>, <Enter>, <BS>, because they have
-                special uses in streak-mode.
+        Note: If ; (or any key mapped to <Plug>SneakNext) is in the list,
+              Sneak automatically moves it to the first position (because
+              it's semantically equivalent and it saves a target label).
+
+        Note: Sneak automatically removes invalid target labels:
+              - Any key mapped to <Plug>SneakPrevious
+              - <Esc>, <Tab>, <BS>, because they are special
+              - <Space>, <Enter>, because they are invisible
 
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*

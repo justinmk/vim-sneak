@@ -105,15 +105,6 @@ func! s:do_streak(s, v, reverse) "{{{
   return choice
 endf "}}}
 
-"returns 1 if a:key does something other than jumping to a target label:
-"    - escape/cancel streak-mode (<Space>, <C-c>, <Esc>)
-"    - highlight next batch of targets (<Tab>)
-"    - go to next/previous match (; and , by default)
-func! s:is_active_key(key)
-  return -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>", "\<Tab>"], a:key)
-    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\|Next\|Previous\)'
-endf
-
 func! s:after()
   autocmd! sneak_streak_cleanup * <buffer>
   silent! call matchdelete(w:sneak_cursor_hl)
@@ -177,6 +168,13 @@ func! s:before()
   augroup END
 endf
 
+"returns 1 if a:key is invisible or special.
+func! s:is_special_key(key)
+  return -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>", "\<Tab>"], a:key)
+    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(Next\|Previous\)'
+    \ || (g:sneak#opt.s_next && maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
+endf
+
 "we must do this because:
 "  - we don't know which keys the user assigned to SneakNext/Previous
 "  - we need to reserve special keys like <Esc> and <Tab>
@@ -185,10 +183,10 @@ func! sneak#streak#sanitize_target_labels()
   let i = 0
   while i < nrkeys
     let k = strpart(g:sneak#target_labels, i, 1)
-    if s:is_active_key(k)
-      "remove the char at index i
+    if s:is_special_key(k) "remove the char
       let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
-      if maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)' "special case: move 's' to the front (clever-s)
+      "move ; (or s if 'clever-s' is enabled) to the front.
+      if (!g:sneak#opt.s_next && maparg(k, 'n') =~# '<Plug>SneakNext') || (maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
         let g:sneak#target_labels = k . g:sneak#target_labels
       else
         let nrkeys -= 1
