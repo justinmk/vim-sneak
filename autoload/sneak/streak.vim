@@ -90,8 +90,13 @@ func! s:do_streak(s, v, reverse) "{{{
   let mappedto = maparg(choice, a:v ? 'x' : 'n')
   let mappedtoNext = mappedto =~# '<Plug>SneakNext'
 
-  if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
-    call cursor(overflow[0], overflow[1])
+  if choice == "\<Tab>"  "decorate next N matches
+    if overflow[0] > 0 "on-screen overflow
+      call cursor(overflow[0], overflow[1])
+    else "continue off-screen
+      call searchpos(a:s.get_onscreen_pattern().(a:s.prefix).(a:s.search), a:s.search_options_no_s)
+      norm! zt
+    endif
   elseif -1 != index(["\<Esc>", "\<C-c>"], choice)
     return "\<Esc>" "exit streak-mode.
   elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.

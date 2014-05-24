@@ -30,6 +30,10 @@ func! sneak#search#new()
           \)
   endf
 
+  func! s.get_onscreen_pattern()
+    return '\%'.(self._reverse ? '<' : '>').self.get_stopline().'l'
+  endf
+
   func! s.get_onscreen_searchpattern(w)
     if &wrap
       return ''
