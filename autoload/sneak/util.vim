@@ -30,7 +30,7 @@ endf
 
 func! sneak#util#getchar()
   let input = sneak#util#getc()
-  if !&iminsert
+  if 1 != &iminsert
     return input
   endif
   "a language keymap is activated, so input must be resolved to the mapped values.

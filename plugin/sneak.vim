@@ -252,7 +252,7 @@ func! s:getnchars(n, mode)
       endif
     else
       let s .= c
-      if &iminsert && sneak#util#strlen(s) >= a:n
+      if 1 == &iminsert && sneak#util#strlen(s) >= a:n
         "HACK: this can happen if the user entered multiple characters while we
         "were waiting to resolve a multi-char keymap.
         "example for keymap 'bulgarian-phonetic':
