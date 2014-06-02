@@ -64,6 +64,10 @@ Execute (hl#get() returns text definition of highlight group):
   hi Cursor guifg=white guibg=#0a9dff ctermfg=16 ctermbg=253
   Assert match(sneak#hl#get('Cursor'), '\Vctermbg=253')
 
+Execute (hl#get() returns empty if highlight group is 'cleared'):
+  hi clear Cursor
+  Assert "" == sneak#hl#get('Cursor')
+
 Execute (streak#sanitize_target_labels()):
   call sneak#streak#init()
   let orig = g:sneak#target_labels
