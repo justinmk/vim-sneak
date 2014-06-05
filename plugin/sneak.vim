@@ -60,8 +60,7 @@ func! sneak#rpt(op, reverse) abort
     return
   endif
 
-  call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, 1,
-        \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.inclusive, 0)
+  call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, 1, xor(a:reverse, s:st.reverse), s:st.inclusive, 0)
 endf
 
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
