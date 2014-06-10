@@ -17,6 +17,8 @@
 Execute (Clean up test environment):
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious
+  omap \ <Plug>SneakPrevious
+  xmap \ <Plug>SneakPrevious
   silent! unmap f
   silent! unmap t
   let mapleader = ','

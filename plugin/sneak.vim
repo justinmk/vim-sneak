@@ -321,23 +321,18 @@ endif
 
 if !hasmapto('<Plug>SneakNext', 'n') && mapcheck(';', 'n') ==# ''
   nmap ; <Plug>SneakNext
+  omap ; <Plug>SneakNext
+  xmap ; <Plug>SneakNext
 endif
 if !hasmapto('<Plug>SneakPrevious', 'n')
   if mapcheck(',', 'n') ==# ''
     nmap , <Plug>SneakPrevious
+    omap , <Plug>SneakPrevious
+    xmap , <Plug>SneakPrevious
   elseif mapcheck('\', 'n') ==# '' || mapcheck('\', 'n') ==# ','
     nmap \ <Plug>SneakPrevious
-  endif
-endif
-
-if !hasmapto('<Plug>SneakNext', 'o') && mapcheck(';', 'o') ==# ''
-  omap ; <Plug>SneakNext
-endif
-if !hasmapto('<Plug>SneakPrevious', 'o')
-  if mapcheck(',', 'o') ==# ''
-    omap , <Plug>SneakPrevious
-  elseif mapcheck('\', 'o') ==# '' || mapcheck('\', 'o') ==# ','
     omap \ <Plug>SneakPrevious
+    xmap \ <Plug>SneakPrevious
   endif
 endif
 
@@ -346,17 +341,6 @@ if !hasmapto('<Plug>VSneakForward') && !hasmapto('<Plug>Sneak_s', 'v') && mapche
 endif
 if !hasmapto('<Plug>VSneakBackward') && !hasmapto('<Plug>Sneak_S', 'v') && mapcheck('Z', 'x') ==# ''
   xmap Z <Plug>Sneak_S
-endif
-
-if !hasmapto('<Plug>VSneakNext') && !hasmapto('<Plug>SneakNext', 'v') && mapcheck(';', 'x') ==# ''
-  xmap ; <Plug>SneakNext
-endif
-if !hasmapto('<Plug>VSneakPrevious') && !hasmapto('<Plug>SneakPrevious', 'v')
-  if mapcheck(',', 'x') ==# ''
-    xmap , <Plug>SneakPrevious
-  elseif mapcheck('\', 'x') ==# ''
-    xmap \ <Plug>SneakPrevious
-  endif
 endif
 
 " redundant legacy mappings for backwards compatibility (must come _after_ the hasmapto('<Plug>Sneak_S') checks above)
