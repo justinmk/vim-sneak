@@ -20,12 +20,14 @@ func! sneak#hl#get(hlgroup) "gets the definition of the specified highlight
 endf
 
 func! s:init()
+  let magenta = (&t_Co < 256 ? "magenta" : "201")
+
   if 0 == hlID("SneakPluginTarget") || "" == sneak#hl#get("SneakPluginTarget")
-    highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+    exec "highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=".magenta
   endif
 
   if 0 == hlID("SneakStreakMask") || "" == sneak#hl#get("SneakStreakMask")
-    highlight SneakStreakMask guifg=magenta guibg=magenta ctermfg=magenta ctermbg=magenta
+    exec "highlight SneakStreakMask guifg=magenta guibg=magenta ctermfg=".magenta." ctermbg=".magenta
   endif
 
   if 0 == hlID("SneakPluginScope") || "" == sneak#hl#get("SneakPluginScope")
@@ -37,7 +39,7 @@ func! s:init()
   endif
 
   if 0 == hlID("SneakStreakTarget") || "" == sneak#hl#get("SneakStreakTarget")
-    highlight SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=magenta ctermfg=white cterm=bold
+    exec "highlight SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=".magenta." ctermfg=white cterm=bold"
   endif
 
   if 0 == hlID("SneakStreakStatusLine") || "" == sneak#hl#get("SneakStreakStatusLine")
