@@ -137,25 +137,51 @@ and |,| were reset by |f| or |t|. This is especially useful for re-invoking
 ------------------------------------------------------------------------------
 3.2 Functions                                                *sneak-functions*
 
-Sneak provides |sneak-mappings| as a convenience, but you can call sneak#
-functions directly if you want behavior other than the default <Plug>
-mappings. 
+Sneak provides default |sneak-mappings|, but you can call `sneak#` functions
+directly if you want customized behavior.
 
-Note: <c-u> is required before the |call| command below, in order to avoid
-      unwanted range from a [count] prefix or a visual-mode invocation.
+sneak#wrap(op, inputlen, reverse, inclusive, streak)             *sneak#wrap()*
+        Invokes Sneak and prompts for exactly {inputlen} characters. For
+        example, if {inputlen} is 2, then the match is performed as soon as
+        the second character is pressed, without having to press <Enter>.
+        {op} may be blank "" or any operation (even custom operations).
 
-nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
+        For example, to customize <Plug>Sneak_f:
+>
+        nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
+<
+            Note: In the example above, <c-u> is required to avoid unwanted
+                  |cmdline-ranges| from a [count] or a visual-mode invocation.
 
-sneak#wrap()
-sneak#to()
-        Invoke Sneak and perform the search when {max} characters are input
-        at the Sneak prompt. For example, if {max} is 2, then the match is
-        performed as soon as the second character is pressed, without having
-        to press <Enter>.
+sneak#is_sneaking()                                       *sneak#is_sneaking()*
+        Returns 1 if Sneak is active (matches are highlighted).
+        Returns 0 after the user does anything (which deactivates Sneak and
+        removes the highlight). This is useful if you want to change the
+        behavior of a mapping based on whether Sneak is active.
+            https://github.com/justinmk/vim-sneak/pull/93
 
-sneak#is_sneaking()
-        Returns 1 if matches are highlighted. Returns 0 after the user moves
-        (which removes the highlight and cancels "sneaking").
+        For example, you might want <Tab> to go to the next match _only_ while
+        Sneak is active:
+>
+            nmap <expr> <Tab> sneak#is_sneaking() ? '<Plug>SneakNext' : '<Tab>'
+<
+sneak#reset(key)                                                *sneak#reset()*
+        Prevents Sneak from hijacking |;| and |,| until the next invocation of
+        Sneak. This is useful if you have remapped the Vim built-in |f| or
+        |t| to another key and you still want to use |;| and |,| for both Sneak
+        and your custom "f" mapping.
+            https://github.com/justinmk/vim-sneak/issues/114
+
+        For example, to use "a" as your "f":
+>
+            nnoremap <expr> a sneak#reset('f')
+            nnoremap <expr> A sneak#reset('F')
+            xnoremap <expr> a sneak#reset('f')
+            xnoremap <expr> A sneak#reset('F')
+            onoremap <expr> a sneak#reset('f')
+            onoremap <expr> A sneak#reset('F')
+<
+            Note: The <expr> modifier is required!
 
 ------------------------------------------------------------------------------
 3.3 Visual Mode
