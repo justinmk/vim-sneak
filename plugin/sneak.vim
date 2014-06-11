@@ -40,6 +40,11 @@ func! sneak#is_sneaking()
   return exists("#SneakPlugin#CursorMoved#<buffer>")
 endf
 
+func! sneak#cancel()
+  call sneak#hl#removehl()
+  autocmd! SneakPlugin * <buffer>
+endf
+
 " convenience wrapper for key bindings/mappings
 func! sneak#wrap(op, inputlen, reverse, inclusive, streak) abort
   let cnt = v:count1 "get count before doing _anything_, else it gets overwritten.
@@ -196,10 +201,10 @@ endf "}}}
 func! s:attach_autocmds()
   augroup SneakPlugin
     autocmd!
-    autocmd InsertEnter,WinLeave,BufLeave <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
+    autocmd InsertEnter,WinLeave,BufLeave <buffer> call sneak#cancel()
     "_nested_ autocmd to skip the _first_ CursorMoved event.
-    "NOTE: CursorMoved is _not_ triggered if there is 'typeahead', which means during a macro or other script...
-    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call sneak#hl#removehl() | autocmd! SneakPlugin * <buffer>
+    "NOTE: CursorMoved is _not_ triggered if there is 'typeahead', i.e. during a macro or script...
+    autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call sneak#cancel()
   augroup END
 endf
 
