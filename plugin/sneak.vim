@@ -43,6 +43,9 @@ endf
 func! sneak#cancel()
   call sneak#hl#removehl()
   autocmd! SneakPlugin * <buffer>
+  if maparg('<esc>', 'n') =~# 'sneak#cancel' "teardown temporary <esc> mapping
+    silent! unmap <esc>
+  endif
 endf
 
 " convenience wrapper for key bindings/mappings
@@ -182,6 +185,9 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   "  - store in w: because matchadd() highlight is per-window.
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
+
+  "let user deactivate with <esc>
+  if maparg('<esc>', 'n') ==# ""|nnoremap <silent> <esc> :<c-u>call sneak#cancel()<cr>|endif
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && !max(bounds) && s.hasmatches(2)
