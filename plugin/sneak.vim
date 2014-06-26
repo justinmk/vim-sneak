@@ -12,7 +12,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 "persist state for repeat
-let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0], 'inclusive':0 }
+let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0], 'inclusive':0, 'regex':0 }
 
 func! sneak#init()
   unlockvar g:sneak#opt
@@ -83,7 +83,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   let [curlin, curcol] = [line('.'), virtcol('.')] "initial position
   let is_op = !empty(a:op) && !is_v "operator-pending invocation
   let s = g:sneak#search#instance
-  call s.init(a:input, a:repeatmotion, a:reverse)
+  call s.init(a:input, a:repeatmotion, a:reverse, s:st.regex)
 
   if is_v && a:repeatmotion
     norm! gv
@@ -247,15 +247,21 @@ func! s:ft_hook() "set up temporary mappings to 'hook' into f/F/t/T
 endf
 
 func! s:getnchars(n, mode)
+  let s:st.regex = 0
   let s = ''
+  let i = 1
   echo '>'
-  for i in range(1, a:n)
+  while i <= a:n
     if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
     let c = sneak#util#getchar()
     if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
       return ""
     endif
-    if c == "\<CR>"
+
+    if i == 1 && c == "\<C-x>"
+      let s:st.regex = 1 "special case: enable regex-mode.
+      let i = 0
+    elseif c == "\<CR>"
       if i > 1 "special case: accept the current input (#15)
         break
       else "special case: repeat the last search (useful for streak-mode).
@@ -272,8 +278,10 @@ func! s:getnchars(n, mode)
         break
       endif
     endif
-    redraw | echo '>'.s
-  endfor
+
+    redraw | echo '>'.(s:st.regex ? '\v' : '').s
+    let i = i + 1
+  endwhile
   return s
 endf
 
