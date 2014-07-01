@@ -129,6 +129,9 @@ or whatever (if any) key you mapped to <Plug>SneakNext.
 
 Sneak adds to the |jumplist| only on the initial invocation; so after moving
 around with ; and , (or s/S) you can easily go back via |CTRL-O| or |``|.
+    - Repeat invocations (;/,) do not add to the jumplist.
+    - Consecutive invocations ("s" immediately after s/S/;/,)
+      do not add to the jumplist.
 
 s<Enter> ("s" followed by Enter) always repeats the last search, even if |;|
 and |,| were reset by |f| or |t|. This is especially useful for re-invoking
@@ -249,8 +252,8 @@ Streak-mode features:
     - automatically jumps to the first match
         - press <Space> or <Esc> to escape streak-mode
         - press <Tab> to skip to the next 56 matches
-        - press any key that is _not_ displayed as a target label to exit
-          streak-mode and immediately perform that key's normal-mode function
+        - press any key that is _not_ a target label to exit streak-mode and
+          immediately perform that key's normal-mode function
     - works with all operators, including |surround|
     - streak-mode edit operations can be repeated and it works correctly
       regardless of the remaining on-screen matches
