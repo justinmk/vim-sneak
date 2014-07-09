@@ -428,7 +428,7 @@ your |vimrc|: >
     map ? <Plug>SneakNext
     map ? <Plug>SneakPrevious
 
-    " 1-character _inclusive_ Sneak (for enhanced 'f')
+    " 1-character enhanced 'f'
     nmap ? <Plug>Sneak_f
     nmap ? <Plug>Sneak_F
     " visual-mode
@@ -438,7 +438,7 @@ your |vimrc|: >
     omap ? <Plug>Sneak_f
     omap ? <Plug>Sneak_F
 
-    " 1-character _exclusive_ Sneak (for enhanced 't')
+    " 1-character enhanced 't'
     nmap ? <Plug>Sneak_t
     nmap ? <Plug>Sneak_T
     " visual-mode

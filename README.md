@@ -142,18 +142,17 @@ By the way: `cl` is equivalent to `s`, and `cc` is equivalent to `S`.
 
 #### How can I replace `f` and/or `t` with *one-character* Sneak?
 
-Sneak provides `<Plug>` convenience-mappings for "inclusive" (`f`)
-and "exclusive" (`t`) 1-character-sneak.
+Sneak provides `<Plug>` convenience-mappings for `f` and `t` 1-character-sneak.
 These mappings do *not* invoke streak-mode, even if you have it enabled.
 ```
-    "replace 'f' with inclusive 1-char Sneak
+    "replace 'f' with 1-char Sneak
     nmap f <Plug>Sneak_f
     nmap F <Plug>Sneak_F
     xmap f <Plug>Sneak_f
     xmap F <Plug>Sneak_F
     omap f <Plug>Sneak_f
     omap F <Plug>Sneak_F
-    "replace 't' with exclusive 1-char Sneak
+    "replace 't' with 1-char Sneak
     nmap t <Plug>Sneak_t
     nmap T <Plug>Sneak_T
     xmap t <Plug>Sneak_t

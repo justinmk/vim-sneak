@@ -884,7 +884,7 @@ Execute (deactivate language keymap):
   set keymap=
 
 ###########################################################
-# test 1-char inclusive map Sneak_f
+# test Sneak_f map (1 char, f-like)
 
 Execute (map to Sneak_f):
   silent! unmap f
