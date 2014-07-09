@@ -36,6 +36,10 @@ endf
 
 call sneak#init()
 
+func! sneak#state()
+  return deepcopy(s:st)
+endf
+
 func! sneak#is_sneaking()
   return exists("#SneakPlugin#CursorMoved#<buffer>")
 endf
@@ -120,6 +124,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   "      so this can be done in s.init() instead of here.
   call s.initpattern()
 
+  let s:st.rptreverse = a:reverse
   if !a:repeatmotion "this is a new (not repeat) invocation
     "persist even if the search fails, because the _reverse_ direction might have a match.
     let s:st.rst = 0 | let s:st.input = a:input | let s:st.inputlen = a:inputlen
