@@ -134,7 +134,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     call s:ft_hook()
   endif
 
-  if is_op && 2 != a:inclusive
+  if is_op && 2 != a:inclusive && !a:reverse
     norm! v
   endif
 

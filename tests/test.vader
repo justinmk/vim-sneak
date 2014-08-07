@@ -884,13 +884,17 @@ Execute (deactivate language keymap):
   set keymap=
 
 ###########################################################
-# test Sneak_f map (1 char, f-like)
+# Sneak_f and Sneak_t
 
 Execute (map to Sneak_f):
+  silent! unmap t
+  silent! unmap T
   silent! unmap f
   silent! unmap F
   nmap f <Plug>Sneak_f
   nmap F <Plug>Sneak_F
+  nmap t <Plug>Sneak_t
+  nmap T <Plug>Sneak_T
   let g:sneak#f_reset = 0
   call sneak#init()
 
@@ -923,14 +927,98 @@ Expect ([count]s SHOULD invoke vertical-scope):
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   axb1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
+Do (f-delete forward):
+  dfe
+
+Expect:
+  f ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (t-delete forward):
+  dte
+
+Expect:
+  ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (f-delete-3 forward):
+  3dfe
+
+Expect:
+  f ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (t-delete-3 forward):
+  3dte
+
+Expect:
+  ef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (inclusive f-delete forward):
+  dvfe
+
+Expect:
+  ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (inclusive t-delete forward):
+  dvte
+
+Expect:
+  def ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (exclusive f-delete backward [issue #121]):
+  eedFa
+
+Expect:
+  ab1cdef f ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (exclusive t-delete backward [issue #121]):
+  eedTa
+
+Expect:
+  ab1cdef af ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (inclusive f-delete backward [issue #121]):
+  eedvFa
+
+Expect:
+  ab1cdef  ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (inclusive t-delete backward [issue #121]):
+  eedvTa
+
+Expect:
+  ab1cdef a ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Execute (cleanup):
+  silent! unmap f
+  silent! unmap F
+  silent! unmap t
+  silent! unmap T
+
 ###########################################################
 # test sneak mapped to 'f' (instead of default 's')
 
 Execute (map to f):
   unmap s
   unmap S
-  silent! unmap f
-  silent! unmap F
   nmap f <Plug>Sneak_s
   nmap F <Plug>Sneak_S
   let g:sneak#f_reset = 1
