@@ -189,7 +189,3 @@ Vim 7.2.330, 7.3, 7.4.
 ### License
 
 Copyright © Justin M. Keyes. Distributed under the MIT license.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/justinmk/vim-sneak/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
