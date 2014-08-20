@@ -24,8 +24,6 @@ func! sneak#init()
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
       \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703) && has("conceal")
-      \ ,'streak_with_f': get(g:, 'sneak#streak_with_f', 0)
-      \ ,'streak_with_t': get(g:, 'sneak#streak_with_t', 0)
       \ }
 
   for k in ['f', 't'] "if user mapped f/t to Sneak, then disable f/t reset.
@@ -196,7 +194,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   "let user deactivate with <esc>
   if maparg('<esc>', 'n') ==# ""|nmap <silent> <esc> :<c-u>call sneak#cancel()<cr><esc>|endif
 
-  "enter streak-mode iff there are >=2 _additional_ on-screen matches.
+  "enter streak-mode if there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && !max(bounds) && s.hasmatches(2)
         \ ? sneak#streak#to(s, is_v, a:reverse): ""
 
@@ -308,20 +306,20 @@ if g:sneak#opt.textobject_z
 endif
 
 " 1-char 'enhanced f' sneak
-nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, g:sneak#opt.streak_with_f)<cr>
-nnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap('', 1, 1, 1, g:sneak#opt.streak_with_f)<cr>
-xnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap(visualmode(), 1, 0, 1, g:sneak#opt.streak_with_f)<cr>
-xnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap(visualmode(), 1, 1, 1, g:sneak#opt.streak_with_f)<cr>
-onoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap(v:operator, 1, 0, 1, g:sneak#opt.streak_with_f)<cr>
-onoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap(v:operator, 1, 1, 1, g:sneak#opt.streak_with_f)<cr>
+nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, g:sneak#opt.streak>1)<cr>
+nnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap('', 1, 1, 1, g:sneak#opt.streak>1)<cr>
+xnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap(visualmode(), 1, 0, 1, g:sneak#opt.streak>1)<cr>
+xnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap(visualmode(), 1, 1, 1, g:sneak#opt.streak>1)<cr>
+onoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap(v:operator, 1, 0, 1, g:sneak#opt.streak>1)<cr>
+onoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap(v:operator, 1, 1, 1, g:sneak#opt.streak>1)<cr>
 
 " 1-char 'enhanced t' sneak
-nnoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap('', 1, 0, 0, g:sneak#opt.streak_with_t)<cr>
-nnoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap('', 1, 1, 0, g:sneak#opt.streak_with_t)<cr>
-xnoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap(visualmode(), 1, 0, 0, g:sneak#opt.streak_with_t)<cr>
-xnoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap(visualmode(), 1, 1, 0, g:sneak#opt.streak_with_t)<cr>
-onoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap(v:operator, 1, 0, 0, g:sneak#opt.streak_with_t)<cr>
-onoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap(v:operator, 1, 1, 0, g:sneak#opt.streak_with_t)<cr>
+nnoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap('', 1, 0, 0, g:sneak#opt.streak>1)<cr>
+nnoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap('', 1, 1, 0, g:sneak#opt.streak>1)<cr>
+xnoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap(visualmode(), 1, 0, 0, g:sneak#opt.streak>1)<cr>
+xnoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap(visualmode(), 1, 1, 0, g:sneak#opt.streak>1)<cr>
+onoremap <silent> <Plug>Sneak_t :<c-u>call sneak#wrap(v:operator, 1, 0, 0, g:sneak#opt.streak>1)<cr>
+onoremap <silent> <Plug>Sneak_T :<c-u>call sneak#wrap(v:operator, 1, 1, 0, g:sneak#opt.streak>1)<cr>
 
 nnoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap('', 2, 0, 2, 2)<cr>
 nnoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap('', 2, 1, 2, 2)<cr>
