@@ -1,0 +1,6 @@
+" vimrc for tests.
+set nocp
+set rtp+=tests/vader
+" vim-repeat is expected for some tests.
+set rtp+=tests/repeat
+set rtp+=$PWD
