@@ -272,6 +272,11 @@ to enter streak-mode), create a mapping to <Plug>(SneakStreak). For example:
     nmap s <Plug>(SneakStreak)
     nmap S <Plug>(SneakStreakBackward)
 <
+To force streak-mode with the predefined 1-char 'enhanced f' and 'enhanced t'
+maps (<Plug>Sneak_f, <Plug>Sneak_F, <Plug>Sneak_t and <Plug>Sneak_T):
+>
+    let g:sneak#streak = 2
+<
 Streak-mode features:
 
     - automatically jumps to the first match
@@ -363,7 +368,11 @@ g:sneak#streak = 0
 
     0 : Disable |sneak-streak-mode|.
 
-    1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
+    1 : Enable (smart) |sneak-streak-mode| if the Vim |+conceal| feature is
+        available.
+
+    2 : Force |sneak-streak-mode| with "extended f/t" maps, if the Vim
+        |+conceal| feature is available.
 
 g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
 
