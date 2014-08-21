@@ -263,8 +263,8 @@ To enable "passive" or "smart" streak-mode:                   *g:sneak#streak*
 >
     let g:sneak#streak = 1
 >
-With this setting, sneak with automatically enter streak-mode _only_ if there
-are ≥2 visible (on-screen) matches
+With this setting, sneak will automatically enter streak-mode _only_ if there
+are ≥2 visible (on-screen) matches.
 
 To force streak-mode always (instead of passively letting Sneak decide when
 to enter streak-mode), create a mapping to <Plug>(SneakStreak). For example:
