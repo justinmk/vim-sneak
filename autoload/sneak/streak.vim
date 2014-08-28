@@ -29,7 +29,7 @@
 "   - sneak handles long lines https://github.com/Lokaltog/vim-easymotion/issues/82
 "   - sneak can find and highlight concealed characters
 
-let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
+let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ?0 adghjklweryiopzxcvbmADJK:WEYIOPXCVB")
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
