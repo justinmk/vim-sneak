@@ -1,3 +1,5 @@
+# vim -Nu <(echo 'set rtp+=~/.vim/bundle/vim-sneak/,~/.vim/bundle/vader.vim,~/.vim/bundle/vim-repeat | runtime plugin/sneak.vim | runtime plugin/vader.vim | runtime plugin/repeat.vim')
+#
 # BUG: highlight targets are bogus if &iminsert=1
 # BUG: sneak cannot find ёе: in this text
 # BUG: sneak cannot find е:а in this text

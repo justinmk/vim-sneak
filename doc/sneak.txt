@@ -210,7 +210,7 @@ sneak#state()                                                   *sneak#state()*
                             1: after calling |sneak#reset()|
 
         For example, to create a mapping that behaves differently depending
-        on the current Sneak direction (`reverse` key):
+        on the current Sneak direction (`rptreverse` key):
 >
         nmap <silent> <expr> <tab> sneak#is_sneaking()
               \ ? (sneak#state().rptreverse ? '<Plug>(SneakStreakBackward)<cr>' : '<Plug>(SneakStreak)<cr>')
