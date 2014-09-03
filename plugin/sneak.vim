@@ -1,6 +1,6 @@
 " sneak.vim - The missing motion
 " Author:       Justin M. Keyes
-" Version:      1.7.2
+" Version:      2.0.0
 " License:      MIT
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
@@ -45,10 +45,19 @@ func! sneak#is_sneaking()
 endf
 
 func! sneak#cancel()
+  echom s:lastchange "/" sneak#util#undoseq()
   call sneak#hl#removehl()
   autocmd! SneakPlugin * <buffer>
+  let s:lastchange = -1
   if maparg('<esc>', 'n') =~# 'sneak#cancel' "teardown temporary <esc> mapping
     silent! unmap <esc>
+  endif
+endf
+
+" undo the last edit if it was performed by the current sneak invocation.
+func! sneak#undo()
+  if sneak#util#undoseq() > s:lastchange
+    silent! execute "normal! u"
   endif
 endf
 
@@ -61,7 +70,7 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, streak) abort
   if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
     call sneak#rpt(a:op, a:reverse) " s goes to next match
   else " s invokes new search
-    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:streak)
+    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:streak, 1)
   endif
 endf
 
@@ -73,21 +82,24 @@ func! sneak#rpt(op, reverse) abort
   endif
 
   call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, 1,
-        \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.inclusive, 0)
+        \ ((a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)), s:st.inclusive, 0, 1)
 endf
 
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
 " inclusive:  0 => like t, 1 => like f, 2 => like /
-func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak) abort "{{{
+" jump:       automatically jump to first match (streak mode)
+func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak, nojump) abort "{{{
   if empty(a:input) "user canceled
     redraw | echo '' | return
   endif
-
+  let s:lastchange = sneak#util#undoseq()
   let is_v  = sneak#util#isvisualop(a:op)
   let [curlin, curcol] = [line('.'), virtcol('.')] "initial position
   let is_op = !empty(a:op) && !is_v "operator-pending invocation
+  "do _not_ save jump on repeat invocations, consecutive invocations, or operations.
+  let savejump = !is_op && !a:repeatmotion && !sneak#is_sneaking()
   let s = g:sneak#search#instance
-  call s.init(a:input, a:repeatmotion, a:reverse)
+  call s.init(a:input, a:repeatmotion, a:reverse, savejump)
 
   if is_v && a:repeatmotion
     norm! gv
@@ -327,6 +339,11 @@ xnoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap(visualmode()
 xnoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap(visualmode(), 2, 1, 2, 2)<cr>
 onoremap <silent> <Plug>(SneakStreak)         :<c-u>call sneak#wrap(v:operator, 2, 0, 2, 2)<cr>
 onoremap <silent> <Plug>(SneakStreakBackward) :<c-u>call sneak#wrap(v:operator, 2, 1, 2, 2)<cr>
+
+nnoremap <silent> <Plug>(Sneak_undo) :<c-u>call sneak#undo()<cr>
+xnoremap <silent> <Plug>(Sneak_undo) :<c-u>call sneak#undo()<cr>
+onoremap <silent> <Plug>(Sneak_undo) :<c-u>call sneak#undo()<cr>
+nnoremap <silent> <Plug>(Sneak_redoWithLabels) :<c-u>call sneak#wrap(v:operator, sneak#util#getc(), sneak#util#getc(), sneak#util#getc(), sneak#util#getc())<cr>
 
 if !hasmapto('<Plug>SneakForward') && !hasmapto('<Plug>Sneak_s', 'n') && mapcheck('s', 'n') ==# ''
   nmap s <Plug>Sneak_s

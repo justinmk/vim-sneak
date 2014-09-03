@@ -100,3 +100,7 @@ func! sneak#util#nudge(right)
   return 1
 endf
 
+" Vim 7.2 does not have undotree(), so wrap it.
+func! sneak#util#undoseq()
+  return exists("*undotree") ? undotree().seq_cur : -1
+endf

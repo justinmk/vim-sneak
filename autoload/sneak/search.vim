@@ -3,7 +3,7 @@
 func! sneak#search#new()
   let s = {}
 
-  func! s.init(input, repeatmotion, reverse)
+  func! s.init(input, reverse, savejump)
     let self._reverse = a:reverse
     " search pattern modifiers (case-sensitivity, magic)
     let self.prefix = sneak#search#get_cs(a:input, g:sneak#opt.use_ic_scs).'\V'
@@ -15,8 +15,7 @@ func! sneak#search#new()
     " do not wrap                     search backwards
     let self._search_options = 'W' . (a:reverse ? 'b' : '')
     let self.search_options_no_s = self._search_options
-    " save the jump on the initial invocation, _not_ repeats or consecutive invocations.
-    if !a:repeatmotion && !sneak#is_sneaking() | let self._search_options .= 's' | endif
+    if a:savejump | let self._search_options .= 's' | endif
   endf
 
   func! s.initpattern()
