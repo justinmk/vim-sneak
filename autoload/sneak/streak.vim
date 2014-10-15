@@ -113,7 +113,7 @@ func! s:after()
   exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
   call s:restore_statusline()
   let &synmaxcol=s:synmaxcol_orig
-  let &syntax=s:syntax_orig
+  silent! let &syntax=s:syntax_orig
   let &concealcursor=s:cc_orig
   let &conceallevel=s:cl_orig
   call s:restore_conceal_in_other_windows()
