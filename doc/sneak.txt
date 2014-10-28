@@ -354,10 +354,12 @@ g:sneak#use_ic_scs = 0
 
 g:sneak#map_netrw = 1
 
-    0 : Don't do any special handling of |netrw| buffers.
+    0 : Don't do any special handling of "file manager" buffers (such as
+        |netrw| or filebeagle).
 
-    1 : Set up Sneak mappings (s and S) in |netrw| buffers (|:Ex|, |:Vex|), and
-        move netrw's default s and S mappings to <leader>s and <leader>S.
+    1 : Set up Sneak mappings (s and S) in "file manager" buffers (|:Ex|,
+        |:Vex|, filebeagle) and replace the default buffer-local s and
+        S mappings with <leader>s and <leader>S.
 
 g:sneak#streak = 0
 

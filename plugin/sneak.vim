@@ -369,16 +369,17 @@ xmap <Plug>VSneakPrevious <Plug>SneakPrevious
 
 if g:sneak#opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
   func! s:map_netrw_key(key)
-    if -1 != stridx(maparg(a:key,"n"), "_Net")
-      exec 'nnoremap <buffer> <silent> <leader>'.a:key.' '.maparg(a:key,'n')
-      "unmap netrw's buffer-local mapping to allow Sneak's global mapping.
+    let expanded_map = maparg(a:key,'n')
+    if expanded_map =~# '_Net\|FileBeagle'
+      exec 'nnoremap <buffer> <silent> <leader>'.a:key.' '.expanded_map
+      "unmap the default buffer-local mapping to allow Sneak's global mapping.
       silent! exe 'nunmap <buffer> '.a:key
     endif
   endf
 
   augroup SneakPluginNetrw
     autocmd!
-    autocmd FileType netrw autocmd SneakPluginNetrw CursorMoved <buffer>
+    autocmd FileType netrw,filebeagle autocmd SneakPluginNetrw CursorMoved <buffer>
           \ call <sid>map_netrw_key('s') | call <sid>map_netrw_key('S') | autocmd! SneakPluginNetrw * <buffer>
   augroup END
 endif
