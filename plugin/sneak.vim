@@ -192,7 +192,9 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
   "let user deactivate with <esc>
-  if maparg('<esc>', 'n') ==# ""|nmap <silent> <esc> :<c-u>call sneak#cancel()<cr><esc>|endif
+  "  - use <expr> map to avoid remapping of e.g. ':', but return <esc>, which
+  "    needs to get remapped (for e.g. `<Home>`).
+  if maparg('<esc>', 'n') ==# ""|nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"|endif
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && !max(bounds) && s.hasmatches(2)
