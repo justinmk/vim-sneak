@@ -50,6 +50,7 @@ func! sneak#cancel()
   if maparg('<esc>', 'n') =~# 'sneak#cancel' "teardown temporary <esc> mapping
     silent! unmap <esc>
   endif
+  return ''
 endf
 
 " convenience wrapper for key bindings/mappings
