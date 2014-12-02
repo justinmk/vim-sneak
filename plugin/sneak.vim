@@ -24,6 +24,7 @@ func! sneak#init()
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
       \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703) && has("conceal")
+      \ ,'prompt'       : get(g:, 'sneak#prompt', '>')
       \ }
 
   for k in ['f', 't'] "if user mapped f/t to Sneak, then disable f/t reset.
@@ -253,7 +254,7 @@ endf
 
 func! s:getnchars(n, mode)
   let s = ''
-  echo '>'
+  echo g:sneak#opt.prompt
   for i in range(1, a:n)
     if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
     let c = sneak#util#getchar()
@@ -277,7 +278,7 @@ func! s:getnchars(n, mode)
         break
       endif
     endif
-    redraw | echo '>'.s
+    redraw | echo g:sneak#opt.prompt . s
   endfor
   return s
 endf
