@@ -381,6 +381,10 @@ g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM
               - <Esc>, <Tab>, <BS>, because they are special
               - <Space>, <Enter>, because they are invisible
 
+g:sneak#prompt = '>'
+
+        Message displayed at the Sneak input prompt.
+
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*
 
