@@ -5,17 +5,17 @@
 ==============================================================================
 1. Overview                                                            *sneak*
 
-Sneak provides a way to move quickly and precisely to locations that would 
-be awkward to reach with built-in Vim motions. 
+Sneak provides a way to move quickly and precisely to locations that would
+be awkward to reach with built-in Vim motions.
 
 Sneak is invoked with s (sneak forward) or S (sneak backwards), followed by
 exactly two characters:
 
     s{char}{char}
 
-Thus, you can often reach a target with only 3 keystrokes. Sneak always moves 
+Thus, you can often reach a target with only 3 keystrokes. Sneak always moves
 immediately to the first {char}{char} match. Additional matches are
-highlighted, and you can reach them by pressing ; (similar to the built-in 
+highlighted, and you can reach them by pressing ; (similar to the built-in
 behavior for |f| and |t|).
 
 Sneak has a few other features, but above all, Sneak tries to get out of your
@@ -71,7 +71,7 @@ Sneak default NORMAL-mode mappings:
     {range}S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
                              | occurrence of {char}{char}
-    {operator}Z{char}{char}  | Perform {operator} from the cursor to the 
+    {operator}Z{char}{char}  | Perform {operator} from the cursor to the
                              | previous occurrence of {char}{char}
 
     NOTE: s and S go to the next/previous match only immediately after
@@ -239,8 +239,8 @@ Repeat the operation with dot: |.|
 ------------------------------------------------------------------------------
 3.5 Vertical Scope                                      *sneak-vertical-scope*
 
-Sneak has a unique feature called "vertical scope" search. This is invoked by 
-prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case, 
+Sneak has a unique feature called "vertical scope" search. This is invoked by
+prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case,
 the search is restricted to a column having a width of 2× the [count].
 
 |sneak-vertical-scope| never invokes |sneak-streak-mode|.
@@ -263,14 +263,19 @@ To enable "passive" or "smart" streak-mode:                   *g:sneak#streak*
 >
     let g:sneak#streak = 1
 >
-With this setting, sneak with automatically enter streak-mode _only_ if there
-are ≥2 visible (on-screen) matches
+With this setting, sneak will automatically enter streak-mode _only_ if there
+are ≥2 visible (on-screen) matches.
 
 To force streak-mode always (instead of passively letting Sneak decide when
 to enter streak-mode), create a mapping to <Plug>(SneakStreak). For example:
 >
     nmap s <Plug>(SneakStreak)
     nmap S <Plug>(SneakStreakBackward)
+<
+To force streak-mode with the predefined 1-char 'enhanced f' and 'enhanced t'
+maps (<Plug>Sneak_f, <Plug>Sneak_F, <Plug>Sneak_t and <Plug>Sneak_T):
+>
+    let g:sneak#streak = 2
 <
 Streak-mode features:
 
@@ -311,7 +316,7 @@ Following is a list of Sneak options with their default values.
 g:sneak#f_reset = 1
 g:sneak#t_reset = 1
 
-        Note: if you have mapped f (or t) to a |sneak-mappings| then the 
+        Note: if you have mapped f (or t) to a |sneak-mappings| then the
         default is 0.
 
     0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
@@ -365,7 +370,11 @@ g:sneak#streak = 0
 
     0 : Disable |sneak-streak-mode|.
 
-    1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
+    1 : Enable (smart) |sneak-streak-mode| if the Vim |+conceal| feature is
+        available.
+
+    2 : Force |sneak-streak-mode| with "extended f/t" maps, if the Vim
+        |+conceal| feature is available.
 
 g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
 
