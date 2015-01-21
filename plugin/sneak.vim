@@ -375,7 +375,9 @@ if g:sneak#opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
   func! s:map_netrw_key(key)
     let expanded_map = maparg(a:key,'n')
     if !strlen(expanded_map) || expanded_map =~# '_Net\|FileBeagle'
-      exec (expanded_map =~# '<Plug>' ? 'nmap' : 'nnoremap').' <buffer> <silent> <leader>'.a:key.' '.expanded_map
+      if strlen(expanded_map) > 0 "else, mapped to <nop>
+        silent exe (expanded_map =~# '<Plug>' ? 'nmap' : 'nnoremap').' <buffer> <silent> <leader>'.a:key.' '.expanded_map
+      endif
       "unmap the default buffer-local mapping to allow Sneak's global mapping.
       silent! exe 'nunmap <buffer> '.a:key
     endif
