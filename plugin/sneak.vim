@@ -23,6 +23,7 @@ func! sneak#init()
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
+      \ ,'map_esc'      : get(g:, 'sneak#map_esc', 0)
       \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703) && has("conceal")
       \ ,'prompt'       : get(g:, 'sneak#prompt', '>')
       \ }
@@ -193,10 +194,9 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
-  "let user deactivate with <esc>
-  "  - use <expr> map to avoid remapping of e.g. ':', but return <esc>, which
-  "    needs to get remapped (for e.g. `<Home>`).
-  if maparg('<esc>', 'n') ==# ""|nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"|endif
+  if g:sneak#opt.map_esc && maparg('<esc>', 'n') ==# ""
+    nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
+  endif
 
   "enter streak-mode iff there are >=2 _additional_ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak)) && !max(bounds) && s.hasmatches(2)

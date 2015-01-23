@@ -75,8 +75,7 @@ Sneak default NORMAL-mode mappings:
                              | previous occurrence of {char}{char}
 
     NOTE: s and S go to the next/previous match only immediately after
-          invoking Sneak; moving the cursor resets this behavior.
-          |sneak-clever-s|
+    invoking Sneak; moving the cursor resets this behavior. |sneak-clever-s|
 
 Sneak default VISUAL-mode mappings:
 
@@ -311,8 +310,7 @@ Following is a list of Sneak options with their default values.
 g:sneak#f_reset = 1
 g:sneak#t_reset = 1
 
-        Note: if you have mapped f (or t) to a |sneak-mappings| then the 
-        default is 0.
+    Note: if you mapped f (or t) to a |sneak-mappings| then the default is 0.
 
     0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
         define different maps for <Plug>SneakNext or <Plug>SneakPrevious and
@@ -352,6 +350,18 @@ g:sneak#use_ic_scs = 0
 
     1 : Case sensitivity is determined by 'ignorecase' and 'smartcase'.
 
+g:sneak#map_esc = 0
+
+    0 : Disable temporary remapping of <esc>. This is the default because of
+        possible interference with ALT/META maps, F-keys, arrow keys, etc.
+            https://github.com/justinmk/vim-sneak/issues/133
+
+    1 : Allows you to clear the Sneak highlighting by pressing <esc>.
+        Typically, remapping <esc> is not a good idea, especially in non-GUI
+        Vim. With `g:sneak#map_esc`, the plugin creates a temporary mapping
+        so quirks are mitigated (but not eliminated).
+            https://github.com/justinmk/vim-sneak/issues/106
+
 g:sneak#map_netrw = 1
 
     0 : Don't do any special handling of "file manager" buffers (such as
@@ -369,17 +379,17 @@ g:sneak#streak = 0
 
 g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
 
-        List of 1-character "labels" used by streak-mode to decorate the
-        target locations.
+    List of 1-character "labels" used by streak-mode to decorate the target
+    locations.
 
-        Note: If ; (or any key mapped to <Plug>SneakNext) is in the list,
-              Sneak automatically moves it to the first position (because
-              it's semantically equivalent and it saves a target label).
+    Note: If ; (or any key mapped to <Plug>SneakNext) is in the list, Sneak
+    automatically moves it to the first position (because it's semantically
+    equivalent and it saves a target label).
 
-        Note: Sneak automatically removes invalid target labels:
-              - Any key mapped to <Plug>SneakPrevious
-              - <Esc>, <Tab>, <BS>, because they are special
-              - <Space>, <Enter>, because they are invisible
+    Note: Invalid target labels are automatically removed:
+        - Any key mapped to <Plug>SneakPrevious
+        - <Esc>, <Tab>, <BS>, because they are special
+        - <Space>, <Enter>, because they are invisible
 
 g:sneak#prompt = '>'
 
