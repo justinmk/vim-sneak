@@ -17,6 +17,8 @@
 # ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
 
 Execute (Clean up test environment):
+  set encoding=utf8
+  scriptencoding utf8
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious
   omap \ <Plug>SneakPrevious
