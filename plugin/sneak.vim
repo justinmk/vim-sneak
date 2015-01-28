@@ -25,6 +25,7 @@ func! sneak#init()
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
       \ ,'map_esc'      : get(g:, 'sneak#map_esc', 0)
       \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703) && has("conceal")
+      \ ,'streak_esc'   : get(g:, 'sneak#streak_esc', "\<space>")
       \ ,'prompt'       : get(g:, 'sneak#prompt', '>')
       \ }
 

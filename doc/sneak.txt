@@ -53,9 +53,11 @@ Type dzad to delete from the cursor to the first instance of "ad": >
 ------------------------------------------------------------------------------
 2.1 Default mappings                                          *sneak-defaults*
 
+    Note: See |sneak-mappings| to change these mappings.
+
 Sneak default NORMAL-mode mappings:
 
-    Normal-mode key sequence | Description
+    Normal-Mode Key Sequence | Description
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     S{char}{char}            | Go to the previous occurrence of {char}{char}
@@ -79,7 +81,7 @@ Sneak default NORMAL-mode mappings:
 
 Sneak default VISUAL-mode mappings:
 
-    Visual-mode key sequence | Description
+    Visual-Mode Key Sequence | Description
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     Z{char}{char}            | Go to the previous occurrence of {char}{char}
@@ -91,6 +93,13 @@ Sneak default VISUAL-mode mappings:
     , or \                   | Go to the [count]'th previous match
     s                        | Go to the [count]'th next match (NOTE above)
     S                        | Go to the [count]'th previous match (NOTE above)
+
+STREAK-mode mappings (|sneak-streak-mode|):
+
+    Key Sequence             | Description
+    -------------------------|----------------------------------------------
+    <space>                  | Exit streak-mode at the current cursor
+                             | position.
 
 
 ==============================================================================
@@ -376,6 +385,11 @@ g:sneak#streak = 0
     0 : Disable |sneak-streak-mode|.
 
     1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
+
+g:sneak#streak_esc = "\<space>"
+
+    Exit |sneak-streak-mode| as if <esc> were pressed.
+        https://github.com/justinmk/vim-sneak/issues/122
 
 g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
 

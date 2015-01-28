@@ -92,7 +92,8 @@ func! s:do_streak(s, v, reverse) "{{{
 
   if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
     call cursor(overflow[0], overflow[1])
-  elseif -1 != index(["\<Esc>", "\<C-c>"], choice)
+  elseif (strlen(g:sneak#opt.streak_esc) && choice ==# g:sneak#opt.streak_esc)
+        \ || -1 != index(["\<Esc>", "\<C-c>"], choice)
     return "\<Esc>" "exit streak-mode.
   elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
