@@ -219,7 +219,7 @@ func! s:attach_autocmds()
     autocmd!
     autocmd InsertEnter,WinLeave,BufLeave <buffer> call sneak#cancel()
     "_nested_ autocmd to skip the _first_ CursorMoved event.
-    "NOTE: CursorMoved is _not_ triggered if there is 'typeahead', i.e. during a macro or script...
+    "NOTE: CursorMoved is _not_ triggered if there is typeahead during a macro/script...
     autocmd CursorMoved <buffer> autocmd SneakPlugin CursorMoved <buffer> call sneak#cancel()
   augroup END
 endf
