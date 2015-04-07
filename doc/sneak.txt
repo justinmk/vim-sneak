@@ -359,18 +359,6 @@ g:sneak#use_ic_scs = 0
 
     1 : Case sensitivity is determined by 'ignorecase' and 'smartcase'.
 
-g:sneak#map_esc = 0
-
-    0 : Disable temporary remapping of <esc>. This is the default because of
-        possible interference with ALT/META maps, F-keys, arrow keys, etc.
-            https://github.com/justinmk/vim-sneak/issues/133
-
-    1 : Allows you to clear the Sneak highlighting by pressing <esc>.
-        Typically, remapping <esc> is not a good idea, especially in non-GUI
-        Vim. With `g:sneak#map_esc`, the plugin creates a temporary mapping
-        so quirks are mitigated (but not eliminated).
-            https://github.com/justinmk/vim-sneak/issues/106
-
 g:sneak#map_netrw = 1
 
     0 : Don't do any special handling of "file manager" buffers (such as

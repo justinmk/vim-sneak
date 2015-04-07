@@ -23,7 +23,6 @@ func! sneak#init()
       \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
-      \ ,'map_esc'      : get(g:, 'sneak#map_esc', 0)
       \ ,'streak'       : get(g:, 'sneak#streak', 0) && (v:version >= 703) && has("conceal")
       \ ,'streak_esc'   : get(g:, 'sneak#streak_esc', "\<space>")
       \ ,'prompt'       : get(g:, 'sneak#prompt', '>')
@@ -195,7 +194,8 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   let w:sneak_hl_id = matchadd('SneakPluginTarget',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
-  if g:sneak#opt.map_esc && maparg('<esc>', 'n') ==# ""
+  "Let user deactivate with <esc>
+  if (has('nvim') || has('gui_running')) && maparg('<esc>', 'n') ==# ""
     nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
   endif
 
