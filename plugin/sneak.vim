@@ -83,6 +83,9 @@ endf
 " inclusive:  0 => like t, 1 => like f, 2 => like /
 func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak) abort "{{{
   if empty(a:input) "user canceled
+    if a:op ==# 'c'  " user <esc> during change-operation should return to previous mode.
+      call feedkeys((col('.') > 1 && col('.') < col('$') ? "\<RIGHT>" : '') . "\<C-\>\<C-G>", 'n')
+    endif
     redraw | echo '' | return
   endif
 
