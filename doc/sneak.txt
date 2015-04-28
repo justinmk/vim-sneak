@@ -55,9 +55,10 @@ Type dzad to delete from the cursor to the first instance of "ad": >
 
     Note: See |sneak-mappings| to change these mappings.
 
-Sneak default NORMAL-mode mappings:
 
-    Normal-Mode Key Sequence | Description
+NORMAL-mode mappings~
+
+    Key Sequence             | Description
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     S{char}{char}            | Go to the previous occurrence of {char}{char}
@@ -69,8 +70,8 @@ Sneak default NORMAL-mode mappings:
     , or \                   | Go to the [count]'th previous match
     s                        | Go to the [count]'th next match (see NOTE)
     S                        | Go to the [count]'th previous match (see NOTE)
-    {range}s{char}{char}     | Invoke |sneak-vertical-scope|
-    {range}S{char}{char}     | Invoke backwards |sneak-vertical-scope|
+    [count]s{char}{char}     | Invoke |sneak-vertical-scope|
+    [count]S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
                              | occurrence of {char}{char}
     {operator}Z{char}{char}  | Perform {operator} from the cursor to the 
@@ -79,9 +80,10 @@ Sneak default NORMAL-mode mappings:
     NOTE: s and S go to the next/previous match only immediately after
     invoking Sneak; moving the cursor resets this behavior. |sneak-clever-s|
 
-Sneak default VISUAL-mode mappings:
 
-    Visual-Mode Key Sequence | Description
+VISUAL-mode mappings~
+
+    Key Sequence             | Description
     -------------------------|----------------------------------------------
     s{char}{char}            | Go to the next occurrence of {char}{char}
     Z{char}{char}            | Go to the previous occurrence of {char}{char}
@@ -94,11 +96,12 @@ Sneak default VISUAL-mode mappings:
     s                        | Go to the [count]'th next match (NOTE above)
     S                        | Go to the [count]'th previous match (NOTE above)
 
-STREAK-mode mappings (|sneak-streak-mode|):
+
+STREAK-mode mappings~
 
     Key Sequence             | Description
     -------------------------|----------------------------------------------
-    <space>                  | Exit streak-mode at the current cursor
+    <space>                  | Exit |sneak-streak-mode| at the current cursor
                              | position.
 
 
@@ -271,8 +274,8 @@ To enable "passive" or "smart" streak-mode:                   *g:sneak#streak*
 >
     let g:sneak#streak = 1
 >
-With this setting, sneak with automatically enter streak-mode _only_ if there
-are ≥2 visible (on-screen) matches
+With this setting, Sneak enters streak-mode _only_ if there are ≥2 visible
+(on-screen) matches
 
 To force streak-mode always (instead of passively letting Sneak decide when
 to enter streak-mode), create a mapping to <Plug>(SneakStreak). For example:
