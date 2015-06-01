@@ -208,8 +208,8 @@ sneak#state()                                                   *sneak#state()*
             KEY             VALUE~
             bounds          [left, right] integer pair representing the current
                             |sneak-vertical-scope| or [0, 0] if not scoped
-            inclusive       0: |f|-like motion
-                            1: |t|-like motion
+            inclusive       0: |t|-like motion
+                            1: |f|-like motion
                             2: |exclusive| motion like |/|
             input           current search string
             inputlen        length of the current search string
