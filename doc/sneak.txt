@@ -205,6 +205,7 @@ sneak#reset(key)                                                *sneak#reset()*
 sneak#state()                                                   *sneak#state()*
         Returns a read-only dictionary representing the current behavior.
 
+        Values set at invocation (_not_ for repeat):
             KEY             VALUE~
             bounds          [left, right] integer pair representing the current
                             |sneak-vertical-scope| or [0, 0] if not scoped
@@ -215,10 +216,13 @@ sneak#state()                                                   *sneak#state()*
             inputlen        length of the current search string
             reverse         0: invoked as forward motion `s`
                             1: invoked as backward motion `S`
-            rptreverse      0: repeated motion in "next" direction |;|
-                            1: repeated motion in "previous" direction |,|
             rst             0: |;| and |,| should repeat the most recent Sneak
                             1: after calling |sneak#reset()|
+
+        Values updated on each repeat (|;| |,|):
+            KEY             VALUE~
+            rptreverse      0: repeat was effectively forward
+                            1: repeat was effectively backward
 
         For example, to create a mapping that behaves differently depending
         on the current Sneak direction (`rptreverse` key):
@@ -351,12 +355,12 @@ g:sneak#s_next = 0
 
 g:sneak#absolute_dir = 0
 
-    0 : Repeating a sneak using |;| or |,| moves to the next or previous match.
+    0 : Relative direction. |;| goes to the next match in the direction of the
+        initial s/S invocation and |,| goes in the opposite direction.
 
-    1 : Repeating a sneak using |;| or |,| always moves the cursor forwards or
+    1 : Absolute direction. Repeat via |;| or |,| always goes forwards or
         backwards respectively.
-        Note: When |sneak-clever-s| is enabled, "s" and "S" behave the same as
-        |;| and |,|.
+        Note: With |sneak-clever-s|, s and S behave the same as |;| and |,|.
 
 g:sneak#textobject_z = 1
 
