@@ -76,9 +76,9 @@ func! sneak#rpt(op, reverse) abort
     return
   endif
 
-  let l:reverse = (a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)
+  let l:relative_reverse = (a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)
   call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, 1,
-        \ (g:sneak#opt.absolute_dir ? a:reverse : l:reverse), s:st.inclusive, 0)
+        \ (g:sneak#opt.absolute_dir ? a:reverse : l:relative_reverse), s:st.inclusive, 0)
 endf
 
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
