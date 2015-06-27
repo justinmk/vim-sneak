@@ -542,6 +542,42 @@ Execute (unset clever-s):
   let g:sneak#s_next = 0
   call sneak#init()
 ###########################################################
+# absolute_dir
+
+Execute (init absolute_dir):
+  let g:sneak#absolute_dir = 1
+  call sneak#init()
+
+Given:
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+  abcdef abcdef abcdef
+
+Execute (sneak#state() 'reverse' and 'rptreverse'):
+  norm sab
+  Assert sneak#state()['reverse']    == 0
+  Assert sneak#state()['rptreverse'] == 0
+  norm ;
+  Assert sneak#state()['reverse']    == 0
+  Assert sneak#state()['rptreverse'] == 0
+  norm ,
+  Assert sneak#state()['reverse']    == 0
+  Assert sneak#state()['rptreverse'] == 1
+  norm Sab
+  Assert sneak#state()['reverse']    == 1
+  Assert sneak#state()['rptreverse'] == 1
+  norm ;
+  Assert sneak#state()['reverse']    == 1
+  Assert sneak#state()['rptreverse'] == 0
+  norm ,
+  Assert sneak#state()['reverse']    == 1
+  Assert sneak#state()['rptreverse'] == 1
+
+Execute (unset absolute_dir):
+  let g:sneak#absolute_dir = 0
+  call sneak#init()
+
+###########################################################
 
 Given:
   abcdef abcdef abcdef

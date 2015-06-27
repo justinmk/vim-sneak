@@ -349,6 +349,15 @@ g:sneak#s_next = 0
         persists until you move the cursor.
         Note: You can still use |;| and |,| as usual.
 
+g:sneak#absolute_dir = 0
+
+    0 : Repeating a sneak using |;| or |,| moves to the next or previous match.
+
+    1 : Repeating a sneak using |;| or |,| always moves the cursor forwards or
+        backwards respectively.
+        Note: When |sneak-clever-s| is enabled, "s" and "S" behave the same as
+        |;| and |,|.
+
 g:sneak#textobject_z = 1
 
     0 : Prevent the default {operator}z mapping. You can map to something
