@@ -129,7 +129,7 @@ behavior of [count]f and [count]t.
     Note: If your mapleader is |,| then Sneak maps |\| instead of |,|.
     You can override this by specifying some other mapping, eg: >
 
-    nmap ? <Plug>SneakPrevious
+    nmap gS <Plug>SneakPrevious
 <
                                                               *sneak-clever-s*
 Similar to the clever-f[3] plugin, immediately after invoking Sneak, you can
@@ -513,12 +513,12 @@ your |vimrc|: >
 <
 Here are some examples: >
 
-    nmap <leader>s <Plug>Sneak_s
-    nmap <leader>S <Plug>Sneak_S
-    xmap <leader>s <Plug>Sneak_s
-    xmap <leader>S <Plug>Sneak_S
-    omap <leader>s <Plug>Sneak_s
-    omap <leader>S <Plug>Sneak_S
+    nmap gs <Plug>Sneak_s
+    nmap gS <Plug>Sneak_S
+    xmap gs <Plug>Sneak_s
+    xmap gS <Plug>Sneak_S
+    omap gs <Plug>Sneak_s
+    omap gS <Plug>Sneak_S
 
     nmap <Space> <Plug>(SneakStreak)
 
