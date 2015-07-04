@@ -88,18 +88,22 @@ func! s:do_streak(s, v, reverse) "{{{
   call s:after()
 
   let mappedto = maparg(choice, a:v ? 'x' : 'n')
-  let mappedtoNext = mappedto =~# '<Plug>SneakNext'
+  if g:sneak#opt.absolute_dir && a:reverse
+      let mapped = mappedto =~# '<Plug>SneakPrevious'
+  else
+      let mapped = mappedto =~# '<Plug>SneakNext'
+  endif
 
   if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
     call cursor(overflow[0], overflow[1])
   elseif (strlen(g:sneak#opt.streak_esc) && choice ==# g:sneak#opt.streak_esc)
         \ || -1 != index(["\<Esc>", "\<C-c>"], choice)
     return "\<Esc>" "exit streak-mode.
-  elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
+  elseif !mapped && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
     call feedkeys(choice) "exit streak-mode and fall through to Vim.
     return ""
   else "valid target was selected
-    let p = mappedtoNext ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
+    let p = mapped ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
 
