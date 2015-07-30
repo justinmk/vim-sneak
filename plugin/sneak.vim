@@ -14,6 +14,21 @@ set cpo&vim
 "persist state for repeat
 let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0], 'inclusive':0 }
 
+let s:check_opfunc = v:version > 704 || (v:version == 704 && has('patch786'))
+if s:check_opfunc
+  augroup SneakPluginOpfunc
+    autocmd!
+    autocmd OptionSet * if expand('<amatch>') ==# 'operatorfunc' | call s:set_opfunc() | endif
+  augroup END
+
+  let s:opfunc = ''
+  let s:opfunc_new = 0
+  func s:set_opfunc()
+    let s:opfunc = v:option_new
+    let s:opfunc_new = 1
+  endfunc
+endif
+
 func! sneak#init()
   unlockvar g:sneak#opt
   "options                                 v-- for backwards-compatibility
@@ -64,6 +79,8 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, streak) abort
 
   if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
     call sneak#rpt(a:op, a:reverse) " s goes to next match
+  elseif s:check_opfunc && is_similar_invocation && a:op ==# 'g@' && !s:opfunc_new && s:opfunc == &opfunc
+    call sneak#rpt(a:op, 0) " repeat same motion with same direction
   else " s invokes new search
     call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:streak)
   endif
@@ -84,6 +101,7 @@ endf
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
 " inclusive:  0 => like t, 1 => like f, 2 => like /
 func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak) abort "{{{
+  let s:opfunc_new = 0
   if empty(a:input) "user canceled
     if a:op ==# 'c'  " user <esc> during change-operation should return to previous mode.
       call feedkeys((col('.') > 1 && col('.') < col('$') ? "\<RIGHT>" : '') . "\<C-\>\<C-G>", 'n')
