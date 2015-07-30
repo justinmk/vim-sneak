@@ -16,17 +16,12 @@ let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0], 'in
 
 let s:check_opfunc = v:version > 704 || (v:version == 704 && has('patch786'))
 if s:check_opfunc
-  augroup SneakPluginOpfunc
-    autocmd!
-    autocmd OptionSet * if expand('<amatch>') ==# 'operatorfunc' | call s:set_opfunc() | endif
-  augroup END
-
   let s:opfunc = ''
   let s:opfunc_new = 0
-  func s:set_opfunc()
-    let s:opfunc = v:option_new
-    let s:opfunc_new = 1
-  endfunc
+  augroup SneakPluginOpfunc
+    autocmd!
+    autocmd OptionSet operatorfunc let s:opfunc = v:option_new | let s:opfunc_new = 1
+  augroup END
 endif
 
 func! sneak#init()
