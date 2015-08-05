@@ -55,7 +55,7 @@ endf
 
 func! s:do_streak(s, v, reverse) "{{{
   let w = winsaveview()
-  call s:before()
+  call s:before(a:reverse)
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
   let i = 0
@@ -111,6 +111,7 @@ endf "}}}
 func! s:after()
   autocmd! sneak_streak_cleanup * <buffer>
   silent! call matchdelete(w:sneak_cursor_hl)
+  silent! call matchdelete(w:sneak_normal_hl)
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
@@ -138,7 +139,7 @@ func! s:restore_conceal_in_other_windows()
   endfor
 endf
 
-func! s:before()
+func! s:before(reverse)
   let s:matchmap = {}
 
   " prevent highlighting in other windows showing the same buffer
@@ -161,6 +162,9 @@ func! s:before()
   hi! link Conceal SneakStreakTarget
   "set temporary link to hide the sneak search targets
   hi! link SneakPluginTarget SneakStreakMask
+  "set temporary link to Normal text highlight
+  let shade_match = a:reverse ? '\%'.line('w0').'l\_.*\%#' : '\%#\_.*\%'.line('w$').'l'
+  let w:sneak_normal_hl = matchadd("SneakStreakNormal", shade_match, 9)
 
   call s:disable_conceal_in_other_windows()
   call s:decorate_statusline()
