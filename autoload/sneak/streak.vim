@@ -33,7 +33,13 @@ let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiop
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
-  exec "syntax match SneakStreakTarget '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
+  let s:matchlines[a:pos[0]]['marker'] = substitute(
+        \ s:matchlines[a:pos[0]]['marker'],
+        \ '\%'.a:pos[1].'c.',
+        \ a:c,
+        \ '')
+  call add(s:matchlines[a:pos[0]]['matches'], matchaddpos('SneakStreakTarget', [a:pos], 11))
+  call add(s:matchlines[a:pos[0]]['matches'], matchaddpos('SneakPluginTarget', [[a:pos[0], a:pos[1], 2]], 10))
 endf
 
 func! s:decorate_statusline() "highlight statusline to indicate streak-mode.
@@ -42,6 +48,15 @@ endf
 
 func! s:restore_statusline() "restore normal statusline highlight.
   highlight! link StatusLine NONE
+endf
+
+func! s:restore_matchlines()
+  for [line_num, line] in items(s:matchlines)
+    keepjumps call setline(line_num, line['orig'])
+    for id in line['matches']
+      silent! call matchdelete(id)
+    endfor
+  endfor
 endf
 
 func! sneak#streak#to(s, v, reverse)
@@ -58,6 +73,8 @@ func! s:do_streak(s, v, reverse) "{{{
   call s:before(a:reverse)
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
+  let s:matchlines = {}
+  let lastline = -1
   let i = 0
   let overflow = [0, 0] "position of the next match (if any) after we have run out of target labels.
   while 1
@@ -74,6 +91,17 @@ func! s:do_streak(s, v, reverse) "{{{
     if i < s:maxmarks
       "TODO: multibyte-aware substring: matchstr('asdfäöü', '.\{4\}\zs.') https://github.com/Lokaltog/vim-easymotion/issues/16#issuecomment-34595066
       let c = strpart(g:sneak#target_labels, i, 1)
+      if p[0] != lastline
+        if lastline != -1
+          keepjumps call setline(lastline, s:matchlines[lastline]['marker'])
+        endif
+        let s:matchlines[p[0]] = {
+              \ 'orig': getline(p[0]),
+              \ 'marker': getline(p[0]),
+              \ 'matches': [],
+              \ }
+        let lastline = p[0]
+      endif
       call s:placematch(c, p)
     else "we have exhausted the target labels; grab the first non-labeled match.
       let overflow = p
@@ -82,6 +110,7 @@ func! s:do_streak(s, v, reverse) "{{{
 
     let i += 1
   endwhile
+  keepjumps call setline(lastline, s:matchlines[lastline]['marker'])
 
   call winrestview(w) | redraw
   let choice = sneak#util#getchar()
@@ -111,7 +140,7 @@ endf "}}}
 func! s:after()
   autocmd! sneak_streak_cleanup * <buffer>
   silent! call matchdelete(w:sneak_cursor_hl)
-  silent! call matchdelete(w:sneak_normal_hl)
+  silent! call matchdelete(w:sneak_shade_hl)
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
@@ -120,6 +149,7 @@ func! s:after()
   silent! let &syntax=s:syntax_orig
   let &concealcursor=s:cc_orig
   let &conceallevel=s:cl_orig
+  call s:restore_matchlines()
   call s:restore_conceal_in_other_windows()
 endf
 
@@ -144,15 +174,17 @@ func! s:before(reverse)
 
   " prevent highlighting in other windows showing the same buffer
   ownsyntax sneak_streak
+  if !g:sneak#opt.clear_syntax
+    let &syntax=&syntax
+  endif
 
   " highlight the cursor location (else the cursor is not visible during getchar())
-  let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 11, -1)
+  let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 12)
 
   let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
   let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2
 
   let s:syntax_orig=&syntax
-  syntax clear
   " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
   let s:synmaxcol_orig=&synmaxcol | set synmaxcol=0
 
@@ -162,9 +194,10 @@ func! s:before(reverse)
   hi! link Conceal SneakStreakTarget
   "set temporary link to hide the sneak search targets
   hi! link SneakPluginTarget SneakStreakMask
-  "set temporary link to Normal text highlight
-  let shade_match = a:reverse ? '\%'.line('w0').'l\_.*\%#' : '\%#\_.*\%'.line('w$').'l'
-  let w:sneak_normal_hl = matchadd("SneakStreakNormal", shade_match, 9)
+  "shade ignored text in direction of sneak search
+  let w:sneak_shade_hl = matchadd("SneakStreakShade", a:reverse 
+        \ ? '\%'.line('w0').'l\_.*\%#' 
+        \ : '\%#\_.*\%'.line('w$').'l', 9)
 
   call s:disable_conceal_in_other_windows()
   call s:decorate_statusline()
