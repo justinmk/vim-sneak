@@ -73,6 +73,11 @@ func! s:do_streak(s, v, reverse) "{{{
   call s:before(a:reverse)
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
+  let s:undo_file = tempname()
+  if s:should_use_wundo()
+      execute "wundo" s:undo_file
+  endif
+
   let s:matchlines = {}
   let lastline = -1
   let i = 0
@@ -134,6 +139,23 @@ func! s:do_streak(s, v, reverse) "{{{
     call cursor(p[0], p[1])
   endif
 
+  " Restore undo tree {{{
+  if s:should_use_wundo() && filereadable(s:undo_file)
+    silent execute "rundo" s:undo_file
+    call delete(s:undo_file)
+    unlet s:undo_file
+  else
+    " Break undo history (undobreak)
+    let old_undolevels = &undolevels
+    set undolevels=-1
+    keepjumps call setline('.', getline('.'))
+    let &undolevels = old_undolevels
+    unlet old_undolevels
+    " FIXME: Error occur by GundoToggle for undo number 2 is empty
+    keepjumps call setline('.', getline('.'))
+  endif "}}}
+
+
   return choice
 endf "}}}
 
@@ -174,8 +196,8 @@ func! s:before(reverse)
 
   " prevent highlighting in other windows showing the same buffer
   ownsyntax sneak_streak
-  if !g:sneak#opt.clear_syntax
-    let &syntax=&syntax
+  if !g:sneak#opt.streak_clear_syntax
+    let &syntax=&syntax " HACK: set window's new ownsyntax to previous buffer syntax
   endif
 
   " highlight the cursor location (else the cursor is not visible during getchar())
@@ -214,6 +236,15 @@ func! s:is_special_key(key)
     \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(Next\|Previous\)'
     \ || (g:sneak#opt.s_next && maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
 endf
+
+function! s:is_cmdwin() "{{{
+  return bufname('%') ==# '[Command Line]'
+endfunction "}}}
+function! s:should_use_wundo() "{{{
+    " wundu cannot use in command-line window and
+    " unless undolist is not empty
+    return ! s:is_cmdwin() && undotree().seq_last != 0
+endfunction "}}}
 
 "we must do this because:
 "  - we don't know which keys the user assigned to SneakNext/Previous
