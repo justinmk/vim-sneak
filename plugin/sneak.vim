@@ -209,7 +209,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
         \ ? sneak#streak#to(s, is_v, a:reverse): ""
 
   if !is_op
-    if "" != target && "\<Esc>" != target
+    if "" != target || "\<Esc>" ==? target
       call sneak#hl#removehl()
     endif
   elseif a:op !=# 'y'
