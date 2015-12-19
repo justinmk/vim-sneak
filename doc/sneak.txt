@@ -127,8 +127,9 @@ Similar to clever-f[3], immediately after invoking Sneak you can move to the
 next match by hitting `s` (or `S`) again. If you instead move the cursor or do
 something else, then `s` starts a new Sneak. In that case, you can repeat the
 most recent Sneak search by pressing "s<Enter>" (or whatever key, if any, you
-mapped to <Plug>SneakNext).
-
+mapped to <Plug>SneakNext). To enable "clever s": >
+    let g:sneak#s_next = 1
+<
 Sneak adds to the |jumplist| only on the initial invocation; so after moving
 around with ; and , (or s/S) you can easily go back via |CTRL-O| or |``|.
     - Repeat invocations (;/,) do not add to the jumplist.
