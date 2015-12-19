@@ -148,6 +148,10 @@ s<Enter> ("s" followed by Enter) always repeats the last search, even if |;|
 and |,| were reset by |f| or |t|. This is especially useful for re-invoking
 |sneak-streak-mode| (because |;| and |,| never invoke streak-mode).
 
+To enable it:
+>
+    let g:sneak#s_next = 1
+<
 ------------------------------------------------------------------------------
 3.2 Functions                                                *sneak-functions*
 
