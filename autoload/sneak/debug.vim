@@ -1,6 +1,10 @@
 
 
 func! s:dbgflag(settingname)
+  if !exists(a:settingname)
+    silent echo 'does not exist: '.a:settingname
+    return
+  endif
   exec 'let value='.a:settingname
   silent echo a:settingname.'='.value
 endf
