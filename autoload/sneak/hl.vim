@@ -30,6 +30,10 @@ func! s:init()
     exec "highlight SneakStreakMask guifg=magenta guibg=magenta ctermfg=".magenta." ctermbg=".magenta
   endif
 
+  if 0 == hlID("SneakStreakShade") || "" == sneak#hl#get("SneakStreakShade")
+    exec "highlight SneakStreakShade guifg=gray guibg=NONE ctermfg=gray ctermbg=NONE"
+  endif
+
   if 0 == hlID("SneakPluginScope") || "" == sneak#hl#get("SneakPluginScope")
     if &background ==# 'dark'
       highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white

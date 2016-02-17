@@ -1,3 +1,19 @@
+# Modifications in this fork
+
+Improved sneak streak coloring.
+- Text is shaded towards direction of streak.
+  - New highlight group is called `SneakStreakShade`
+- Exposed option to toggle whether syntax is cleared on sneak streak
+  - `let sneak#streak_clear_syntax = 0`
+  - Default value of `1` to preserve behavior (could change this)
+
+### Visualization
+With `sneak#streak_clear_syntax = 1` and default Sneak colors
+![default colors](http://i.imgur.com/kZtooAl.gif)
+
+With `sneak#streak_clear_syntax = 0` and custom Sneak colors
+![custom colors](http://i.imgur.com/HKcq8kf.gif)
+
 # sneak.vim :shoe:
 
 Sneak is a minimalist, versatile Vim *motion* plugin that jumps to any location specified by two characters.
