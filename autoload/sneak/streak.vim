@@ -109,7 +109,7 @@ func! s:do_streak(s, v, reverse) "{{{
 endf "}}}
 
 func! s:after()
-  autocmd! sneak_streak_cleanup * <buffer>
+  autocmd! sneak_streak_cleanup
   silent! call matchdelete(w:sneak_cursor_hl)
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
@@ -167,7 +167,7 @@ func! s:before()
 
   augroup sneak_streak_cleanup
     autocmd!
-    autocmd CursorMoved <buffer> call <sid>after()
+    autocmd CursorMoved * call <sid>after()
   augroup END
 endf
 
