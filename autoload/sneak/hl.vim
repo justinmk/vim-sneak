@@ -42,10 +42,6 @@ func! s:init()
     exec "highlight SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=".magenta." ctermfg=white cterm=bold"
   endif
 
-  if 0 == hlID("SneakStreakStatusLine") || "" == sneak#hl#get("SneakStreakStatusLine")
-    highlight link SneakStreakStatusLine SneakStreakTarget
-  endif
-
   if has('gui_running') || -1 != match(sneak#hl#get('Cursor'), 'ctermbg')
     highlight link SneakStreakCursor Cursor
   else

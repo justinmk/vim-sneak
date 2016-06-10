@@ -5,24 +5,21 @@
 ==============================================================================
 1. Overview                                                            *sneak*
 
-Sneak provides a way to move quickly and precisely to locations that would 
-be awkward to reach with built-in Vim motions. 
+Sneak provides a way to move quickly and precisely to locations that would be
+awkward to reach with built-in Vim motions. 
 
-Sneak is invoked with s (sneak forward) or S (sneak backwards), followed by
-exactly two characters:
+To use Sneak, type "s" followed by exactly two characters:
 
     s{char}{char}
 
-Thus, you can often reach a target with only 3 keystrokes. Sneak always moves 
+Thus you can often reach a target with 3 keystrokes. Sneak always moves 
 immediately to the first {char}{char} match. Additional matches are
-highlighted, and you can reach them by pressing ; (similar to the built-in 
-behavior for |f| and |t|).
+highlighted, you can reach them by pressing ; (just like |f| and |t|).
 
-Sneak has a few other features, but above all, Sneak tries to get out of your
-way: highlights and autocmds are removed as soon as the cursor is moved.
+There are other features, but above all, the goal is to get out of your way:
+highlights and autocmds are removed as soon as the cursor is moved.
 
-Sneak is tested on 7.2+. Vi-compatibility must be disabled. 'nocompatible'
-|sneak-streak-mode| requires Vim 7.3+.
+Sneak works with Vim 7.2+ (|sneak-streak-mode| requires Vim 7.3+).
 
 ==============================================================================
 2. Usage                                                         *sneak-usage*
@@ -31,23 +28,18 @@ Sneak is invoked by one of the provided mappings. |sneak-defaults|
 You can change these mappings. |sneak-mappings|
 
 Examples (cursor position indicated with brackets []): >
-
     [L]orem ipsum dolor sit amet, consectetur adipisicing elit
 <
 Type ssi to go to the beginning of the word "sit": >
-
     Lorem ipsum dolor [s]it amet, consectetur adipisicing elit
 <
 Type ; (or 's' again!) to go to the next match: >
-
     Lorem ipsum dolor sit amet, consectetur adipi[s]icing elit
 <
 Type Sdo to go backwards to the beginning of the word "dolor": >
-
     Lorem ipsum [d]olor sit amet, consectetur adipisicing elit
 <
 Type dzad to delete from the cursor to the first instance of "ad": >
-
     Lorem ipsum [a]dipisicing elit
 <
 ------------------------------------------------------------------------------
@@ -127,16 +119,15 @@ needed and searches for the keymapped result as expected. (Requires Vim 7.3+)
 behavior of [count]f and [count]t.
 
     Note: If your mapleader is |,| then Sneak maps |\| instead of |,|.
-    You can override this by specifying some other mapping, eg: >
-
-    nmap gS <Plug>SneakPrevious
+    You can override this by specifying some other mapping, e.g.: >
+        nmap gS <Plug>SneakPrevious
 <
                                                               *sneak-clever-s*
-Similar to the clever-f[3] plugin, immediately after invoking Sneak, you can
-move to the next match by simply pressing 's' (or 'S') again. If you instead
-move the cursor or do something else, then 's' starts a new Sneak search. In
-that case, you can repeat the most recent Sneak search by pressing 's<Enter>'
-or whatever (if any) key you mapped to <Plug>SneakNext.
+Similar to clever-f[3], immediately after invoking Sneak you can move to the
+next match by hitting `s` (or `S`) again. If you instead move the cursor or do
+something else, then `s` starts a new Sneak. In that case, you can repeat the
+most recent Sneak search by pressing "s<Enter>" (or whatever key, if any, you
+mapped to <Plug>SneakNext).
 
 Sneak adds to the |jumplist| only on the initial invocation; so after moving
 around with ; and , (or s/S) you can easily go back via |CTRL-O| or |``|.
@@ -160,28 +151,26 @@ sneak#wrap(op, inputlen, reverse, inclusive, streak)             *sneak#wrap()*
         the second character is pressed, without having to press <Enter>.
         {op} may be blank "" or any operation (even custom operations).
 
-        For example, to customize <Plug>Sneak_f:
->
-        nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
+        E.g. to customize <Plug>Sneak_f: >
+            nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
 <
-            Note: In the example above, <c-u> is required to avoid unwanted
-                  |cmdline-ranges| from a [count] or a visual-mode invocation.
-
 sneak#is_sneaking()                                       *sneak#is_sneaking()*
         Returns 1 if Sneak is active (matches are highlighted).
         Returns 0 after the user does anything (which deactivates Sneak and
-        removes the highlight). This is useful if you want to change the
-        behavior of a mapping based on whether Sneak is active.
+        removes the highlight). Useful for changing the behavior of a mapping
+        based on whether Sneak is active.
             https://github.com/justinmk/vim-sneak/pull/93
 
-        For example, you might want <Tab> to go to the next match _only_ while
-        Sneak is active:
->
+        For example you might want <Tab> to go to the next match _only_ while
+        Sneak is active: >
             nmap <expr> <Tab> sneak#is_sneaking() ? '<Plug>SneakNext' : '<Tab>'
 <
+        You can also use this to change the statusline: >
+            set statusline=%{sneak#is_sneaking()?'SNEAKING':'RELAXING'}
+<
 sneak#cancel()                                                 *sneak#cancel()*
-        Deactivates Sneak (removes autocmds and highlighting) and causes
-        `sneak#is_sneaking()` to return 0.
+        Deactivates Sneak: removes autocmds/highlighting and causes
+        |sneak#is_sneaking()| to return 0.
             https://github.com/justinmk/vim-sneak/issues/106
 
 sneak#reset(key)                                                *sneak#reset()*
@@ -263,6 +252,7 @@ the search is restricted to a column having a width of 2× the [count].
 Use cases:
 
     - CSV file
+    - man page (example: search for "-e" in `man bash`)
     - hex editing :%!xxd
     - any columnar layout
 
@@ -432,11 +422,6 @@ Sneak uses the following highlight groups:
         Used to de-emphasize un-labeled matches and the "tail" of labeled
         matches in |sneak-streak-mode|, so the target label is easier to see.
 
-    SneakStreakStatusLine
-        Decorates the statusline during |sneak-streak-mode|. This only works
-        if you use the default |hl-StatusLine| highlight group; it probably
-        won't work if you use a statusline plugin like Powerline.
-
 There are three ways to override the default colors (listed in order of
 decreasing elegance):
 
@@ -465,13 +450,12 @@ decreasing elegance):
 ------------------------------------------------------------------------------
 4.3 Custom Mappings                                           *sneak-mappings*
 
-Sneak provides <Plug> mappings for you to specify alternative key maps.
-Keep in mind, however, that motion mappings should absolutely be the
-least-friction mappings in your editor, because motion is the most common
-editor task; mapping Sneak to something like <leader>s is not recommended.
+Sneak provides <Plug> keys for you to specify alternative mappings. Keep in
+mind however that motion mappings should absolutely be the least-friction
+mappings in your editor, because motion is the most common editor task;
+mapping Sneak to something like <leader>s is not recommended.
 
-You can remap any Sneak feature by defining any of these <Plug> mappings in
-your |vimrc|: >
+Available <Plug> keys: >
 
     " 2-character Sneak (default)
     nmap ? <Plug>Sneak_s
@@ -511,7 +495,7 @@ your |vimrc|: >
     nmap ? <Plug>(SneakStreak)
     nmap ? <Plug>(SneakStreakBackward)
 <
-Here are some examples: >
+Examples: >
 
     nmap gs <Plug>Sneak_s
     nmap gS <Plug>Sneak_S
@@ -547,8 +531,8 @@ In your bug report, it is helpful to include the output of this command: >
 
     :call sneak#debug#report()
 
-If you are feeling diligent: to narrow down the cause of the issue, you can
-run Vim without any plugins except sneak.vim like this: >
+If you are feeling diligent: to narrow down the cause of the issue, run Vim
+without any plugins except sneak.vim: >
 
     vim -u NONE -N -c ':set runtimepath+=~/.vim/bundle/vim-sneak/' -c ':runtime plugin/sneak.vim'
 <
@@ -557,15 +541,12 @@ run Vim without any plugins except sneak.vim like this: >
 
 Author: Justin M. Keyes <justinkz+vim@gmail.com>
 
-Sneak was inspired by vim-seek[1], vim-easymotion[2], and clever-f[3].
+Sneak was inspired by vim-seek, vim-easymotion, clever-f, and Tim Pope's
+plugins.
 
-Tim Pope's plugin sources were used for reference and best practices.
-
-easymotion.txt was used for the initial version of this document.
-
-[1] https://github.com/goldfeld/vim-seek
-[2] https://github.com/Lokaltog/vim-easymotion
-[3] https://github.com/rhysd/clever-f.vim
+    https://github.com/goldfeld/vim-seek
+    https://github.com/Lokaltog/vim-easymotion
+    https://github.com/rhysd/clever-f.vim
 
 ==============================================================================
 vim:tw=78:sw=4:ts=8:ft=help:norl:

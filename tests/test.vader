@@ -18,8 +18,10 @@
 # ёе:ёе:ёе:ёе:ёе:ёе:ёе:аааааааёе:а
 
 Execute (Clean up test environment):
-  set encoding=utf8
-  scriptencoding utf8
+  if !has('nvim')
+    set encoding=utf8
+    scriptencoding utf8
+  endif
   nmap ; <Plug>SneakNext
   nmap \ <Plug>SneakPrevious
   omap \ <Plug>SneakPrevious

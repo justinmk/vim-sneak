@@ -36,14 +36,6 @@ func! s:placematch(c, pos)
   exec "syntax match SneakStreakTarget '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
 endf
 
-func! s:decorate_statusline() "highlight statusline to indicate streak-mode.
-  highlight! link StatusLine SneakStreakStatusLine
-endf
-
-func! s:restore_statusline() "restore normal statusline highlight.
-  highlight! link StatusLine NONE
-endf
-
 func! sneak#streak#to(s, v, reverse)
   let seq = ""
   while 1
@@ -114,7 +106,6 @@ func! s:after()
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
-  call s:restore_statusline()
   let &synmaxcol=s:synmaxcol_orig
   silent! let &syntax=s:syntax_orig
   let &concealcursor=s:cc_orig
@@ -163,7 +154,6 @@ func! s:before()
   hi! link SneakPluginTarget SneakStreakMask
 
   call s:disable_conceal_in_other_windows()
-  call s:decorate_statusline()
 
   augroup sneak_streak_cleanup
     autocmd!
