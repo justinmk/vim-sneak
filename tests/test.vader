@@ -721,16 +721,6 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (streak: repeat does NOT invoke streak-mode if streak-mode was not triggered on the original operation):
-  2j3wdzab2k3b
-  :\<C-U>doautocmd CursorMoved\<CR>
-  .
-
-Expect:
-  ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
-  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
-  ab1cdef ab2cdef ab3cdef ab5cdef ab6cdef
-
 Do (streak/target/backwards/delete/repeat):
   2j2wdZefs
   :\<C-U>doautocmd CursorMoved\<CR>
