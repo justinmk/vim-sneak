@@ -82,7 +82,7 @@ func! sneak#rpt(op, reverse) abort
 endf
 
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
-" inclusive:  0 => like t, 1 => like f, 2 => like /
+" inclusive:  0: t-like, 1: f-like, 2: /-like
 func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, streak) abort "{{{
   if empty(a:input) "user canceled
     if a:op ==# 'c'  " user <esc> during change-operation should return to previous mode.
