@@ -159,11 +159,11 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     endif
   endfor
 
-  if nudge && (!is_v || max(matchpos) > 0)
-    call sneak#util#nudge(a:reverse) "undo nudge for t
-  endif
-
   if 0 == max(matchpos)
+    if nudge
+      call sneak#util#nudge(a:reverse) "undo nudge for t
+    endif
+
     let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
     call sneak#util#echo('not found'.(max(bounds) ? printf(km.' (in columns %d-%d): %s', bounds[0], bounds[1], a:input) : km.': '.a:input))
     return
@@ -205,6 +205,10 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
   " Operators always invoke streak-mode; also for 3+ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak && (is_op || s.hasmatches(2)))) && !max(bounds)
         \ ? sneak#streak#to(s, is_v, a:reverse) : ""
+
+  if nudge
+    call sneak#util#nudge(a:reverse) "undo nudge for t
+  endif
 
   if is_op && 2 != a:inclusive && !a:reverse
     " f/t operations do not apply to the current character; nudge the cursor.
