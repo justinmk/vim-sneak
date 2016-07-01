@@ -144,10 +144,6 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     call s:ft_hook()
   endif
 
-  if is_op && 2 != a:inclusive && !a:reverse
-    norm! v
-  endif
-
   let nextchar = searchpos('\_.', 'n'.(s.search_options_no_s))
   let nudge = !a:inclusive && a:repeatmotion && nextchar == s.dosearch('n')
   if nudge
@@ -206,9 +202,14 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
   endif
 
-  "enter streak-mode iff there are >=2 _additional_ on-screen matches.
+  " Operators always invoke streak-mode; also for 3+ on-screen matches.
   let target = (2 == a:streak || (a:streak && g:sneak#opt.streak && (is_op || s.hasmatches(2)))) && !max(bounds)
         \ ? sneak#streak#to(s, is_v, a:reverse) : ""
+
+  if is_op && 2 != a:inclusive && !a:reverse
+    " f/t operations do not apply to the current character; nudge the cursor.
+    call sneak#util#nudge(1)
+  endif
 
   if is_op || "" != target
     call sneak#hl#removehl()
