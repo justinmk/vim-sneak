@@ -1086,6 +1086,47 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
+###########################################################
+# test streak mode with exclusive sneak
+
+Execute (mappings for exclusive streak mode):
+  nnoremap <silent> t :<c-u>call sneak#wrap('', 1, 0, 0, 2)<cr>
+  nnoremap <silent> T :<c-u>call sneak#wrap('', 1, 1, 0, 2)<cr>
+  onoremap <silent> t :<c-u>call sneak#wrap(v:operator, 1, 0, 0, 2)<cr>
+  onoremap <silent> T :<c-u>call sneak#wrap(v:operator, 1, 1, 0, 2)<cr>
+
+Do (sneak-streak to correct character with exclusive sneak, forwards, normal [issue #176]):
+  tcax
+
+Expect:
+  ab1cdef ab2cdef abcdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (sneak-streak to correct character with exclusive sneak, backwards, normal [issue #176]):
+  $Tcsx
+
+Expect:
+  ab1cdef ab2cdef ab3cef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (sneak-streak to correct character with exclusive sneak, forwards, op-pending [issue #176]):
+  wwdtfa
+
+Expect:
+  ab1cdef ab2cdef f ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (sneak-streak to correct character with exclusive sneak, backwards, op-pending [issue #176]):
+  5wcTb;X
+
+Expect:
+  ab1cdef ab2cdef ab3cdef abXab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
 Execute (cleanup):
   silent! unmap f
   silent! unmap F
