@@ -8,8 +8,8 @@ func! sneak#search#new()
     " search pattern modifiers (case-sensitivity, magic)
     let self.prefix = sneak#search#get_cs(a:input, g:sneak#opt.use_ic_scs).'\V'
     " the escaped user input to search for
-    let self.search = escape(a:input, '"\')
-    " example: highlight string 'ab' after line 42, column 5 
+    let self.search = substitute(escape(a:input, '"\'), '\a', '\\[[=\0=]]', 'g')
+    " example: highlight string 'ab' after line 42, column 5
     "          matchadd('foo', 'ab\%>42l\%5c', 1)
     let self.match_pattern = ''
     " do not wrap                     search backwards
