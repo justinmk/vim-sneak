@@ -49,7 +49,9 @@ endf
 
 func! sneak#cancel()
   call sneak#hl#removehl()
-  autocmd! SneakPlugin
+  augroup SneakPlugin
+    autocmd!
+  augroup END
   if maparg('<esc>', 'n') =~# 'sneak#cancel' "teardown temporary <esc> mapping
     silent! unmap <esc>
   endif
