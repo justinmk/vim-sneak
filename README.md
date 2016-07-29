@@ -1,23 +1,33 @@
 # sneak.vim :shoe:
 
-Sneak is a minimalist, versatile Vim *motion* plugin that jumps to any location specified by two characters.
-It works with **multiple lines**, **operators** (including **repeat** `.`
-and **[surround]**), **[keymaps]**, **visual mode**, **[unicode]** ("multibyte"),
-and **macros**. Many details have been carefully balanced to minimize
-friction between *intent* and *action*.
+Vim's built-in motions cover many special cases, but there's a gap for "medium
+distance" across several lines: `f` is restricted to the current line,
+and `/` is [clunky](#faq).
 
-The plugin chooses sane defaults, easily changed via `<Plug>` mappings
-(see [`:help sneak`](doc/sneak.txt)).
+    l  f  t  %  'm  }  ]m  ]]  M  L         /
+                                       ^
+                                       |
+                                     sneak
 
-**New Option:** Use Sneak as a minimalist alternative
-to [EasyMotion](https://github.com/Lokaltog/vim-easymotion):
+Sneak is a minimalist, versatile _motion_ to reach any location specified by two
+characters. It works with **multiple lines**, **operators** (including
+**repeat** `.` and **[surround]**), **[keymaps]**, **visual mode**,
+**[unicode]** ("multibyte"), and **macros**. Many details have been balanced to
+minimize friction between intent and action.
+
+  - preserves default behavior of `f t F T ; ,`
+  - repeat motion via `;` and `,`
+  - repeat operation via `.`
+  - jump immediately to first match
+  - only the *initial* invocation adds to the jumplist
+  - [count] prefix invokes *vertical scope*
+  - supports [mbyte-keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)
+    ([#47](https://github.com/justinmk/vim-sneak/issues/47))
+
+Use Sneak as a minimalist
+[EasyMotion](https://github.com/Lokaltog/vim-easymotion) alternative:
 
     let g:sneak#streak = 1
-
-[unicode]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#UTF-8
-[keymaps]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap
-[surround]: https://github.com/tpope/vim-surround
-[count]: http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]
 
 ### Usage (Default)
 
@@ -59,50 +69,18 @@ via `z` (because `s` is taken by surround.vim).
   of the literal text `\}`
     * Press `.` to repeat the `gUz\}` operation.
 
-### Motivation
-
-    l  f  t  %  'm  }  ]m  ]]  M  L     /
-                                     ^
-                                     |
-                                   sneak
-
-Vim's built-in motions cover many special cases, but it's awkward to move across 
-several lines to an arbitrary position: `f` is restricted to the current line,
-and `/` is [clunky](#faq) for medium-distance motion.
-
-Compare Sneak to Vim's built-in `/` and other plugins:
-
-  - minimum of **3 keystrokes**
-  - repeat motion via `;` and `,`
-  - repeat operation via `.`
-  - move anywhere, even offscreen
-  - jump immediately to first match
-  - only the *initial* invocation adds to the jumplist
-  - preserves default behavior of `f t F T ; ,`
-  - avoids noise in `/` history
-  - [count] prefix invokes *vertical scope*
-  - always literal: `s\*` jumps to the literal `\*`
-  - supports [mbyte-keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)
-    ([#47](https://github.com/justinmk/vim-sneak/issues/47))
-
 ### Installation
 
 - Manual installation:
   - Copy the files to your `.vim` directory (`_vimfiles` on Windows).
 - [Pathogen](https://github.com/tpope/vim-pathogen)
   - `cd ~/.vim/bundle && git clone git://github.com/justinmk/vim-sneak.git`
-- [Vundle](https://github.com/gmarik/vundle)
-  1. Add `Plugin 'justinmk/vim-sneak'` to .vimrc
-  2. Run `:PluginInstall`
-- [NeoBundle](https://github.com/Shougo/neobundle.vim)
-  1. Add `NeoBundle 'justinmk/vim-sneak'` to .vimrc
-  2. Run `:NeoBundleInstall`
 - [vim-plug](https://github.com/junegunn/vim-plug)
   1. Add `Plug 'justinmk/vim-sneak'` to .vimrc
   2. Run `:PlugInstall`
 
-If you want to repeat Sneak *operations* (like `dzab`) with dot `.`,
-then [repeat.vim](https://github.com/tpope/vim-repeat) is required.
+To repeat Sneak *operations* (like `dzab`) with dot `.`,
+[repeat.vim](https://github.com/tpope/vim-repeat) is required.
 
 ### FAQ
 
@@ -112,11 +90,14 @@ For the same reason that Vim has [motions](http://vimdoc.sourceforge.net/htmldoc
 like `f` and `t`: common operations should use as few keystrokes as possible.
 
 * `/ab<cr>` requires 33% more keystrokes than `sab`
-* Sneak remembers *only* the initial position in the Vim jumplist—so you can explore a trail of matches via `;`, then return to the start with a single `ctrl-o` or ``` `` ```
-* Sneak doesn't clutter your search history
-* Sneak is always literal (no need to escape special characters)
-* Sneak has smarter, subtler highlighting
-* Sneak *Streak-Mode*
+* sets *only* the initial position in the Vim jumplist—so you can explore a
+  trail of matches via `;`, then return to the start with a single `ctrl-o` or ``` `` ```
+* doesn't clutter your search history
+* input is always literal (no need to escape special characters)
+  * ignores accents ("equivalence class") when matching
+    ([#183](https://github.com/justinmk/vim-sneak/issues/183))
+* smarter, subtler highlighting
+* sneak *Streak-Mode*
 
 #### Why not use `f`?
 
@@ -189,3 +170,8 @@ Vim 7.2.330, 7.3, 7.4.
 ### License
 
 Copyright © Justin M. Keyes. Distributed under the MIT license.
+
+[unicode]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#UTF-8
+[keymaps]: http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap
+[surround]: https://github.com/tpope/vim-surround
+[count]: http://vimdoc.sourceforge.net/htmldoc/intro.html#[count]
