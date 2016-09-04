@@ -1038,7 +1038,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (inclusive f-delete forward):
+Do (FIXME inclusive f-delete forward):
   dvfe
 
 Expect:
@@ -1046,7 +1046,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (inclusive t-delete forward):
+Do (FIXME inclusive t-delete forward):
   dvte
 
 Expect:
