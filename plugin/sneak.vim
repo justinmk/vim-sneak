@@ -206,8 +206,8 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, str
     nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
   endif
 
-  "enter streak-mode iff there are >=2 _additional_ on-screen matches.
-  let target = (2 == a:streak || (a:streak && g:sneak#opt.streak && (is_op || s.hasmatches(2)))) && !max(bounds)
+  "enter streak-mode iff there are >=2 (>=1 in op-pending) _additional_ on-screen matches.
+  let target = (2 == a:streak || (a:streak && g:sneak#opt.streak && s.hasmatches(is_op ? 1 : 2))) && !max(bounds)
         \ ? sneak#streak#to(s, is_v, a:reverse) : ""
 
   if is_op || "" != target
