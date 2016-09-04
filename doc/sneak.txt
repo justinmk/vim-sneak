@@ -140,6 +140,10 @@ s<Enter> ("s" followed by Enter) always repeats the last search, even if |;|
 and |,| were reset by |f| or |t|. This is especially useful for re-invoking
 |sneak-streak-mode| (because |;| and |,| never invoke streak-mode).
 
+To enable it:
+>
+    let g:sneak#s_next = 1
+<
 ------------------------------------------------------------------------------
 3.2 Functions                                                *sneak-functions*
 
@@ -314,8 +318,8 @@ To change an option, add a |let| statement in your |vimrc|. For example: >
 <
 Following is a list of Sneak options with their default values.
 
-g:sneak#f_reset = 1
-g:sneak#t_reset = 1
+*g:sneak#f_reset* = 1
+*g:sneak#t_reset* = 1
 
     Note: if you mapped f (or t) to a |sneak-mappings| then the default is 0.
 
@@ -333,7 +337,7 @@ g:sneak#t_reset = 1
         you invoke f or t. See the README.md FAQ regarding "f-enhancement"
         plugins.
 
-g:sneak#s_next = 0
+*g:sneak#s_next* = 0
 
     0 : Disable "clever-s" behavior. Use |;| and |,| to go to the next or
         previous match.
@@ -344,7 +348,7 @@ g:sneak#s_next = 0
         persists until you move the cursor.
         Note: You can still use |;| and |,| as usual.
 
-g:sneak#absolute_dir = 0
+*g:sneak#absolute_dir* = 0
 
     0 : Relative direction. |;| goes to the next match in the direction of the
         initial s/S invocation and |,| goes in the opposite direction.
@@ -353,20 +357,20 @@ g:sneak#absolute_dir = 0
         backwards respectively.
         Note: With |sneak-clever-s|, s and S behave the same as |;| and |,|.
 
-g:sneak#textobject_z = 1
+*g:sneak#textobject_z* = 1
 
     0 : Prevent the default {operator}z mapping. You can map to something
         else, see |sneak-mappings|.
 
     1 : Allow the default {operator}z mapping.
 
-g:sneak#use_ic_scs = 0
+*g:sneak#use_ic_scs* = 0
 
     0 : Always case-sensitive
 
     1 : Case sensitivity is determined by 'ignorecase' and 'smartcase'.
 
-g:sneak#map_netrw = 1
+*g:sneak#map_netrw* = 1
 
     0 : Don't do any special handling of "file manager" buffers (such as
         |netrw| or filebeagle).
@@ -375,18 +379,18 @@ g:sneak#map_netrw = 1
         |:Vex|, filebeagle) and replace the default buffer-local s and
         S mappings with <leader>s and <leader>S.
 
-g:sneak#streak = 0
+*g:sneak#streak* = 0
 
     0 : Disable |sneak-streak-mode|.
 
     1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
 
-g:sneak#streak_esc = "\<space>"
+*g:sneak#streak_esc* = "\<space>"
 
     Exit |sneak-streak-mode| as if <esc> were pressed.
         https://github.com/justinmk/vim-sneak/issues/122
 
-g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
+*g:sneak#target_labels* = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
 
     List of 1-character "labels" used by streak-mode to decorate the target
     locations.
@@ -400,7 +404,7 @@ g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM
         - <Esc>, <Tab>, <BS>, because they are special
         - <Space>, <Enter>, because they are invisible
 
-g:sneak#prompt = '>'
+*g:sneak#prompt* = '>'
 
         Message displayed at the Sneak input prompt.
 
