@@ -44,7 +44,7 @@ Execute (autoloaded functions should not exist):
 # for the case where s has not ever been invoked.
 Given:
   ababAbABababaB
-Do (f-repeat without having ever invoked s / issue #31):
+Do (f-repeat without having ever invoked s. #31):
   fa;ix
 Expect:
   ababAbABxababaB
@@ -358,7 +358,7 @@ Expect:
   arr 1940mm
   Pete Best 1941
 
-Do (repeat backwards delete operation / issue #7):
+Do (repeat backwards delete operation. #7):
   3jdZar
   :\<C-U>doautocmd CursorMoved\<CR>
   .
@@ -368,7 +368,7 @@ Expect:
   George Ht
   Pete Best 1941
 
-Do (repeat backwards delete operation twice / issue #7):
+Do (repeat backwards delete operation twice. #7):
   3jdZar
   :\<C-U>doautocmd CursorMoved\<CR>
   .
@@ -945,11 +945,28 @@ Execute (map to Sneak_f):
   silent! unmap T
   silent! unmap f
   silent! unmap F
+  silent! xunmap t
+  silent! xunmap T
+  silent! xunmap f
+  silent! xunmap F
+
   nmap f <Plug>Sneak_f
   nmap F <Plug>Sneak_F
   nmap t <Plug>Sneak_t
   nmap T <Plug>Sneak_T
+
+  xmap f <Plug>Sneak_f
+  xmap F <Plug>Sneak_F
+  xmap t <Plug>Sneak_t
+  xmap T <Plug>Sneak_T
+
+  omap f <Plug>Sneak_f
+  omap F <Plug>Sneak_F
+  omap t <Plug>Sneak_t
+  omap T <Plug>Sneak_T
+
   let g:sneak#f_reset = 0
+
   call sneak#init()
 
 Given:
@@ -989,6 +1006,14 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
+Do (f-delete invalid target):
+  dfZ
+
+Expect (should not delete current char. #177):
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
 Do (t-delete forward):
   dte
 
@@ -1013,7 +1038,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (inclusive f-delete forward):
+Do (FIXME inclusive f-delete forward):
   dvfe
 
 Expect:
@@ -1021,7 +1046,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (inclusive t-delete forward):
+Do (FIXME inclusive t-delete forward):
   dvte
 
 Expect:
@@ -1029,7 +1054,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (exclusive f-delete backward [issue #121]):
+Do (exclusive f-delete backward. #121):
   eedFa
 
 Expect:
@@ -1037,7 +1062,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (exclusive t-delete backward [issue #121]):
+Do (exclusive t-delete backward. #121):
   eedTa
 
 Expect:
@@ -1045,7 +1070,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (inclusive f-delete backward [issue #121]):
+Do (inclusive f-delete backward. #121):
   eedvFa
 
 Expect:
@@ -1053,7 +1078,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (inclusive t-delete backward [issue #121]):
+Do (inclusive t-delete backward. #121):
   eedvTa
 
 Expect:
@@ -1066,6 +1091,10 @@ Execute (cleanup):
   silent! unmap F
   silent! unmap t
   silent! unmap T
+  silent! xunmap f
+  silent! xunmap F
+  silent! xunmap t
+  silent! xunmap T
 
 ###########################################################
 # test sneak mapped to 'f' (instead of default 's')
