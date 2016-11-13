@@ -106,10 +106,11 @@ func! s:after()
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
-  let &synmaxcol=s:synmaxcol_orig
-  silent! let &syntax=s:syntax_orig
-  let &concealcursor=s:cc_orig
-  let &conceallevel=s:cl_orig
+  let &l:synmaxcol=s:synmaxcol_orig
+  silent! let &l:foldmethod=s:fdm_orig
+  silent! let &l:syntax=s:syntax_orig
+  let &l:concealcursor=s:cc_orig
+  let &l:conceallevel=s:cl_orig
   call s:restore_conceal_in_other_windows()
 endf
 
@@ -141,10 +142,14 @@ func! s:before()
   let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
   let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2
 
+  if &l:foldmethod ==# 'syntax' " Avoid broken folds when we clear syntax below.
+    let s:fdm_orig=&l:foldmethod | setlocal foldmethod=manual
+  endif
+
   let s:syntax_orig=&syntax
   syntax clear
   " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
-  let s:synmaxcol_orig=&synmaxcol | set synmaxcol=0
+  let s:synmaxcol_orig=&l:synmaxcol | setlocal synmaxcol=0
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
   let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakPluginTarget')
@@ -191,9 +196,5 @@ func! sneak#streak#sanitize_target_labels()
   endwhile
 endf
 
-func! sneak#streak#init()
-  call sneak#streak#sanitize_target_labels()
-  let s:maxmarks = sneak#util#strlen(g:sneak#target_labels)
-endf
-
-call sneak#streak#init()
+call sneak#streak#sanitize_target_labels()
+let s:maxmarks = sneak#util#strlen(g:sneak#target_labels)

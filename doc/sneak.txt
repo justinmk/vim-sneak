@@ -120,7 +120,7 @@ behavior of [count]f and [count]t.
 
     Note: If your mapleader is |,| then Sneak maps |\| instead of |,|.
     You can override this by specifying some other mapping, e.g.: >
-        nmap gS <Plug>SneakPrevious
+        map gS <Plug>SneakPrevious
 <
                                                               *sneak-clever-s*
 Similar to clever-f[3], immediately after invoking Sneak you can move to the
@@ -507,10 +507,8 @@ Examples: >
 
     nmap <Space> <Plug>(SneakStreak)
 
-    nmap <enter> <Plug>SneakNext
-    xmap <enter> <Plug>SneakNext
-    nmap <bs>    <Plug>SneakPrevious
-    xmap <bs>    <Plug>SneakPrevious
+    map <enter> <Plug>SneakNext
+    map <bs>    <Plug>SneakPrevious
 
     " by default, Sneak does not touch 'f' or 't', so if you want
     " 1-character Sneak for 'f' or 't', do the following.
