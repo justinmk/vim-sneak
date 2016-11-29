@@ -27,7 +27,7 @@ minimize friction between intent and action.
 Use Sneak as a minimalist
 [EasyMotion](https://github.com/Lokaltog/vim-easymotion) alternative:
 
-    let g:sneak#streak = 1
+    let g:sneak#label = 1
 
 ### Usage (Default)
 
@@ -97,7 +97,7 @@ like `f` and `t`: common operations should use as few keystrokes as possible.
   * ignores accents ("equivalence class") when matching
     ([#183](https://github.com/justinmk/vim-sneak/issues/183))
 * smarter, subtler highlighting
-* sneak *Streak-Mode*
+* sneak *label-mode*
 
 #### Why not use `f`?
 
@@ -124,7 +124,7 @@ By the way: `cl` is equivalent to `s`, and `cc` is equivalent to `S`.
 #### How can I replace `f` and/or `t` with *one-character* Sneak?
 
 Sneak provides `<Plug>` convenience-mappings for `f` and `t` 1-character-sneak.
-These mappings do *not* invoke streak-mode, even if you have it enabled.
+These mappings do *not* invoke label-mode, even if you have it enabled.
 ```
     "replace 'f' with 1-char Sneak
     nmap f <Plug>Sneak_f

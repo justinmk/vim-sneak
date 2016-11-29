@@ -11,14 +11,14 @@
 "
 " FEATURES:
 "   - skips folds
-"   - if no visible matches, does not invoke streak-mode
+"   - if no visible matches, does not invoke label-mode
 "   - there is no 'grouping'
 "     - this minimizes the steps for the common case
 "     - If your search has >56 matches, press <tab> to jump to the 57th match
 "       and label the next 56 matches.
 " 
 " cf. EASYMOTION:
-"   - EasyMotion's 'single line' feature is superfluous because streak-mode
+"   - EasyMotion's 'single line' feature is superfluous because label-mode
 "     isn't activated unless there are >=2 on-screen matches, and any key that
 "     isn't a target falls through to Vim.
 "   - because sneak targets 2 chars, there is never a problem discerning
@@ -33,19 +33,19 @@ let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiop
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
-  exec "syntax match SneakStreakTarget '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
+  exec "syntax match SneakLabelTarget '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
 endf
 
-func! sneak#streak#to(s, v, reverse)
+func! sneak#label#to(s, v, reverse)
   let seq = ""
   while 1
-    let choice = s:do_streak(a:s, a:v, a:reverse)
+    let choice = s:do_label(a:s, a:v, a:reverse)
     let seq .= choice
     if choice != "\<Tab>" | return seq | endif
   endwhile
 endf
 
-func! s:do_streak(s, v, reverse) "{{{
+func! s:do_label(s, v, reverse) "{{{
   let w = winsaveview()
   call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
@@ -86,11 +86,11 @@ func! s:do_streak(s, v, reverse) "{{{
 
   if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
     call cursor(overflow[0], overflow[1])
-  elseif (strlen(g:sneak#opt.streak_esc) && choice ==# g:sneak#opt.streak_esc)
+  elseif (strlen(g:sneak#opt.label_esc) && choice ==# g:sneak#opt.label_esc)
         \ || -1 != index(["\<Esc>", "\<C-c>"], choice)
-    return "\<Esc>" "exit streak-mode.
+    return "\<Esc>" "exit label-mode.
   elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
-    call feedkeys(choice) "exit streak-mode and fall through to Vim.
+    call feedkeys(choice) "exit label-mode and fall through to Vim.
     return ""
   else "valid target was selected
     let p = mappedtoNext ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
@@ -101,11 +101,11 @@ func! s:do_streak(s, v, reverse) "{{{
 endf "}}}
 
 func! s:after()
-  autocmd! sneak_streak_cleanup
+  autocmd! sneak_label_cleanup
   silent! call matchdelete(w:sneak_cursor_hl)
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
-  exec 'hi! link SneakPluginTarget '.s:orig_hl_sneaktarget
+  exec 'hi! link SneakTarget '.s:orig_hl_sneaktarget
   let &l:synmaxcol=s:synmaxcol_orig
   silent! let &l:foldmethod=s:fdm_orig
   silent! let &l:syntax=s:syntax_orig
@@ -134,10 +134,10 @@ func! s:before()
   let s:matchmap = {}
 
   " prevent highlighting in other windows showing the same buffer
-  ownsyntax sneak_streak
+  ownsyntax sneak_label
 
   " highlight the cursor location (else the cursor is not visible during getchar())
-  let w:sneak_cursor_hl = matchadd("SneakStreakCursor", '\%#', 11, -1)
+  let w:sneak_cursor_hl = matchadd("SneakCursor", '\%#', 11, -1)
 
   let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
   let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2
@@ -152,15 +152,15 @@ func! s:before()
   let s:synmaxcol_orig=&l:synmaxcol | setlocal synmaxcol=0
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
-  let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakPluginTarget')
+  let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakTarget')
   "set temporary link to our custom 'conceal' highlight
-  hi! link Conceal SneakStreakTarget
+  hi! link Conceal SneakLabelTarget
   "set temporary link to hide the sneak search targets
-  hi! link SneakPluginTarget SneakStreakMask
+  hi! link SneakTarget SneakLabelMask
 
   call s:disable_conceal_in_other_windows()
 
-  augroup sneak_streak_cleanup
+  augroup sneak_label_cleanup
     autocmd!
     autocmd CursorMoved * call <sid>after()
   augroup END
@@ -176,7 +176,7 @@ endf
 "we must do this because:
 "  - we don't know which keys the user assigned to SneakNext/Previous
 "  - we need to reserve special keys like <Esc> and <Tab>
-func! sneak#streak#sanitize_target_labels()
+func! sneak#label#sanitize_target_labels()
   let nrkeys = sneak#util#strlen(g:sneak#target_labels)
   let i = 0
   while i < nrkeys
@@ -196,5 +196,5 @@ func! sneak#streak#sanitize_target_labels()
   endwhile
 endf
 
-call sneak#streak#sanitize_target_labels()
+call sneak#label#sanitize_target_labels()
 let s:maxmarks = sneak#util#strlen(g:sneak#target_labels)

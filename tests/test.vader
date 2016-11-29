@@ -29,13 +29,13 @@ Execute (Clean up test environment):
   silent! unmap f
   silent! unmap t
   let mapleader = ','
-  let g:sneak#streak = 0
+  let g:sneak#label = 0
   let g:sneak#use_ic_scs = 0
   call sneak#init()
 
 ###########################################################
 Execute (autoloaded functions should not exist):
-  Assert !exists("*sneak#streak#to")
+  Assert !exists("*sneak#label#to")
   Assert !exists("*sneak#hl#removehl")
   Assert !exists("*sneak#search#new")
   Assert !exists("*sneak#util#strlen")
@@ -55,8 +55,8 @@ Expect:
 Do (tickle the autoloads):
   sab
 
-Execute ('streak' functions should not exist after vanilla-sneak):
-  Assert !exists("*sneak#streak#to")
+Execute ('label' functions should not exist after vanilla-sneak):
+  Assert !exists("*sneak#label#to")
 
 Execute (hl#links_to() returns linked-to highlight group):
   hi! link Conceal SneakConceal
@@ -87,11 +87,11 @@ Execute (sneak#cancel() cancels sneak#is_sneaking()):
   call sneak#cancel()
   Assert !sneak#is_sneaking()
 
-Execute (streak#sanitize_target_labels()):
-  runtime autoload/sneak/streak.vim
+Execute (label#sanitize_target_labels()):
+  runtime autoload/sneak/label.vim
   let orig = g:sneak#target_labels
   let g:sneak#target_labels = " \\ as  d\<Esc>fo\<Tab>ob\<Space>a;\\rASD"
-  call sneak#streak#sanitize_target_labels()
+  call sneak#label#sanitize_target_labels()
   Assert g:sneak#target_labels ==#  ";asdfoobarASD"
   "cleanup
   let g:sneak#target_labels = orig
@@ -112,7 +112,7 @@ Execute (s.hasmatches()):
   Assert !s.hasmatches(3)
 
 Execute (autoloaded functions should exist):
-  Assert exists("*sneak#streak#to")
+  Assert exists("*sneak#label#to")
   Assert exists("*sneak#hl#removehl")
   Assert exists("*sneak#search#new")
   Assert exists("*sneak#util#strlen")
@@ -494,7 +494,7 @@ Expect:
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
 ###########################################################
-# clever-s _not_ in streak-mode
+# clever-s _not_ in label-mode
 
 Execute (init clever-s):
   let g:sneak#s_next = 1
@@ -620,10 +620,10 @@ Expect:
   abcdef abcdef abcdef
 
 ###########################################################
-# streak-mode
+# label-mode
 
-Execute (streak-mode):
-  let g:sneak#streak = 1
+Execute (label-mode):
+  let g:sneak#label = 1
   call sneak#init()
 
 Given:
@@ -631,7 +631,7 @@ Given:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Do (basic streak motion):
+Do (basic label motion):
   sabaD
 
 Expect:
@@ -639,7 +639,7 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAa
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-Do (backwards streak motion):
+Do (backwards label motion):
   jj$Sefsix
 
 Expect:
@@ -647,25 +647,25 @@ Expect:
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
-#TODO: feedkeys() in do_streak() breaks macros/Vader
-#Do (SneakNext in streak-mode):
+#TODO: feedkeys() in do_label() breaks macros/Vader
+#Do (SneakNext in label-mode):
 #  sab;x
 #Expect:
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 #  `=QWEOIJ/+     ~~~!!! ! { } bc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-#Do (SneakPrevious in streak-mode):
+#Do (SneakPrevious in label-mode):
 #  jsab\x
 #Expect:
 #  abcdef ``=2Bd-a3/+ bCDef ``=2Bd-a3/+
 #  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-#Do (SneakNext in visual-mode + streak-mode):
+#Do (SneakNext in visual-mode + label-mode):
 #  vsab;x
 #Expect:
 #  bc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-#Do (SneakPrevious in visual-mode + streak-mode):
+#Do (SneakPrevious in visual-mode + label-mode):
 #  jvsab\x
 #Expect:
 #  abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab
@@ -682,7 +682,7 @@ Given:
   | batch_size | Fixnum  | nil     | number of maximum items to be assigned at once |
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
-Do (delete + streak):
+Do (delete + label):
   dznug
 
 Expect:
@@ -694,7 +694,7 @@ Given:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (streak + delete):
+Do (label + delete):
   dzab;
 
 Expect:
@@ -702,7 +702,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (streak + delete + repeat):
+Do (label + delete + repeat):
   dzaba
   :\<C-U>doautocmd CursorMoved\<CR>
   .
@@ -711,7 +711,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (streak + 2-delete + repeat):
+Do (label + 2-delete + repeat):
   2dzab\<Esc>
   :\<C-U>doautocmd CursorMoved\<CR>
   .
@@ -721,7 +721,7 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (streak/target/backwards/delete/repeat):
+Do (label/target/backwards/delete/repeat):
   2j2wdZefs
   :\<C-U>doautocmd CursorMoved\<CR>
   .
@@ -730,7 +730,7 @@ Expect:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (streak/target/change/repeat):
+Do (label/target/change/repeat):
   jwczefaFOO\<Esc>
   :\<C-U>doautocmd CursorMoved\<CR>
   jb.
@@ -741,7 +741,7 @@ Expect:
   ab1cdef FOOef ab5cdef ab6cdef
 
 Execute (cleanup):
-  let g:sneak#streak = 0
+  let g:sneak#label = 0
   call sneak#init()
 
 ###########################################################

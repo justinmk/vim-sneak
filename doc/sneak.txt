@@ -19,7 +19,7 @@ highlighted, you can reach them by pressing ; (just like |f| and |t|).
 There are other features, but above all, the goal is to get out of your way:
 highlights and autocmds are removed as soon as the cursor is moved.
 
-Sneak works with Vim 7.2+ (|sneak-streak-mode| requires Vim 7.3+).
+Sneak works with Vim 7.2+ (|sneak-label-mode| requires Vim 7.3+).
 
 ==============================================================================
 2. Usage                                                         *sneak-usage*
@@ -89,11 +89,11 @@ VISUAL-mode mappings~
     S                        | Go to the [count]'th previous match (NOTE above)
 
 
-STREAK-mode mappings~
+LABEL-mode mappings~
 
     Key Sequence             | Description
     -------------------------|----------------------------------------------
-    <space>                  | Exit |sneak-streak-mode| at the current cursor
+    <space>                  | Exit |sneak-label-mode| at the current cursor
                              | position.
 
 
@@ -138,7 +138,7 @@ around with ; and , (or s/S) you can easily go back via |CTRL-O| or |``|.
 
 s<Enter> ("s" followed by Enter) always repeats the last search, even if |;|
 and |,| were reset by |f| or |t|. This is especially useful for re-invoking
-|sneak-streak-mode| (because |;| and |,| never invoke streak-mode).
+|sneak-label-mode| (because |;| and |,| never invoke label-mode).
 
 ------------------------------------------------------------------------------
 3.2 Functions                                                *sneak-functions*
@@ -146,14 +146,27 @@ and |,| were reset by |f| or |t|. This is especially useful for re-invoking
 Sneak provides default |sneak-mappings|, but you can call `sneak#` functions
 directly if you want customized behavior.
 
-sneak#wrap(op, inputlen, reverse, inclusive, streak)             *sneak#wrap()*
-        Invokes Sneak and prompts for exactly {inputlen} characters. For
-        example, if {inputlen} is 2, then the match is performed as soon as
-        the second character is pressed, without having to press <Enter>.
+sneak#wrap(op, inputlen, reverse, inclusive, label)             *sneak#wrap()*
+        Sneaks with exactly {inputlen} characters. E.g. if {inputlen} is 2 the
+        match is performed when the second character is pressed, without
+        waiting for <Enter>.
         {op} may be blank "" or any operation (even custom operations).
 
-        E.g. to customize <Plug>Sneak_f: >
-            nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
+        Example: Configure "f" to trigger label-mode: >
+          nnoremap <silent> f :<C-U>call sneak#wrap('',           1, 0, 1, 1)<CR>
+          nnoremap <silent> F :<C-U>call sneak#wrap('',           1, 1, 1, 1)<CR>
+          xnoremap <silent> f :<C-U>call sneak#wrap(visualmode(), 1, 0, 1, 1)<CR>
+          xnoremap <silent> F :<C-U>call sneak#wrap(visualmode(), 1, 1, 1, 1)<CR>
+          onoremap <silent> f :<C-U>call sneak#wrap(v:operator,   1, 0, 1, 1)<CR>
+          onoremap <silent> F :<C-U>call sneak#wrap(v:operator,   1, 1, 1, 1)<CR>
+<
+        Example: Configure "s" to wait for 3 characters: >
+          nnoremap <silent> s :<C-U>call sneak#wrap('',           3, 0, 2, 1)<CR>
+          nnoremap <silent> S :<C-U>call sneak#wrap('',           3, 1, 2, 1)<CR>
+          xnoremap <silent> s :<C-U>call sneak#wrap(visualmode(), 3, 0, 2, 1)<CR>
+          xnoremap <silent> S :<C-U>call sneak#wrap(visualmode(), 3, 1, 2, 1)<CR>
+          onoremap <silent> s :<C-U>call sneak#wrap(v:operator,   3, 0, 2, 1)<CR>
+          onoremap <silent> S :<C-U>call sneak#wrap(v:operator,   3, 1, 2, 1)<CR>
 <
 sneak#is_sneaking()                                       *sneak#is_sneaking()*
         Returns 1 if Sneak is active (matches are highlighted).
@@ -218,7 +231,7 @@ sneak#state()                                                   *sneak#state()*
         on the current Sneak direction (`rptreverse` key):
 >
         nmap <silent> <expr> <tab> sneak#is_sneaking()
-              \ ? (sneak#state().rptreverse ? '<Plug>(SneakStreakBackward)<cr>' : '<Plug>(SneakStreak)<cr>')
+              \ ? (sneak#state().rptreverse ? '<Plug>SneakLabel_S<cr>' : '<Plug>SneakLabel_s<cr>')
               \ : '<Plug>Sneak_s'
 <
 ------------------------------------------------------------------------------
@@ -248,7 +261,7 @@ Sneak has a unique feature called "vertical scope" search. This is invoked by
 prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case, 
 the search is restricted to a column having a width of 2× the [count].
 
-|sneak-vertical-scope| never invokes |sneak-streak-mode|.
+|sneak-vertical-scope| never invokes |sneak-label-mode|.
 
 Use cases:
 
@@ -258,46 +271,41 @@ Use cases:
     - any columnar layout
 
 ------------------------------------------------------------------------------
-3.6 Streak-Mode                                            *sneak-streak-mode*
+3.6 Label-mode                           *sneak-label-mode* *sneak-streak-mode*
 
-Sneak "streak" mode minimizes the number of steps to get to a location, using
-a clever interface similar to vim-easymotion[2]. However, there are several
-differences (explained below) that make Sneak streak-mode faster, simpler,
-and more predictable than vim-easymotion.
+Label-mode minimizes the steps to jump to a location, using a clever interface
+similar to vim-easymotion[2]. (Sneak label-mode is faster, simpler, and more
+predictable than vim-easymotion, see "Label-mode features" below.)
 
-To enable "passive" or "smart" streak-mode:                   *g:sneak#streak*
+To enable label-mode:                                         *g:sneak#label*
 >
-    let g:sneak#streak = 1
+    let g:sneak#label = 1
 >
-With this setting, Sneak enters streak-mode _only_ if there are ≥2 visible
-(on-screen) matches
-
-To force streak-mode always (instead of passively letting Sneak decide when
-to enter streak-mode), create a mapping to <Plug>(SneakStreak). For example:
->
-    nmap s <Plug>(SneakStreak)
-    nmap S <Plug>(SneakStreakBackward)
+Sneak enters label-mode if there are ≥2 visible (on-screen) matches. To force
+label-mode always (instead of passively letting Sneak decide), set a mapping
+to <Plug>SneakLabel_s. Example: >
+    nmap s <Plug>SneakLabel_s
+    nmap S <Plug>SneakLabel_S
 <
-Streak-mode features:
+Label-mode features ~
 
-    - automatically jumps to the first match
-        - press <Space> or <Esc> to escape streak-mode
-        - press <Tab> to skip to the next 56 matches
-        - press any key that is _not_ a target label to exit streak-mode and
+    - Automatically jumps to the first match
+        - Press <Space> or <Esc> to escape label-mode
+        - Press <Tab> to skip to the next 56 matches
+        - Press any key that is NOT a target label to exit label-mode and
           immediately perform that key's normal-mode function
-    - works with all operators, including |surround|
-    - streak-mode edit operations can be repeated and it works correctly
-      regardless of the remaining on-screen matches
-    - s<Enter> repeats the last sneak search (S<Enter> to change direction)
-    - text in |folds| is ignored by streak-mode
-        - you can reach folded/off-screen matches with |;| and |,|
+    - Works with all operators, including |surround|
+    - Operations can be repeated with |.| (dot)
+    - s<Enter> repeats the last search (S<Enter> to change direction)
+    - Text in |folds| is ignored (not labeled)
+        - You can reach folded/off-screen matches with |;| and |,|
 
 As always, you can:
-    - skip to the next or previous match with |;| or |,|
-    - return to your original location via |CTRL-O| or |``|
+    - Skip to the next or previous match with |;| or |,|
+    - Return to your original location via |CTRL-O| or |``|
 
 Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is invoked
-      and streak-mode will _not_ be invoked.
+      and label-mode will _not_ be invoked.
 
 ==============================================================================
 4. Configuration                                         *sneak-configuration*
@@ -308,11 +316,10 @@ much as possible; but you can change them as follows.
 ------------------------------------------------------------------------------
 4.1 Options                                                    *sneak-options*
 
-To change an option, add a |let| statement in your |vimrc|. For example: >
-
+To change an option, add a |let| statement in your |vimrc|. Example: >
     let g:sneak#use_ic_scs = 0
 <
-Following is a list of Sneak options with their default values.
+Sneak options and defaults ~
 
 g:sneak#f_reset = 1
 g:sneak#t_reset = 1
@@ -375,21 +382,20 @@ g:sneak#map_netrw = 1
         |:Vex|, filebeagle) and replace the default buffer-local s and
         S mappings with <leader>s and <leader>S.
 
-g:sneak#streak = 0
+g:sneak#label = 0
 
-    0 : Disable |sneak-streak-mode|.
+    0 : Disable |sneak-label-mode|.
 
-    1 : Enable |sneak-streak-mode| if the Vim |+conceal| feature is available.
+    1 : Enable |sneak-label-mode| if the Vim |+conceal| feature is available.
 
-g:sneak#streak_esc = "\<space>"
+g:sneak#label_esc = "\<Space>"
 
-    Exit |sneak-streak-mode| as if <esc> were pressed.
+    Exit |sneak-label-mode| as if <Esc> were pressed.
         https://github.com/justinmk/vim-sneak/issues/122
 
 g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
 
-    List of 1-character "labels" used by streak-mode to decorate the target
-    locations.
+    List of characters used by label-mode to label the target locations.
 
     Note: If ; (or any key mapped to <Plug>SneakNext) is in the list, Sneak
     automatically moves it to the first position (because it's semantically
@@ -409,52 +415,51 @@ g:sneak#prompt = '>'
 
 Sneak uses the following highlight groups:
 
-    SneakPluginTarget
+    SneakTarget
         Highlights additional matches. Default color is hideous magenta :)
 
-    SneakPluginScope
+    SneakScope
         Highlights the search "scope" for |sneak-vertical-scope|.
         Default color is white (or black if background=light)
 
-    SneakStreakTarget
-        Highlights matches for |sneak-streak-mode|.
+    SneakLabelTarget
+        Highlights matches for |sneak-label-mode|.
 
-    SneakStreakMask
-        Used to de-emphasize un-labeled matches and the "tail" of labeled
-        matches in |sneak-streak-mode|, so the target label is easier to see.
+    SneakLabelMask
+        Highlights un-labeled matches and the "tail" of labeled matches in
+        |sneak-label-mode|.
 
-There are three ways to override the default colors (listed in order of
-decreasing elegance):
+There are three ways to override the default colors (in order of decreasing
+elegance):
 
     1. Link to existing highlight groups (for example, "ErrorMsg" and
        "Comment") so that the colors are implicitly chosen by your
        currently-activated colorscheme: >
 
-       hi link SneakPluginTarget ErrorMsg
-       hi link SneakPluginScope  Comment
+       hi link SneakTarget ErrorMsg
+       hi link SneakScope  Comment
 <
     2. To define specific colors _regardless_ of the current colorscheme, you
        probably need to define an |autocmd| on the |ColorScheme| event
        (otherwise the colorscheme will clear the highlights): >
 
-       augroup SneakPluginColors
+       augroup SneakColors
            autocmd!
-           autocmd ColorScheme * hi SneakPluginTarget guifg=black guibg=red ctermfg=black ctermbg=red
-           autocmd ColorScheme * hi SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
+           autocmd ColorScheme * hi SneakTarget guifg=black guibg=red ctermfg=black ctermbg=red
+           autocmd ColorScheme * hi SneakScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
        augroup END
 <
     3. Edit your color scheme directly: >
 
-       hi SneakPluginTarget guifg=black guibg=red ctermfg=black ctermbg=red
-       hi SneakPluginScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
+       hi SneakTarget guifg=black guibg=red ctermfg=black ctermbg=red
+       hi SneakScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
 <
 ------------------------------------------------------------------------------
 4.3 Custom Mappings                                           *sneak-mappings*
 
-Sneak provides <Plug> keys for you to specify alternative mappings. Keep in
-mind however that motion mappings should absolutely be the least-friction
-mappings in your editor, because motion is the most common editor task;
-mapping Sneak to something like <leader>s is not recommended.
+Sneak provides <Plug> keys for you to specify alternative mappings. But
+keep in mind that motion mappings should be the least-friction mappings in
+your editor, because motion is the most common editor task.
 
 Available <Plug> keys: >
 
@@ -468,7 +473,7 @@ Available <Plug> keys: >
     omap ? <Plug>Sneak_s
     omap ? <Plug>Sneak_S
 
-    " explicit repeat (as opposed to implicit 'clever-s' repeat)
+    " repeat motion
     map ? <Plug>SneakNext
     map ? <Plug>SneakPrevious
 
@@ -492,47 +497,20 @@ Available <Plug> keys: >
     omap ? <Plug>Sneak_t
     omap ? <Plug>Sneak_T
 
-    " force streak-mode always
-    nmap ? <Plug>(SneakStreak)
-    nmap ? <Plug>(SneakStreakBackward)
-<
-Examples: >
-
-    nmap gs <Plug>Sneak_s
-    nmap gS <Plug>Sneak_S
-    xmap gs <Plug>Sneak_s
-    xmap gS <Plug>Sneak_S
-    omap gs <Plug>Sneak_s
-    omap gS <Plug>Sneak_S
-
-    nmap <Space> <Plug>(SneakStreak)
-
-    map <enter> <Plug>SneakNext
-    map <bs>    <Plug>SneakPrevious
-
-    " by default, Sneak does not touch 'f' or 't', so if you want
-    " 1-character Sneak for 'f' or 't', do the following.
-    nmap f <Plug>Sneak_f
-    nmap F <Plug>Sneak_F
-    xmap f <Plug>Sneak_f
-    xmap F <Plug>Sneak_F
-    omap f <Plug>Sneak_f
-    omap F <Plug>Sneak_F
+    " force label-mode
+    nmap ? <Plug>SneakLabel_s
+    nmap ? <Plug>SneakLabel_S
 <
 ==============================================================================
 5. Contributing                                           *sneak-contributing*
 
-Bug reports, feature requests, and pull requests are welcome:
-
+Bug reports, feature requests, and patches are welcome:
     https://github.com/justinmk/vim-sneak
 
 In your bug report, it is helpful to include the output of this command: >
-
     :call sneak#debug#report()
 
-If you are feeling diligent: to narrow down the cause of the issue, run Vim
-without any plugins except sneak.vim: >
-
+To narrow down the issue, run Vim without any plugins except sneak.vim: >
     vim -u NONE -N -c ':set runtimepath+=~/.vim/bundle/vim-sneak/' -c ':runtime plugin/sneak.vim'
 <
 ==============================================================================

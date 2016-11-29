@@ -22,30 +22,30 @@ endf
 func! s:init()
   let magenta = (&t_Co < 256 ? "magenta" : "201")
 
-  if 0 == hlID("SneakPluginTarget") || "" == sneak#hl#get("SneakPluginTarget")
-    exec "highlight SneakPluginTarget guifg=white guibg=magenta ctermfg=white ctermbg=".magenta
+  if 0 == hlID("SneakTarget") || "" == sneak#hl#get("SneakTarget")
+    exec "highlight SneakTarget guifg=white guibg=magenta ctermfg=white ctermbg=".magenta
   endif
 
-  if 0 == hlID("SneakStreakMask") || "" == sneak#hl#get("SneakStreakMask")
-    exec "highlight SneakStreakMask guifg=magenta guibg=magenta ctermfg=".magenta." ctermbg=".magenta
+  if 0 == hlID("SneakLabelMask") || "" == sneak#hl#get("SneakLabelMask")
+    exec "highlight SneakLabelMask guifg=magenta guibg=magenta ctermfg=".magenta." ctermbg=".magenta
   endif
 
-  if 0 == hlID("SneakPluginScope") || "" == sneak#hl#get("SneakPluginScope")
+  if 0 == hlID("SneakScope") || "" == sneak#hl#get("SneakScope")
     if &background ==# 'dark'
-      highlight SneakPluginScope guifg=black guibg=white ctermfg=black ctermbg=white
+      highlight SneakScope guifg=black guibg=white ctermfg=black ctermbg=white
     else
-      highlight SneakPluginScope guifg=white guibg=black ctermfg=white ctermbg=black
+      highlight SneakScope guifg=white guibg=black ctermfg=white ctermbg=black
     endif
   endif
 
-  if 0 == hlID("SneakStreakTarget") || "" == sneak#hl#get("SneakStreakTarget")
-    exec "highlight SneakStreakTarget guibg=magenta guifg=white gui=bold ctermbg=".magenta." ctermfg=white cterm=bold"
+  if 0 == hlID("SneakLabelTarget") || "" == sneak#hl#get("SneakLabelTarget")
+    exec "highlight SneakLabelTarget guibg=magenta guifg=white gui=bold ctermbg=".magenta." ctermfg=white cterm=bold"
   endif
 
   if has('gui_running') || -1 != match(sneak#hl#get('Cursor'), 'ctermbg')
-    highlight link SneakStreakCursor Cursor
+    highlight link SneakCursor Cursor
   else
-    highlight link SneakStreakCursor SneakPluginScope
+    highlight link SneakCursor SneakScope
   endif
 endf
 
