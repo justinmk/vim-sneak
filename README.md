@@ -1,35 +1,30 @@
-# sneak.vim :shoe:
+sneak.vim :shoe:
+================
 
-Vim's built-in motions cover many special cases, but there's a gap for "medium
-distance" across several lines: `f` is restricted to the current line,
-and `/` is [clunky](#faq).
+Sneak is a Vim plugin that jumps to any location specified by two characters. It
+works with **multiple lines**, **operators** (including repeat `.` and
+[surround]), **[keymaps]**, **visual** mode, **[unicode]** ("multibyte"), and
+**macros**.
+
+  - Preserves default `f`, `t`, `;` and `,` behavior
+  - Repeats operation with `.`
+  - Repeats motion with `;` and `,`
+  - Jumps immediately to the first match
+  - Updates the jumplist only for non-repeat motion
+  - Restricts to a vertical scope if *count* is used
+  - Provides *label-mode* for a minimalist
+  [EasyMotion](https://github.com/Lokaltog/vim-easymotion) alternative: `let g:sneak#label = 1`
+  - More at [FAQ](#faq)
+
+Vim has many built-in motions, but "medium distance" is missing...
 
     l  f  t  %  'm  }  ]m  ]]  M  L         /
                                        ^
                                        |
                                      sneak
 
-Sneak is a minimalist, versatile _motion_ to reach any location specified by two
-characters. It works with **multiple lines**, **operators** (including
-**repeat** `.` and **[surround]**), **[keymaps]**, **visual mode**,
-**[unicode]** ("multibyte"), and **macros**. Many details have been balanced to
-minimize friction between intent and action.
-
-  - preserves default behavior of `f t F T ; ,`
-  - repeat motion via `;` and `,`
-  - repeat operation via `.`
-  - jump immediately to first match
-  - only the *initial* invocation adds to the jumplist
-  - [count] prefix invokes *vertical scope*
-  - supports [mbyte-keymaps](http://vimdoc.sourceforge.net/htmldoc/mbyte.html#mbyte-keymap)
-    ([#47](https://github.com/justinmk/vim-sneak/issues/47))
-
-Use Sneak as a minimalist
-[EasyMotion](https://github.com/Lokaltog/vim-easymotion) alternative:
-
-    let g:sneak#label = 1
-
-### Usage (Default)
+Usage (Default)
+---------------
 
 <a href="http://imgur.com/Jke0mIJ" title="Click to see a short demo"><img src="https://raw.github.com/justinmk/vim-sneak/fluff/assets/readme_diagram.png"></a>
 
@@ -69,20 +64,21 @@ via `z` (because `s` is taken by surround.vim).
   of the literal text `\}`
     * Press `.` to repeat the `gUz\}` operation.
 
-### Installation
+Installation
+------------
 
-- Manual installation:
-  - Copy the files to your `.vim` directory (`_vimfiles` on Windows).
+- [vim-plug](https://github.com/junegunn/vim-plug)
+  - `Plug 'justinmk/vim-sneak'`
 - [Pathogen](https://github.com/tpope/vim-pathogen)
   - `cd ~/.vim/bundle && git clone git://github.com/justinmk/vim-sneak.git`
-- [vim-plug](https://github.com/junegunn/vim-plug)
-  1. Add `Plug 'justinmk/vim-sneak'` to .vimrc
-  2. Run `:PlugInstall`
+- Manual installation:
+  - Copy the files to your `.vim` directory.
 
 To repeat Sneak *operations* (like `dzab`) with dot `.`,
 [repeat.vim](https://github.com/tpope/vim-repeat) is required.
 
-### FAQ
+FAQ
+---
 
 #### Why not use `/`?
 
@@ -142,13 +138,9 @@ These mappings do *not* invoke label-mode, even if you have it enabled.
     omap T <Plug>Sneak_T
 ```
 
-#### I want to use an "f-enhancement" plugin simultaneously with Sneak
+Related
+-------
 
-Sneak is intended to replace the so-called [f-enhancement plugins](#related).
-You can use both, but Sneak won't be able to hook into `f`, which means
-`;` and `,` will always repeat the last Sneak.
-
-### Related
 * [Seek](https://github.com/goldfeld/vim-seek)
 * [EasyMotion](https://github.com/Lokaltog/vim-easymotion)
 * [smalls](https://github.com/t9md/vim-smalls)
@@ -157,17 +149,8 @@ You can use both, but Sneak won't be able to hook into `f`, which means
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
 * [Fanf,ingTastic;](https://github.com/dahu/vim-fanfingtastic)
 
-### Bugs
-
-Sneak tries to be well-behaved and annoyance-free. If you find a bug,
-please report it, and perhaps include the output of:
-
-    :call sneak#debug#report()
-
-Sneak is tested on a 10-MB, 400k-lines, syntax-highlighted file with 
-Vim 7.2.330, 7.3, 7.4.
-
-### License
+License
+-------
 
 Copyright © Justin M. Keyes. Distributed under the MIT license.
 

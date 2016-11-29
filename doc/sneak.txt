@@ -1,4 +1,4 @@
-*sneak.txt*  motion improved - Version 1.7.2
+*sneak.txt*  motion improved - Version 1.8
 
                     Sneak - the missing motion for Vim
 
@@ -120,14 +120,14 @@ behavior of [count]f and [count]t.
 
     Note: If your mapleader is |,| then Sneak maps |\| instead of |,|.
     You can override this by specifying some other mapping, e.g.: >
-        map gS <Plug>SneakPrevious
+        map gS <Plug>Sneak_,
 <
                                                               *sneak-clever-s*
 Similar to clever-f[3], immediately after invoking Sneak you can move to the
 next match by hitting `s` (or `S`) again. If you instead move the cursor or do
 something else, then `s` starts a new Sneak. In that case, you can repeat the
 most recent Sneak search by pressing "s<Enter>" (or whatever key, if any, you
-mapped to <Plug>SneakNext). To enable "clever s": >
+mapped to <Plug>Sneak_;). To enable "clever s": >
     let g:sneak#s_next = 1
 <
 Sneak adds to the |jumplist| only on the initial invocation; so after moving
@@ -177,7 +177,7 @@ sneak#is_sneaking()                                       *sneak#is_sneaking()*
 
         For example you might want <Tab> to go to the next match _only_ while
         Sneak is active: >
-            nmap <expr> <Tab> sneak#is_sneaking() ? '<Plug>SneakNext' : '<Tab>'
+            nmap <expr> <Tab> sneak#is_sneaking() ? '<Plug>Sneak_;' : '<Tab>'
 <
         You can also use this to change the statusline: >
             set statusline=%{sneak#is_sneaking()?'SNEAKING':'RELAXING'}
@@ -300,12 +300,12 @@ Label-mode features ~
     - Text in |folds| is ignored (not labeled)
         - You can reach folded/off-screen matches with |;| and |,|
 
-As always, you can:
+    As always, you can:
     - Skip to the next or previous match with |;| or |,|
     - Return to your original location via |CTRL-O| or |``|
 
-Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is invoked
-      and label-mode will _not_ be invoked.
+    Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is
+    invoked and label-mode will _not_ be invoked.
 
 ==============================================================================
 4. Configuration                                         *sneak-configuration*
@@ -327,8 +327,8 @@ g:sneak#t_reset = 1
     Note: if you mapped f (or t) to a |sneak-mappings| then the default is 0.
 
     0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
-        define different maps for <Plug>SneakNext or <Plug>SneakPrevious and
-        still use ; and , for |f| and |t| as usual.
+        define different maps for <Plug>Sneak_; or <Plug>Sneak_, and still
+        use ; and , for |f| and |t| as usual.
 
     1 : Pressing |f| (or |t|) causes Sneak to "reset" so that |;| and |,| will apply
         to the last f (or t) motion instead of the last s or S. This makes it
@@ -397,12 +397,12 @@ g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM
 
     List of characters used by label-mode to label the target locations.
 
-    Note: If ; (or any key mapped to <Plug>SneakNext) is in the list, Sneak
+    Note: If ; (or any key mapped to <Plug>Sneak_;) is in the list, Sneak
     automatically moves it to the first position (because it's semantically
     equivalent and it saves a target label).
 
     Note: Invalid target labels are automatically removed:
-        - Any key mapped to <Plug>SneakPrevious
+        - Any key mapped to <Plug>Sneak_,
         - <Esc>, <Tab>, <BS>, because they are special
         - <Space>, <Enter>, because they are invisible
 
@@ -474,8 +474,8 @@ Available <Plug> keys: >
     omap ? <Plug>Sneak_S
 
     " repeat motion
-    map ? <Plug>SneakNext
-    map ? <Plug>SneakPrevious
+    map ? <Plug>Sneak_;
+    map ? <Plug>Sneak_,
 
     " 1-character enhanced 'f'
     nmap ? <Plug>Sneak_f

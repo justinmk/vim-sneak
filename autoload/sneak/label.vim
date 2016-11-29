@@ -81,8 +81,8 @@ func! s:do_label(s, v, reverse) "{{{
 
   let mappedto = maparg(choice, a:v ? 'x' : 'n')
   let mappedtoNext = (g:sneak#opt.absolute_dir && a:reverse)
-        \ ? mappedto =~# '<Plug>SneakPrevious'
-        \ : mappedto =~# '<Plug>SneakNext'
+        \ ? mappedto =~# '<Plug>Sneak\(_,\|Previous\)'
+        \ : mappedto =~# '<Plug>Sneak\(_;\|Next\)'
 
   if choice == "\<Tab>" && overflow[0] > 0 "overflow => decorate next N matches
     call cursor(overflow[0], overflow[1])
@@ -169,12 +169,12 @@ endf
 "returns 1 if a:key is invisible or special.
 func! s:is_special_key(key)
   return -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>", "\<Tab>"], a:key)
-    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(Next\|Previous\)'
+    \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(_;\|_,\|Next\|Previous\)'
     \ || (g:sneak#opt.s_next && maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
 endf
 
 "we must do this because:
-"  - we don't know which keys the user assigned to SneakNext/Previous
+"  - we don't know which keys the user assigned to Sneak_;/Sneak_,
 "  - we need to reserve special keys like <Esc> and <Tab>
 func! sneak#label#sanitize_target_labels()
   let nrkeys = sneak#util#strlen(g:sneak#target_labels)
@@ -185,7 +185,8 @@ func! sneak#label#sanitize_target_labels()
       let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
       "move ; (or s if 'clever-s' is enabled) to the front.
       if !g:sneak#opt.absolute_dir
-            \ && ((!g:sneak#opt.s_next && maparg(k, 'n') =~# '<Plug>SneakNext') || (maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)'))
+            \ && ((!g:sneak#opt.s_next && maparg(k, 'n') =~# '<Plug>Sneak\(_;\|Next\)')
+            \     || (maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)'))
         let g:sneak#target_labels = k . g:sneak#target_labels
       else
         let nrkeys -= 1

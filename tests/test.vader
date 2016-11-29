@@ -22,10 +22,10 @@ Execute (Clean up test environment):
     set encoding=utf8
     scriptencoding utf8
   endif
-  nmap ; <Plug>SneakNext
-  nmap \ <Plug>SneakPrevious
-  omap \ <Plug>SneakPrevious
-  xmap \ <Plug>SneakPrevious
+  nmap ; <Plug>Sneak_;
+  nmap \ <Plug>Sneak_,
+  omap \ <Plug>Sneak_,
+  xmap \ <Plug>Sneak_,
   silent! unmap f
   silent! unmap t
   let mapleader = ','
@@ -648,24 +648,24 @@ Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 #TODO: feedkeys() in do_label() breaks macros/Vader
-#Do (SneakNext in label-mode):
+#Do (Sneak_; in label-mode):
 #  sab;x
 #Expect:
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 #  `=QWEOIJ/+     ~~~!!! ! { } bc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-#Do (SneakPrevious in label-mode):
+#Do (Sneak_, in label-mode):
 #  jsab\x
 #Expect:
 #  abcdef ``=2Bd-a3/+ bCDef ``=2Bd-a3/+
 #  `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-#Do (SneakNext in visual-mode + label-mode):
+#Do (Sneak_; in visual-mode + label-mode):
 #  vsab;x
 #Expect:
 #  bc AAaab
 #  abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
-#Do (SneakPrevious in visual-mode + label-mode):
+#Do (Sneak_, in visual-mode + label-mode):
 #  jvsab\x
 #Expect:
 #  abcdef ``=2Bd-a3/+ =QWEOIJ/+     ~~~!!! ! { } abc AAaab

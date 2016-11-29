@@ -1,6 +1,6 @@
 " sneak.vim - The missing motion
 " Author:       Justin M. Keyes
-" Version:      1.7.4
+" Version:      1.8
 " License:      MIT
 
 if exists('g:loaded_sneak_plugin') || &compatible || v:version < 700
@@ -305,13 +305,13 @@ onoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(v:operator, 2, 1, 2, 1)<cr
 
 onoremap <silent> <Plug>SneakRepeat :<c-u>call sneak#wrap(v:operator, sneak#util#getc(), sneak#util#getc(), sneak#util#getc(), sneak#util#getc())<cr>
 
-" explicit repeat (as opposed to 'clever-s' implicit repeat)
-nnoremap <silent> <Plug>SneakNext     :<c-u>call sneak#rpt('', 0)<cr>
-nnoremap <silent> <Plug>SneakPrevious :<c-u>call sneak#rpt('', 1)<cr>
-xnoremap <silent> <Plug>SneakNext     :<c-u>call sneak#rpt(visualmode(), 0)<cr>
-xnoremap <silent> <Plug>SneakPrevious :<c-u>call sneak#rpt(visualmode(), 1)<cr>
-onoremap <silent> <Plug>SneakNext     :<c-u>call sneak#rpt(v:operator, 0)<cr>
-onoremap <silent> <Plug>SneakPrevious :<c-u>call sneak#rpt(v:operator, 1)<cr>
+" repeat motion (explicit--as opposed to implicit 'clever-s')
+nnoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt('', 0)<cr>
+nnoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt('', 1)<cr>
+xnoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt(visualmode(), 0)<cr>
+xnoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt(visualmode(), 1)<cr>
+onoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt(v:operator, 0)<cr>
+onoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt(v:operator, 1)<cr>
 
 if g:sneak#opt.textobject_z
   omap z  <Plug>Sneak_s
@@ -348,20 +348,20 @@ if !hasmapto('<Plug>SneakBackward') && !hasmapto('<Plug>Sneak_S', 'n') && mapche
   nmap S <Plug>Sneak_S
 endif
 
-if !hasmapto('<Plug>SneakNext', 'n') && mapcheck(';', 'n') ==# ''
-  nmap ; <Plug>SneakNext
-  omap ; <Plug>SneakNext
-  xmap ; <Plug>SneakNext
+if !hasmapto('<Plug>Sneak_;', 'n') && !hasmapto('<Plug>SneakNext', 'n') && mapcheck(';', 'n') ==# ''
+  nmap ; <Plug>Sneak_;
+  omap ; <Plug>Sneak_;
+  xmap ; <Plug>Sneak_;
 endif
-if !hasmapto('<Plug>SneakPrevious', 'n')
+if !hasmapto('<Plug>Sneak_,', 'n') && !hasmapto('<Plug>SneakPrevious', 'n')
   if mapcheck(',', 'n') ==# ''
-    nmap , <Plug>SneakPrevious
-    omap , <Plug>SneakPrevious
-    xmap , <Plug>SneakPrevious
+    nmap , <Plug>Sneak_,
+    omap , <Plug>Sneak_,
+    xmap , <Plug>Sneak_,
   elseif mapcheck('\', 'n') ==# '' || mapcheck('\', 'n') ==# ','
-    nmap \ <Plug>SneakPrevious
-    omap \ <Plug>SneakPrevious
-    xmap \ <Plug>SneakPrevious
+    nmap \ <Plug>Sneak_,
+    omap \ <Plug>Sneak_,
+    xmap \ <Plug>Sneak_,
   endif
 endif
 
@@ -377,14 +377,20 @@ nmap <Plug>SneakForward   <Plug>Sneak_s
 nmap <Plug>SneakBackward  <Plug>Sneak_S
 xmap <Plug>VSneakForward  <Plug>Sneak_s
 xmap <Plug>VSneakBackward <Plug>Sneak_S
-xmap <Plug>VSneakNext     <Plug>SneakNext
-xmap <Plug>VSneakPrevious <Plug>SneakPrevious
+xmap <Plug>VSneakNext     <Plug>Sneak_;
+xmap <Plug>VSneakPrevious <Plug>Sneak_,
 nmap <Plug>(SneakStreak)         <Plug>SneakLabel_s
 nmap <Plug>(SneakStreakBackward) <Plug>SneakLabel_S
 xmap <Plug>(SneakStreak)         <Plug>SneakLabel_s
 xmap <Plug>(SneakStreakBackward) <Plug>SneakLabel_S
 omap <Plug>(SneakStreak)         <Plug>SneakLabel_s
 omap <Plug>(SneakStreakBackward) <Plug>SneakLabel_S
+nmap <Plug>SneakNext     <Plug>Sneak_;
+nmap <Plug>SneakPrevious <Plug>Sneak_,
+xmap <Plug>SneakNext     <Plug>Sneak_;
+xmap <Plug>SneakPrevious <Plug>Sneak_,
+omap <Plug>SneakNext     <Plug>Sneak_;
+omap <Plug>SneakPrevious <Plug>Sneak_,
 
 if g:sneak#opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
   func! s:map_netrw_key(key)
