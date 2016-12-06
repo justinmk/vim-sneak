@@ -21,7 +21,6 @@ func! sneak#init()
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
       \ ,'s_next'       : get(g:, 'sneak#s_next', 0)
       \ ,'absolute_dir' : get(g:, 'sneak#absolute_dir', 0)
-      \ ,'textobject_z' : get(g:, 'sneak#textobject_z', 1)
       \ ,'use_ic_scs'   : get(g:, 'sneak#use_ic_scs', 0)
       \ ,'map_netrw'    : get(g:, 'sneak#map_netrw', 1)
       \ ,'label'        : get(g:, 'sneak#label', get(g:, 'sneak#streak', 0)) && (v:version >= 703) && has("conceal")
@@ -313,11 +312,6 @@ xnoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt(visualmode(), 1)<cr>
 onoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt(v:operator, 0)<cr>
 onoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt(v:operator, 1)<cr>
 
-if g:sneak#opt.textobject_z
-  omap z  <Plug>Sneak_s
-  omap Z  <Plug>Sneak_S
-endif
-
 " 1-char 'enhanced f' sneak
 nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
 nnoremap <silent> <Plug>Sneak_F :<c-u>call sneak#wrap('', 1, 1, 1, 0)<cr>
@@ -346,6 +340,12 @@ if !hasmapto('<Plug>SneakForward') && !hasmapto('<Plug>Sneak_s', 'n') && mapchec
 endif
 if !hasmapto('<Plug>SneakBackward') && !hasmapto('<Plug>Sneak_S', 'n') && mapcheck('S', 'n') ==# ''
   nmap S <Plug>Sneak_S
+endif
+if !hasmapto('<Plug>Sneak_s', 'o') && mapcheck('z', 'o') ==# ''
+  omap z <Plug>Sneak_s
+endif
+if !hasmapto('<Plug>Sneak_S', 'o') && mapcheck('Z', 'o') ==# ''
+  omap Z <Plug>Sneak_S
 endif
 
 if !hasmapto('<Plug>Sneak_;', 'n') && !hasmapto('<Plug>SneakNext', 'n') && mapcheck(';', 'n') ==# ''

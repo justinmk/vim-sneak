@@ -324,7 +324,7 @@ Sneak options and defaults ~
 g:sneak#f_reset = 1
 g:sneak#t_reset = 1
 
-    Note: if you mapped f (or t) to a |sneak-mappings| then the default is 0.
+    Note: Defaults to 0 if you mapped f (or t) to any |sneak-mappings|.
 
     0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
         define different maps for <Plug>Sneak_; or <Plug>Sneak_, and still
@@ -359,13 +359,6 @@ g:sneak#absolute_dir = 0
     1 : Absolute direction. Repeat via |;| or |,| always goes forwards or
         backwards respectively.
         Note: With |sneak-clever-s|, s and S behave the same as |;| and |,|.
-
-g:sneak#textobject_z = 1
-
-    0 : Prevent the default {operator}z mapping. You can map to something
-        else, see |sneak-mappings|.
-
-    1 : Allow the default {operator}z mapping.
 
 g:sneak#use_ic_scs = 0
 
