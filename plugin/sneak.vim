@@ -193,7 +193,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
 
   "highlight actual matches at or below the cursor position
   "  - store in w: because matchadd() highlight is per-window.
-  let w:sneak_hl_id = matchadd('SneakTarget',
+  let w:sneak_hl_id = matchadd('Sneak',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
   "Let user deactivate with <esc>

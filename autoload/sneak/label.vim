@@ -33,7 +33,7 @@ let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiop
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos
-  exec "syntax match SneakLabelTarget '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
+  exec "syntax match SneakLabel '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
 endf
 
 func! sneak#label#to(s, v, reverse)
@@ -105,7 +105,7 @@ func! s:after()
   silent! call matchdelete(w:sneak_cursor_hl)
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
-  exec 'hi! link SneakTarget '.s:orig_hl_sneaktarget
+  exec 'hi! link Sneak '.s:orig_hl_sneak
   let &l:synmaxcol=s:synmaxcol_orig
   silent! let &l:foldmethod=s:fdm_orig
   silent! let &l:syntax=s:syntax_orig
@@ -152,11 +152,11 @@ func! s:before()
   let s:synmaxcol_orig=&l:synmaxcol | setlocal synmaxcol=0
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
-  let s:orig_hl_sneaktarget = sneak#hl#links_to('SneakTarget')
+  let s:orig_hl_sneak   = sneak#hl#links_to('Sneak')
   "set temporary link to our custom 'conceal' highlight
-  hi! link Conceal SneakLabelTarget
+  hi! link Conceal SneakLabel
   "set temporary link to hide the sneak search targets
-  hi! link SneakTarget SneakLabelMask
+  hi! link Sneak SneakLabelMask
 
   call s:disable_conceal_in_other_windows()
 

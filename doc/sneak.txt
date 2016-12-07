@@ -257,8 +257,8 @@ Repeat the operation with dot: |.|
 ------------------------------------------------------------------------------
 3.5 Vertical Scope                                      *sneak-vertical-scope*
 
-Sneak has a unique feature called "vertical scope" search. This is invoked by 
-prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case, 
+Sneak has a unique feature called "vertical scope" search. This is invoked by
+prefixing a normal Sneak search (`s` or `S`) with a [count]. In that case,
 the search is restricted to a column having a width of 2× the [count].
 
 |sneak-vertical-scope| never invokes |sneak-label-mode|.
@@ -406,47 +406,33 @@ g:sneak#prompt = '>'
 ------------------------------------------------------------------------------
 4.2 Custom Highlighting                                      *sneak-highlight*
 
-Sneak uses the following highlight groups:
+Sneak uses these highlight groups:
 
-    SneakTarget
-        Highlights additional matches. Default color is hideous magenta :)
+    Sneak
+        Highlights Sneak matches. Default color is hideous magenta :)
+        Also used for |sneak-label-mode| unless "SneakLabel" group exists.
 
     SneakScope
-        Highlights the search "scope" for |sneak-vertical-scope|.
-        Default color is white (or black if background=light)
+        Highlights the "scope" for |sneak-vertical-scope|.
+        Default color is white (or black if 'background' is "light").
 
-    SneakLabelTarget
-        Highlights matches for |sneak-label-mode|.
+    SneakLabel
+        Highlights |sneak-label-mode|.
 
-    SneakLabelMask
-        Highlights un-labeled matches and the "tail" of labeled matches in
-        |sneak-label-mode|.
+To customize Sneak colors, handle the |ColorScheme| event: >
 
-There are three ways to override the default colors (in order of decreasing
-elegance):
+    autocmd ColorScheme * hi Sneak guifg=black guibg=red ctermfg=black ctermbg=red
+    autocmd ColorScheme * hi SneakScope guifg=red guibg=yellow ctermfg=red ctermbg=yellow
 
-    1. Link to existing highlight groups (for example, "ErrorMsg" and
-       "Comment") so that the colors are implicitly chosen by your
-       currently-activated colorscheme: >
+To disable Sneak highlighting, link it to the "Normal" highlight group: >
 
-       hi link SneakTarget ErrorMsg
-       hi link SneakScope  Comment
-<
-    2. To define specific colors _regardless_ of the current colorscheme, you
-       probably need to define an |autocmd| on the |ColorScheme| event
-       (otherwise the colorscheme will clear the highlights): >
+    autocmd ColorScheme * hi! link Sneak Normal
 
-       augroup SneakColors
-           autocmd!
-           autocmd ColorScheme * hi SneakTarget guifg=black guibg=red ctermfg=black ctermbg=red
-           autocmd ColorScheme * hi SneakScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
-       augroup END
-<
-    3. Edit your color scheme directly: >
+To disable Sneak highlighting but NOT |sneak-label-mode| highlighting: >
 
-       hi SneakTarget guifg=black guibg=red ctermfg=black ctermbg=red
-       hi SneakScope  guifg=black guibg=yellow ctermfg=black ctermbg=yellow
-<
+    autocmd ColorScheme * hi! link Sneak Normal
+    autocmd ColorScheme * hi SneakLabel guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+
 ------------------------------------------------------------------------------
 4.3 Custom Mappings                                           *sneak-mappings*
 
