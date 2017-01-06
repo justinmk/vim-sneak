@@ -137,7 +137,7 @@ func! s:before()
   ownsyntax sneak_label
 
   " highlight the cursor location (else the cursor is not visible during getchar())
-  let w:sneak_cursor_hl = matchadd("SneakCursor", '\%#', 11, -1)
+  let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
 
   let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
   let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2

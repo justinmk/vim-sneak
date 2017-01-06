@@ -50,12 +50,6 @@ func! s:init() abort
   if 0 == hlID("SneakLabelMask")  " fg same as bg
     exec 'highlight SneakLabelMask guifg='.guibg.' guibg='.guibg.' ctermfg='.ctermbg.' ctermbg='.ctermbg
   endif
-
-  if has('gui_running') || -1 != match(sneak#hl#get('Cursor'), 'ctermbg')
-    highlight link SneakCursor Cursor
-  else
-    highlight link SneakCursor SneakScope
-  endif
 endf
 
 augroup sneak_colorscheme " re-init if :colorscheme is changed at runtime. #108
