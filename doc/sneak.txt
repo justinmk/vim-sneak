@@ -6,13 +6,13 @@
 1. Overview                                                            *sneak*
 
 Sneak provides a way to move quickly and precisely to locations that would be
-awkward to reach with built-in Vim motions. 
+awkward to reach with built-in Vim motions.
 
 To use Sneak, type "s" followed by exactly two characters:
 
     s{char}{char}
 
-Thus you can often reach a target with 3 keystrokes. Sneak always moves 
+Thus you can often reach a target with 3 keystrokes. Sneak always moves
 immediately to the first {char}{char} match. Additional matches are
 highlighted, you can reach them by pressing ; (just like |f| and |t|).
 
@@ -25,15 +25,14 @@ Sneak works with Vim 7.2+ (|sneak-label-mode| requires Vim 7.3+).
 2. Usage                                                         *sneak-usage*
 
 Sneak is invoked by one of the provided mappings. |sneak-defaults|
-You can change these mappings. |sneak-mappings|
 
-Examples (cursor position indicated with brackets []): >
+Example (cursor position indicated with brackets []): >
     [L]orem ipsum dolor sit amet, consectetur adipisicing elit
 <
 Type ssi to go to the beginning of the word "sit": >
     Lorem ipsum dolor [s]it amet, consectetur adipisicing elit
 <
-Type ; (or 's' again!) to go to the next match: >
+Type ; (or s again, if |sneak-clever-s| is enabled) to go to the next match: >
     Lorem ipsum dolor sit amet, consectetur adipi[s]icing elit
 <
 Type Sdo to go backwards to the beginning of the word "dolor": >
@@ -58,10 +57,10 @@ NORMAL-mode mappings~
     S{char}<Enter>           | Go to the previous occurrence of {char}
     s<Enter>                 | Repeat the last Sneak.
     S<Enter>                 | Repeat the last Sneak, in reverse direction.
-    ;                        | Go to the [count]'th next match
-    , or \                   | Go to the [count]'th previous match
-    s                        | Go to the [count]'th next match (see NOTE)
-    S                        | Go to the [count]'th previous match (see NOTE)
+    ;                        | Go to the [count]th next match
+    , or \                   | Go to the [count]th previous match
+    s                        | Go to the [count]th next match (see NOTE)
+    S                        | Go to the [count]th previous match (see NOTE)
     [count]s{char}{char}     | Invoke |sneak-vertical-scope|
     [count]S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
@@ -69,8 +68,8 @@ NORMAL-mode mappings~
     {operator}Z{char}{char}  | Perform {operator} from the cursor to the 
                              | previous occurrence of {char}{char}
 
-    NOTE: s and S go to the next/previous match only immediately after
-    invoking Sneak; moving the cursor resets this behavior. |sneak-clever-s|
+    NOTE: s and S go to the next/previous match immediately after invoking
+    Sneak (if |sneak-clever-s| is enabled).
 
 
 VISUAL-mode mappings~
@@ -83,10 +82,10 @@ VISUAL-mode mappings~
     Z{char}<Enter>           | Go to the previous occurrence of {char}
     s<Enter>                 | Repeat the last Sneak.
     Z<Enter>                 | Repeat the last Sneak, in reverse direction.
-    ;                        | Go to the [count]'th next match
-    , or \                   | Go to the [count]'th previous match
-    s                        | Go to the [count]'th next match (NOTE above)
-    S                        | Go to the [count]'th previous match (NOTE above)
+    ;                        | Go to the [count]th next match
+    , or \                   | Go to the [count]th previous match
+    s                        | Go to the [count]th next match (NOTE above)
+    S                        | Go to the [count]th previous match (NOTE above)
 
 
 LABEL-mode mappings~
@@ -115,7 +114,7 @@ needed and searches for the keymapped result as expected. (Requires Vim 7.3+)
 
 `;` and `,` repeat the last `s` and `S`. They also work correctly with `f` and `t`
 (unless you or another plugin have mapped `f` or `t` to a custom mapping).
-[count]; and [count], skip to the [count]'th match, similar to the
+[count]; and [count], skip to the [count]th match, similar to the
 behavior of [count]f and [count]t.
 
     Note: If your mapleader is |,| then Sneak maps |\| instead of |,|.
@@ -342,13 +341,11 @@ g:sneak#t_reset = 1
 
 g:sneak#s_next = 0
 
-    0 : Disable "clever-s" behavior. Use |;| and |,| to go to the next or
-        previous match.
+    0 : Disable |sneak-clever-s|.
 
-    1 : Enable the "clever-s" feature (similar to the clever-f plugin[3]).
-        It works like this: immediately after invoking Sneak, press "s" _again_
-        to go to the next match, or "S" for the previous match. This behavior
-        persists until you move the cursor.
+    1 : Enable |sneak-clever-s|. It works like this: immediately after
+        invoking Sneak, press "s" _again_ to go to the next match, or "S" for
+        the previous match. This behavior persists until you move the cursor.
         Note: You can still use |;| and |,| as usual.
 
 g:sneak#absolute_dir = 0
