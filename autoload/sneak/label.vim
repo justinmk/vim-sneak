@@ -117,6 +117,7 @@ endf
 func! s:disable_conceal_in_other_windows()
   for w in range(1, winnr('$'))
     if 'help' !=# getwinvar(w, '&buftype') && w != winnr()
+        \ && empty(getbufvar(winbufnr(w), 'dirvish'))
       call setwinvar(w, 'sneak_orig_cl', getwinvar(w, '&conceallevel'))
       call setwinvar(w, '&conceallevel', 0)
     endif
@@ -125,6 +126,7 @@ endf
 func! s:restore_conceal_in_other_windows()
   for w in range(1, winnr('$'))
     if 'help' !=# getwinvar(w, '&buftype') && w != winnr()
+        \ && empty(getbufvar(winbufnr(w), 'dirvish'))
       call setwinvar(w, '&conceallevel', getwinvar(w, 'sneak_orig_cl'))
     endif
   endfor
