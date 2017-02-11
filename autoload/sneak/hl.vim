@@ -31,11 +31,13 @@ func! s:init() abort
 
   if 0 == hlID("SneakScope")
     if &background ==# 'dark'
-      highlight SneakScope guifg=black guibg=white ctermfg=black ctermbg=white
-    else
       highlight SneakScope guifg=white guibg=black ctermfg=white ctermbg=black
+    else
+      highlight SneakScope guifg=black guibg=white ctermfg=black ctermbg=white
     endif
   endif
+
+  highlight default link Cursor SneakScope
 
   let guibg   = s:default_color('Sneak', 'bg', 'gui')
   let guifg   = s:default_color('Sneak', 'fg', 'gui')

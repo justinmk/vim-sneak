@@ -486,9 +486,12 @@ Bug reports, feature requests, and patches are welcome:
 In your bug report, it is helpful to include the output of this command: >
     :call sneak#debug#report()
 
-To narrow down the issue, run Vim without any plugins except sneak.vim: >
-    vim -u NONE -N -c ':set runtimepath+=~/.vim/bundle/vim-sneak/' -c ':runtime plugin/sneak.vim'
-<
+To narrow down the issue, run Vim with a minimal configuration: >
+    vim -u NORC -N +"let g:sneak#label=1" +":set runtimepath+=~/.vim/bundle/vim-sneak/" +":runtime plugin/sneak.vim"
+
+or Nvim: >
+    nvim -u NORC +"let g:sneak#label=1" +":set runtimepath+=~/.local/share/nvim/bundle/vim-sneak/" +":runtime plugin/sneak.vim"
+
 ==============================================================================
 6. Credits                                                     *sneak-credits*
 
