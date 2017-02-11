@@ -25,16 +25,12 @@ func! s:default_color(hlgroup, what, mode) abort
 endfunc
 
 func! s:init() abort
-  if 0 == hlID("Sneak")
-    exec "highlight Sneak guifg=white guibg=magenta ctermfg=white ctermbg=".(&t_Co < 256 ? "magenta" : "201")
-  endif
+  exec "highlight default Sneak guifg=white guibg=magenta ctermfg=white ctermbg=".(&t_Co < 256 ? "magenta" : "201")
 
-  if 0 == hlID("SneakScope")
-    if &background ==# 'dark'
-      highlight SneakScope guifg=white guibg=black ctermfg=white ctermbg=black
-    else
-      highlight SneakScope guifg=black guibg=white ctermfg=black ctermbg=white
-    endif
+  if &background ==# 'dark'
+    highlight default SneakScope guifg=white guibg=black ctermfg=white ctermbg=black
+  else
+    highlight default SneakScope guifg=black guibg=white ctermfg=black ctermbg=white
   endif
 
   highlight default link Cursor SneakScope
@@ -43,15 +39,12 @@ func! s:init() abort
   let guifg   = s:default_color('Sneak', 'fg', 'gui')
   let ctermbg = s:default_color('Sneak', 'bg', 'cterm')
   let ctermfg = s:default_color('Sneak', 'fg', 'cterm')
-  if 0 == hlID("SneakLabel")
-    exec 'highlight SneakLabel gui=bold cterm=bold guifg='.guifg.' guibg='.guibg.' ctermfg='.ctermfg.' ctermbg='.ctermbg
-  endif
+  exec 'highlight default SneakLabel gui=bold cterm=bold guifg='.guifg.' guibg='.guibg.' ctermfg='.ctermfg.' ctermbg='.ctermbg
 
   let guibg   = s:default_color('SneakLabel', 'bg', 'gui')
   let ctermbg = s:default_color('SneakLabel', 'bg', 'cterm')
-  if 0 == hlID("SneakLabelMask")  " fg same as bg
-    exec 'highlight SneakLabelMask guifg='.guibg.' guibg='.guibg.' ctermfg='.ctermbg.' ctermbg='.ctermbg
-  endif
+  " fg same as bg
+  exec 'highlight default SneakLabelMask guifg='.guibg.' guibg='.guibg.' ctermfg='.ctermbg.' ctermbg='.ctermbg
 endf
 
 augroup sneak_colorscheme " re-init if :colorscheme is changed at runtime. #108
