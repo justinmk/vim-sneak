@@ -87,6 +87,8 @@ func! s:after()
   syntax clear
   silent! let &l:foldmethod=s:fdm_orig
   silent! let &l:syntax=s:syntax_orig
+  " Force Vim to reapply 'spell' (must set 'spelllang'). #110
+  let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
   let &l:concealcursor=s:cc_orig
   let &l:conceallevel=s:cl_orig
   call s:restore_conceal_in_other_windows()
@@ -112,6 +114,9 @@ endf
 
 func! s:before()
   let s:matchmap = {}
+  let s:o_spell=&spell
+  let s:o_spelllang=&spelllang
+  set nospell
 
   " prevent highlighting in other windows showing the same buffer
   ownsyntax sneak_label
