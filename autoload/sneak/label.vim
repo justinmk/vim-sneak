@@ -83,6 +83,8 @@ func! s:after()
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link Sneak '.s:orig_hl_sneak
   let &l:synmaxcol=s:synmaxcol_orig
+  " Always clear before restore, in case user has `:syntax off`. #200
+  syntax clear
   silent! let &l:foldmethod=s:fdm_orig
   silent! let &l:syntax=s:syntax_orig
   let &l:concealcursor=s:cc_orig
