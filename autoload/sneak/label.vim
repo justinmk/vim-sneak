@@ -4,30 +4,6 @@
 " 
 "   problem:  keyword highlighting always takes priority over conceal.
 "   strategy: syntax clear | [do the conceal] | let &syntax=s:syntax_orig
-"
-" PROFILING:
-"   - the search should be 'warm' before profiling
-"   - searchpos() appears to be about 30% faster than 'norm! n'
-"
-" FEATURES:
-"   - skips folds
-"   - if no visible matches, does not invoke label-mode
-"   - there is no 'grouping'
-"     - this minimizes the steps for the common case
-"     - If your search has >56 matches, press <tab> to jump to the 57th match
-"       and label the next 56 matches.
-" 
-" cf. EASYMOTION:
-"   - EasyMotion's 'single line' feature is superfluous because label-mode
-"     isn't activated unless there are >=2 on-screen matches, and any key that
-"     isn't a target falls through to Vim.
-"   - because sneak targets 2 chars, there is never a problem discerning
-"     target labels. https://github.com/Lokaltog/vim-easymotion/pull/47#issuecomment-10919205
-"   - https://github.com/Lokaltog/vim-easymotion/issues/59#issuecomment-23226131
-"     - easymotion edits the buffer, plans to create a new buffer
-"     - 'the current way of highligthing is insanely slow'
-"   - sneak handles long lines https://github.com/Lokaltog/vim-easymotion/issues/82
-"   - sneak can find and highlight concealed characters
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
 
