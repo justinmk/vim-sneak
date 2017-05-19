@@ -3,7 +3,7 @@
 "   strategy: make fg/bg the same color, then conceal the other char.
 " 
 "   problem:  keyword highlighting always takes priority over conceal.
-"   strategy: syntax clear | [do the conceal] | let &syntax=s:syntax_orig
+"   strategy: syntax clear | [do the conceal] | let &syntax=s:o_syntax
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
 
@@ -82,15 +82,14 @@ func! s:after()
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link Sneak '.s:orig_hl_sneak
-  let &l:synmaxcol=s:synmaxcol_orig
+  let &l:synmaxcol=s:o_synmaxcol
   " Always clear before restore, in case user has `:syntax off`. #200
   syntax clear
-  silent! let &l:foldmethod=s:fdm_orig
-  silent! let &l:syntax=s:syntax_orig
+  silent! let &l:foldmethod=s:o_fdm
+  silent! let &l:syntax=s:o_syntax
   " Force Vim to reapply 'spell' (must set 'spelllang'). #110
   let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
-  let &l:concealcursor=s:cc_orig
-  let &l:conceallevel=s:cl_orig
+  let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
   call s:restore_conceal_in_other_windows()
 endf
 
@@ -114,27 +113,22 @@ endf
 
 func! s:before()
   let s:matchmap = {}
-  let s:o_spell=&spell
-  let s:o_spelllang=&spelllang
-  set nospell
+  for o in ['spell', 'spelllang', 'cocu', 'cole', 'fdm', 'synmaxcol', 'syntax']
+    exe 'let s:o_'.o.'=&l:'.o
+  endfor
 
+  setlocal nospell concealcursor=ncv conceallevel=2
   " prevent highlighting in other windows showing the same buffer
   ownsyntax sneak_label
-
   " highlight the cursor location (else the cursor is not visible during getchar())
   let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
-
-  let s:cc_orig=&l:concealcursor | setlocal concealcursor=ncv
-  let s:cl_orig=&l:conceallevel  | setlocal conceallevel=2
-
   if &l:foldmethod ==# 'syntax' " Avoid broken folds when we clear syntax below.
-    let s:fdm_orig=&l:foldmethod | setlocal foldmethod=manual
+    setlocal foldmethod=manual
   endif
 
-  let s:syntax_orig=&syntax
   syntax clear
   " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
-  let s:synmaxcol_orig=&l:synmaxcol | setlocal synmaxcol=0
+  setlocal synmaxcol=0
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
   let s:orig_hl_sneak   = sneak#hl#links_to('Sneak')
