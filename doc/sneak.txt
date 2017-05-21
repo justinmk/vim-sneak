@@ -185,14 +185,12 @@ use `Z` (because `S` is taken by the |surround| plugin). `;` and `,` also
 work in visual mode as they do in normal mode.
 
 ------------------------------------------------------------------------------
-Text Object (for use with an |operator|)
+Operations
 
-Use `z` for operations; for example, `dzab` deletes from the cursor to the next
-instance of "ab". `dZab` deletes backwards to the previous instance.
-`czab` `cZab` `yzab` and `yZab` also work as expected.
-
-You can easily map to something other than the default "z" for
-operator-pending behavior. |sneak-mappings|
+Use `z` for operations (or map to something else: |sneak-custom-mappings|).
+For example, `dzab` deletes from the cursor to the next instance of "ab".
+`dZab` deletes backwards to the previous instance. `czab` `cZab` `yzab` and
+`yZab` also work as expected.
 
 Repeat the operation with dot: |.|
 Note: Requires repeat.vim https://github.com/tpope/vim-repeat
@@ -214,13 +212,13 @@ Use cases:
 Label-mode                              *sneak-label-mode* *sneak-streak-mode*
 
 Label-mode minimizes the steps to jump to a location, using a clever interface
-similar to vim-easymotion[2]. Sneak label-mode is faster and more predictable
-than vim-easymotion (see below).
+similar to vim-easymotion (but Sneak is faster and more predictable than
+vim-easymotion).
 
 To enable label-mode:                                         *g:sneak#label*
 >
     let g:sneak#label = 1
->
+
 Sneak enters label-mode if there are ≥2 visible (on-screen) matches. To force
 label-mode always (instead of passively letting Sneak decide), set a mapping
 to <Plug>SneakLabel_s. Example: >
@@ -229,17 +227,12 @@ to <Plug>SneakLabel_s. Example: >
 <
 LABEL-MODE FEATURES ~
 
-Jumps to the first match automatically.
-- <Space> or <Esc> exits label-mode. |g:sneak#label_esc|
-- <Tab> skips to the next set of matches.
-- Type any key that is NOT a target label to exit label-mode and immediately
-  perform that key's normal-mode function
-
-Works with all operators, including |surround|.
-
-Operations can be repeated with |.| (dot).
-
+<Tab> skips to the next set of matches.
+<Space> or <Esc> exits label-mode. |g:sneak#label_esc|
 s<Enter> repeats the last search.
+
+Works with all operators, including |surround|. Operations can be repeated
+with |.| (dot).
 
 |folds| are skipped (not labeled). (Use |;| and |,| to reach folded or
 off-screen matches.)
@@ -248,9 +241,10 @@ Compared to vim-easymotion:
 - Never modifies your data. vim-easymotion uses edit-and-undo hacks.
 - Never adds extra "stages" or "groups", so it is predictable. The _common_
   case is the highest priority.
-- Non-label keys "fall through" to Vim, so you don't need to explicitly exit
-  label-mode. Eliminates the need for "single line" mode.
 - Target labels are always visually separated.
+                                                           *sneak-fallthrough*
+- Non-label keys "fall through" to normal-mode, so you don't need to
+  explicitly exit label-mode if the first match is correct.
 
 As always, you can:
 - Skip to the next or previous match with |;| or |,|
@@ -337,18 +331,22 @@ g:sneak#label_esc = "\<Space>"
     Exit |sneak-label-mode| as if <Esc> were pressed.
         https://github.com/justinmk/vim-sneak/issues/122
 
-g:sneak#target_labels = "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?"
+g:sneak#target_labels = ";sftunq/SFGHLTUNRMQZ?0"
 
-    List of characters used by label-mode to label the target locations.
+    List of characters used to label the target locations. |sneak-label-mode|
 
-    Note: If ; (or any key mapped to <Plug>Sneak_;) is in the list, Sneak
-    automatically moves it to the first position (because it's semantically
-    equivalent and it saves a target label).
+    Labels should be keys that you never use after searching. E.g. it is
+    unlikely that you will use "F" immediately after a Sneak, so "F" is in the
+    label list. This removes a step if the first match is correct: instead,
+    just type your next command. |sneak-fallthrough|
 
-    Note: Invalid target labels are automatically removed:
+    Note: Any key mapped to <Plug>Sneak_; is moved to the first position
+    (because it's semantically equivalent).
+
+    Note: Invalid target labels are removed:
         - Any key mapped to <Plug>Sneak_,
-        - <Esc>, <Tab>, <BS>, because they are special
-        - <Space>, <Enter>, because they are invisible
+        - Special keys: <Esc> <Tab> <BS>
+        - Invisible keys: <Space> <Enter>
 
 g:sneak#prompt = '>'
 

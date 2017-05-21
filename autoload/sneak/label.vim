@@ -5,7 +5,7 @@
 "   problem:  keyword highlighting always takes priority over conceal.
 "   strategy: syntax clear | [do the conceal] | let &syntax=s:o_syntax
 
-let g:sneak#target_labels = get(g:, 'sneak#target_labels', "asdfghjkl;qwertyuiopzxcvbnm/ASDFGHJKL:QWERTYUIOPZXCVBNM?")
+let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ?0")
 
 func! s:placematch(c, pos)
   let s:matchmap[a:c] = a:pos

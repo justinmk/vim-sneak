@@ -632,7 +632,7 @@ Given:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Do (basic label motion):
-  sabaD
+  sabsD
 
 Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
@@ -640,7 +640,7 @@ Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
 
 Do (backwards label motion):
-  jj$Sefsix
+  jj$Seffix
 
 Expect:
   abcdxef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
@@ -683,7 +683,7 @@ Given:
   | logger     | Logger  | nil     | logger instance for debug logs                 |
 
 Do (delete + label):
-  dznug
+  dznun
 
 Expect:
   number of maximum items to be assigned at once |
@@ -703,7 +703,7 @@ Expect:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
 Do (label + delete + repeat):
-  dzaba
+  dzabs
   :\<C-U>doautocmd CursorMoved\<CR>
   .
 
@@ -722,7 +722,7 @@ Expect:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
 Do (label/target/backwards/delete/repeat):
-  2j2wdZefs
+  2j2wdZeff
   :\<C-U>doautocmd CursorMoved\<CR>
   .
 
@@ -731,7 +731,7 @@ Expect:
   ab7cdab3cdef ab4cdef ab5cdef ab6cdef
 
 Do (label/target/change/repeat):
-  jwczefaFOO\<Esc>
+  jwczefsFOO\<Esc>
   :\<C-U>doautocmd CursorMoved\<CR>
   jb.
 
