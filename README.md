@@ -3,15 +3,17 @@ sneak.vim :shoe:
 
 Jump to any location specified by two characters.
 
-Sneak is a well-behaved _motion_ plugin for Vim. It works with **multiple
+Sneak is a powerful, reliable, yet minimal _motion_ plugin for Vim. It works with **multiple
 lines**, **operators** (including repeat `.` and [surround]), motion-repeat
 (`;` and `,`), **[keymaps]**, **visual** mode, **[multibyte]** text, and
 **macros**.
 
-Try *label-mode* for a minimalist
-[EasyMotion](https://github.com/Lokaltog/vim-easymotion) alternative:
+Try *label-mode* for a minimalist alternative to
+[EasyMotion](https://github.com/Lokaltog/vim-easymotion):
 
-    let g:sneak#label = 1
+```vim
+let g:sneak#label = 1
+```
 
 Usage
 -----
@@ -95,34 +97,21 @@ By the way: `cl` is equivalent to `s`, and `cc` is equivalent to `S`.
 
 #### How can I replace `f` with Sneak?
 
-```
-    nmap f <Plug>Sneak_s
-    nmap F <Plug>Sneak_S
-    xmap f <Plug>Sneak_s
-    xmap F <Plug>Sneak_S
-    omap f <Plug>Sneak_s
-    omap F <Plug>Sneak_S
+```vim
+map f <Plug>Sneak_s
+map F <Plug>Sneak_S
 ```
 
 #### How can I replace `f` and/or `t` with *one-character* Sneak?
 
-Sneak provides `<Plug>` convenience-mappings for `f` and `t` 1-character-sneak.
+Sneak has `<Plug>` mappings for `f` and `t` 1-character-sneak.
 These mappings do *not* invoke label-mode, even if you have it enabled.
-```
-    "replace 'f' with 1-char Sneak
-    nmap f <Plug>Sneak_f
-    nmap F <Plug>Sneak_F
-    xmap f <Plug>Sneak_f
-    xmap F <Plug>Sneak_F
-    omap f <Plug>Sneak_f
-    omap F <Plug>Sneak_F
-    "replace 't' with 1-char Sneak
-    nmap t <Plug>Sneak_t
-    nmap T <Plug>Sneak_T
-    xmap t <Plug>Sneak_t
-    xmap T <Plug>Sneak_T
-    omap t <Plug>Sneak_t
-    omap T <Plug>Sneak_T
+
+```vim
+map f <Plug>Sneak_f
+map F <Plug>Sneak_F
+map t <Plug>Sneak_t
+map T <Plug>Sneak_T
 ```
 
 Related

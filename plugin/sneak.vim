@@ -203,7 +203,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
 
   " Operators always invoke label-mode; also for 2+ on-screen matches.
   let target = (2 == a:label || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
-        \ ? sneak#label#to(s, is_v, a:reverse) : ""
+        \ ? sneak#label#to(s, is_v) : ""
 
   if is_op && 2 != a:inclusive && !a:reverse
     " f/t operations do not apply to the current character; nudge the cursor.

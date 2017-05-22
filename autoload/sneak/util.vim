@@ -1,24 +1,24 @@
 if v:version >= 703
-  func! sneak#util#strlen(s)
+  func! sneak#util#strlen(s) abort
     return strwidth(a:s)
     "return call('strdisplaywidth', a:000)
   endf
 else
-  func! sneak#util#strlen(s)
+  func! sneak#util#strlen(s) abort
     return strlen(substitute(a:s, ".", "x", "g"))
   endf
 endif
 
-func! sneak#util#isvisualop(op)
+func! sneak#util#isvisualop(op) abort
   return a:op =~# "^[vV\<C-v>]"
 endf
 
-func! sneak#util#getc()
+func! sneak#util#getc() abort
   let c = getchar()
   return type(c) == type(0) ? nr2char(c) : c
 endf
 
-func! sneak#util#getchar()
+func! sneak#util#getchar() abort
   let input = sneak#util#getc()
   if 1 != &iminsert
     return input
@@ -47,12 +47,12 @@ func! sneak#util#getchar()
 endf
 
 "returns 1 if the string contains an uppercase char. [unicode-compatible]
-func! sneak#util#has_upper(s)
+func! sneak#util#has_upper(s) abort
  return -1 != match(a:s, '\C[[:upper:]]')
 endf
 
 "displays a message that will dissipate at the next opportunity.
-func! sneak#util#echo(msg)
+func! sneak#util#echo(msg) abort
   redraw | echo a:msg
   augroup SneakEcho
     autocmd!
@@ -63,7 +63,7 @@ endf
 "returns the least possible 'wincol'
 "  - if 'sign' column is displayed, the least 'wincol' is 3
 "  - there is (apparently) no clean way to detect if 'sign' column is visible
-func! sneak#util#wincol1()
+func! sneak#util#wincol1() abort
   let w = winsaveview()
   norm! 0
   let c = wincol()
@@ -76,7 +76,7 @@ endf
 "     1  if the cursor was moved
 "     0  if the cursor is not in a fold
 "    -1  if the start/end of the fold is at/above/below the edge of the window
-func! sneak#util#skipfold(current_line, reverse)
+func! sneak#util#skipfold(current_line, reverse) abort
   let foldedge = a:reverse ? foldclosed(a:current_line) : foldclosedend(a:current_line)
   if -1 != foldedge
     if (a:reverse && foldedge <= line("w0")) "fold starts at/above top of window.
@@ -91,7 +91,7 @@ func! sneak#util#skipfold(current_line, reverse)
 endf
 
 "Moves the cursor 1 char to the left or right; wraps at EOL, but _not_ EOF.
-func! sneak#util#nudge(right)
+func! sneak#util#nudge(right) abort
   let nextchar = searchpos('\_.', 'nW'.(a:right ? '' : 'b'))
   if [0, 0] == nextchar
     return 0

@@ -84,8 +84,9 @@ VISUAL-MODE~
 LABEL-MODE~
     Key Sequence             | Description
     -------------------------|----------------------------------------------
-    <space>                  | Exit |sneak-label-mode| at the current cursor
-                             | position.
+    <Space> or <Esc>         | Exit |sneak-label-mode| where the cursor is.
+    <Tab>                    | Label the next set of matches.
+    <BS> or <S-Tab>          | Label the previous set of matches.
 
 ------------------------------------------------------------------------------
 Custom Mappings                                        *sneak-custom-mappings*
@@ -202,7 +203,7 @@ Sneak has a unique feature called "vertical scope" search. This is invoked by
 prefixing `s` or `S` with a [count]. Then the search is limited to a column of
 width of 2×[count]. Vertical-scope never invokes |sneak-label-mode|.
 
-Use cases:
+Use-cases:
     - CSV file
     - man page (example: search for "-e" in `man bash`)
     - hex editing :%!xxd
@@ -227,12 +228,10 @@ to <Plug>SneakLabel_s. Example: >
 <
 LABEL-MODE FEATURES ~
 
-<Tab> skips to the next set of matches.
-<Space> or <Esc> exits label-mode. |g:sneak#label_esc|
-s<Enter> repeats the last search.
+<Tab> skips to the next set of matches (<BS> or <S-Tab> go the other way).
+These actions are preserved when repeating!
 
-Works with all operators, including |surround|. Operations can be repeated
-with |.| (dot).
+<Space> or <Esc> exits label-mode. |g:sneak#label_esc|
 
 |folds| are skipped (not labeled). (Use |;| and |,| to reach folded or
 off-screen matches.)
@@ -249,9 +248,11 @@ Compared to vim-easymotion:
 As always, you can:
 - Skip to the next or previous match with |;| or |,|
 - Return to your original location via |CTRL-O| or |``|
+- Use any |operator|, including |surround|.
+- Repeat operations with |.| (dot).
 
 Note: If `s` is prefixed with a [count] then |sneak-vertical-scope| is
-invoked and label-mode will _not_ be invoked.
+invoked.
 
 ==============================================================================
 Configuration                                            *sneak-configuration*

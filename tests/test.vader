@@ -127,7 +127,6 @@ Given:
 
 Do (move to 22):
   s22x
-
 Expect:
   1 2222 33 444 555 6666 7 888
   11 222 3333 4 55 6666 77 888
@@ -136,7 +135,6 @@ Expect:
 
 Do (next match):
   s22;x
-
 Expect:
   1 2222 33 444 555 6666 7 888
   11 222 3333 4 55 6666 77 888
@@ -145,7 +143,6 @@ Expect:
 
 Do (skip to third match):
   s\<Space>43;x
-
 Expect:
   1 22222 33 444 555 6666 7 888
   11 222 3333 4 55 6666 77 888
@@ -159,7 +156,6 @@ Do (visual mode forwards):
   :\<C-U>doautocmd CursorMoved\<CR>
   :\<C-U>doautocmd CursorMoved\<CR>
   gvs55;d
-
 Expect:
   1 22222 33 444 555 6666 7 888
   11 222 3333 4 555 6666 7 88888
@@ -167,7 +163,6 @@ Expect:
 
 Do (visual mode backwards):
   jjjvwwoZ33;;\d
-
 Expect:
   1 22222 33 444 555 6666 7 888
   11 222 333 444 555 66 77a 8
@@ -183,7 +178,6 @@ Given:
 
 Do (search backwards):
   jjSbbx
-
 Expect:
   a,,bbb
   aa,,b
@@ -204,7 +198,6 @@ Given:
 
 Do (delete):
   dzar
-
 Expect:
   artney 1942
   George Harrison 1943mmdd
@@ -213,7 +206,6 @@ Expect:
 
 Do (delete backwards):
   jwdZar
-
 Expect:
   Paul McCHarrison 1943mmdd
   Ringo Starr 1940mm
@@ -221,7 +213,6 @@ Expect:
 
 Do (delete [count]):
   d3zar
-
 Expect:
   arr 1940mm
   Pete Best 1941
@@ -230,7 +221,6 @@ Do (delete ;):
   dzar
   :\<C-U>doautocmd CursorMoved\<CR>
   d;
-
 Expect:
   arrison 1943mmdd
   Ringo Starr 1940mm
@@ -238,7 +228,6 @@ Expect:
 
 Do (change):
   llczar
-
 Expect:
   Paartney 1942
   George Harrison 1943mmdd
@@ -247,7 +236,6 @@ Expect:
 
 Do (change backwards):
   jjllcZar
-
 Expect:
   Paul McCartney 1942
   George Hngo Starr 1940mm
@@ -255,7 +243,6 @@ Expect:
 
 Do (change [count]):
   c3zar
-
 Expect:
   arr 1940mm
   Pete Best 1941
@@ -264,7 +251,6 @@ Do (change ;):
   czarfoo\<Esc>l
   :\<C-U>doautocmd CursorMoved\<CR>
   c;bar
-
 Expect:
   foobararrison 1943mmdd
   Ringo Starr 1940mm
@@ -272,7 +258,6 @@ Expect:
 
 Do (yank):
   jlyzarp
-
 Expect:
   Paul McCartney 1942
   Geeorge Horge Harrison 1943mmdd
@@ -281,7 +266,6 @@ Expect:
 
 Do (yank backwards):
   jjllyZarp
-
 Expect:
   Paul McCartney 1942
   George Haarrison 1943mmdd
@@ -291,7 +275,6 @@ Expect:
 
 Do (yank [count]):
   y3zarP
-
 Expect:
   Paul McCartney 1942
   George Harrison 1943mmdd
@@ -311,7 +294,6 @@ Given:
 
 Do (search for H):
   sH\<Enter>x
-
 Expect:
   Paul McCartney 1942
   George arrison 1943mmdd
@@ -322,7 +304,6 @@ Do (repeat change):
   jlczarfoo\<Esc>l
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   Paul McCartney 1942
   Gfoofooarr 1940mm
@@ -332,7 +313,6 @@ Do (repeat backwards change):
   jjllcZarfoo\<Esc>hh
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   Paul McCfoofoongo Starr 1940mm
   Pete Best 1941
@@ -341,7 +321,6 @@ Do (repeat delete operation):
   dzar
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   arrison 1943mmdd
   Ringo Starr 1940mm
@@ -353,7 +332,6 @@ Do (repeat delete operation twice):
   .
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   arr 1940mm
   Pete Best 1941
@@ -362,7 +340,6 @@ Do (repeat backwards delete operation. #7):
   3jdZar
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   Paul McCartney 1942
   George Ht
@@ -374,7 +351,6 @@ Do (repeat backwards delete operation twice. #7):
   .
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   Paul McCt
   Pete Best 1941
@@ -392,7 +368,6 @@ Do (repeat [count] delete operation):
   2dzar
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   ar 1941
 
@@ -400,7 +375,6 @@ Do (repeat [count] delete operation):
   2czarfoo\<Esc>l
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   foofooar 1941
 
@@ -408,7 +382,6 @@ Do ([count]repeat delete):
   dzar
   :\<C-U>doautocmd CursorMoved\<CR>
   2.
-
 Expect:
   arr 1940mm
   Pete Babbar 1941
@@ -417,7 +390,6 @@ Do ([count]repeat change):
   czarfoo\<Esc>l
   :\<C-U>doautocmd CursorMoved\<CR>
   2.
-
 Expect:
   foofooarr 1940mm
   Pete Babbar 1941
@@ -435,7 +407,6 @@ Do (search for backticks, then backslashes):
   :\<C-U>doautocmd CursorMoved\<CR>
   :\<C-U>doautocmd CursorMoved\<CR>
   S\\i:)
-
 Expect:
   xyz="abc=def"
   a=b#=c
@@ -455,7 +426,6 @@ Given:
 
 Do (vertical scope and count-prefixed repeat-motion):
   wwjl3spa2;i:
-
 Expect:
   var jdbc = {
     // JDBC driver for MySQL database:
@@ -481,7 +451,6 @@ Given:
 
 Do (crazy sequence with s, f, counts, and repeats):
   fDs1\<Space>;\2fe2;3j4Ti\~
-
 Expect:
   | Option     | Type    | Default | Description                                    |
   | --         | --      | --      | --                                             |
@@ -510,7 +479,6 @@ Do (dummy step to work around Vim (or Vader) macro bug):
 
 Do (clever-s):
   sabsax
-
 Expect:
   abcdef abcdef axbcdef
   abcdef abcdef abcdef
@@ -518,7 +486,6 @@ Expect:
 
 Do (clever-s):
   sab3sax
-
 Expect:
   abcdef abcdef abcdef
   abcdef axbcdef abcdef
@@ -526,7 +493,6 @@ Expect:
 
 Do (clever-s):
   sabsssssssSSax
-
 Expect:
   abcdef abcdef abcdef
   abcdef abcdef abcdef
@@ -534,7 +500,6 @@ Expect:
 
 Do (clever-s with input truncated by <Enter> should still clever-repeat):
   se\<Enter>sssix
-
 Expect:
   abcdef abcdef abcdef
   abcdxef abcdef abcdef
@@ -613,7 +578,6 @@ Execute (create mapping with f as a prefix / do s ; fe):
   nnoremap foobar :echo 'hi'<cr>
   normal sbc2;;fe;iX
   nunmap foobar
-
 Expect:
   abcdef abcdef abcdef
   abcdef abcdXef abcdef
@@ -633,7 +597,6 @@ Given:
 
 Do (basic label motion):
   sabsD
-
 Expect:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
   `=QWEOIJ/+     ~~~!!! ! { } abc AAa
@@ -641,7 +604,6 @@ Expect:
 
 Do (backwards label motion):
   jj$Seffix
-
 Expect:
   abcdxef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
   `=QWEOIJ/+     ~~~!!! ! { } abc AAaab
@@ -684,7 +646,6 @@ Given:
 
 Do (delete + label):
   dznun
-
 Expect:
   number of maximum items to be assigned at once |
   | logger     | Logger  | nil     | logger instance for debug logs                 |
@@ -696,7 +657,6 @@ Given:
 
 Do (label + delete):
   dzab;
-
 Expect:
   ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -706,7 +666,6 @@ Do (label + delete + repeat):
   dzabs
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
@@ -715,7 +674,6 @@ Do (label + 2-delete + repeat):
   2dzab\<Esc>
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -725,7 +683,6 @@ Do (label/target/backwards/delete/repeat):
   2j2wdZeff
   :\<C-U>doautocmd CursorMoved\<CR>
   .
-
 Expect:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdab3cdef ab4cdef ab5cdef ab6cdef
@@ -734,11 +691,63 @@ Do (label/target/change/repeat):
   jwczefsFOO\<Esc>
   :\<C-U>doautocmd CursorMoved\<CR>
   jb.
-
 Expect:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef FOOef ab1cdef ab2cdef
   ab1cdef FOOef ab5cdef ab6cdef
+
+Given:
+  A11111111111111111111111111111111111111111111111111111K
+  B22222222222222222222222222222222222222222222222222222L
+  C11111111111111111111111111111111111111111111111111111M
+  D22222222222222222222222222222222222222222222222222222N
+  E11111111111111111111111111111111111111111111111111111O
+  F22222222222222222222222222222222222222222222222222222P
+  G11111111111111111111111111111111111111111111111111111Q
+  H22222222222222222222222222222222222222222222222222222R
+  I11111111111111111111111111111111111111111111111111111S
+  J22222222222222222222222222222222222222222222222222222T
+
+Do (label/change-direction/delete):
+  4j9ls22\<Tab>\<Tab>\<BS>\<BS>\<BS>\<BS>Rr-
+Expect:
+  A11111111111111111111111111111111111111111111111111111K
+  B222222222222222222222222-2222222222222222222222222222L
+  C11111111111111111111111111111111111111111111111111111M
+  D22222222222222222222222222222222222222222222222222222N
+  E11111111111111111111111111111111111111111111111111111O
+  F22222222222222222222222222222222222222222222222222222P
+  G11111111111111111111111111111111111111111111111111111Q
+  H22222222222222222222222222222222222222222222222222222R
+  I11111111111111111111111111111111111111111111111111111S
+  J22222222222222222222222222222222222222222222222222222T
+
+Do (label/change-direction/delete/repeat):
+  4j9ldz22\<Tab>\<BS>\<BS>N
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+Expect:
+  A11111111111111111111111111111111111111111111111111111K
+  B2222222222222222222222222222222222222222111111111111111111111111111111111111111111111O
+  F22222222222222222222222222222222222222222222222222222P
+  G11111111111111111111111111111111111111111111111111111Q
+  H22222222222222222222222222222222222222222222222222222R
+  I11111111111111111111111111111111111111111111111111111S
+  J22222222222222222222222222222222222222222222222222222T
+
+Do (label/backwards/<BS>):
+  4j9lS22\<BS>\<BS>fr-
+Expect:
+  A11111111111111111111111111111111111111111111111111111K
+  B2222-222222222222222222222222222222222222222222222222L
+  C11111111111111111111111111111111111111111111111111111M
+  D22222222222222222222222222222222222222222222222222222N
+  E11111111111111111111111111111111111111111111111111111O
+  F22222222222222222222222222222222222222222222222222222P
+  G11111111111111111111111111111111111111111111111111111Q
+  H22222222222222222222222222222222222222222222222222222R
+  I11111111111111111111111111111111111111111111111111111S
+  J22222222222222222222222222222222222222222222222222222T
 
 Execute (cleanup):
   let g:sneak#label = 0
@@ -917,7 +926,6 @@ Given:
 
 Do (search for multi-keymap):
   se::e::x
-
 Expect:
   abcdef abcdef abcdef
   абцдеф АБЦДЕФ абцдеф
@@ -926,7 +934,6 @@ Expect:
 
 Do (repeat search for multi-keymap):
   se::e::;x
-
 Expect:
   abcdef abcdef abcdef
   абцдеф АБЦДЕФ абцдеф
@@ -976,7 +983,6 @@ Given:
 
 Do ([count]f):
   3feix
-
 Expect ([count]f should NOT invoke vertical-scope):
   ab1cdef ab2cdef ab3cdxef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -984,7 +990,6 @@ Expect ([count]f should NOT invoke vertical-scope):
 
 Do ([count]f):
   jj3Feix
-
 Expect ([count]F should NOT invoke vertical-scope):
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdxef ab1cdef ab2cdef
@@ -992,7 +997,6 @@ Expect ([count]F should NOT invoke vertical-scope):
 
 Do ([count]s):
   3sab;ax
-
 Expect ([count]s SHOULD invoke vertical-scope):
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1000,7 +1004,6 @@ Expect ([count]s SHOULD invoke vertical-scope):
 
 Do (f-delete forward):
   dfe
-
 Expect:
   f ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1008,7 +1011,6 @@ Expect:
 
 Do (f-delete invalid target):
   dfZ
-
 Expect (should not delete current char. #177):
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1016,7 +1018,6 @@ Expect (should not delete current char. #177):
 
 Do (t-delete forward):
   dte
-
 Expect:
   ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1024,7 +1025,6 @@ Expect:
 
 Do (f-delete-3 forward):
   3dfe
-
 Expect:
   f ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1032,7 +1032,6 @@ Expect:
 
 Do (t-delete-3 forward):
   3dte
-
 Expect:
   ef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1040,7 +1039,6 @@ Expect:
 
 Do (FIXME inclusive f-delete forward):
   dvfe
-
 Expect:
   ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1048,7 +1046,6 @@ Expect:
 
 Do (FIXME inclusive t-delete forward):
   dvte
-
 Expect:
   def ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1056,7 +1053,6 @@ Expect:
 
 Do (exclusive f-delete backward. #121):
   eedFa
-
 Expect:
   ab1cdef f ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1064,7 +1060,6 @@ Expect:
 
 Do (exclusive t-delete backward. #121):
   eedTa
-
 Expect:
   ab1cdef af ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1072,7 +1067,6 @@ Expect:
 
 Do (inclusive f-delete backward. #121):
   eedvFa
-
 Expect:
   ab1cdef  ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1080,7 +1074,6 @@ Expect:
 
 Do (inclusive t-delete backward. #121):
   eedvTa
-
 Expect:
   ab1cdef a ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1116,7 +1109,6 @@ Do (sneak 'f', then Vim default 't', then sneak 'f'):
   :\<C-U>doautocmd CursorMoved\<CR>
   :\<C-U>doautocmd CursorMoved\<CR>
   fderx;rx
-
 Expect:
   abcxef axcxef abcxef
 
