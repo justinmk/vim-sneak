@@ -21,7 +21,7 @@ endf
 
 func! s:default_color(hlgroup, what, mode) abort
   let c = synIDattr(synIDtrans(hlID(a:hlgroup)), a:what, a:mode)
-  return !empty(c) ? c : (a:what ==# 'bg' ? 'magenta' : 'white')
+  return !empty(c) && c != -1 ? c : (a:what ==# 'bg' ? 'magenta' : 'white')
 endfunc
 
 func! s:init() abort
