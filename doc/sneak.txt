@@ -408,10 +408,12 @@ sneak#wrap(op, inputlen, reverse, inclusive, label)             *sneak#wrap()*
           onoremap <silent> S :<C-U>call sneak#wrap(v:operator,   3, 1, 2, 1)<CR>
 <
 sneak#is_sneaking()                                       *sneak#is_sneaking()*
-        Returns 1 if Sneak is active (matches are highlighted).
-        Returns 0 after the user does anything (which deactivates Sneak and
-        removes the highlight). Useful for changing the behavior of a mapping
-        based on whether Sneak is active.
+        Returns 1 if Sneak is active (Sneak is activated by 2-character Sneak,
+        Sneak repeat motion and 1-character enhanced f/F/t/T).
+        Returns 0 if Sneak is not active (Sneak is deactivated by most user
+        actions that do not activate Sneak).
+        Useful for changing the behavior of a mapping based on whether Sneak is
+        active.
             https://github.com/justinmk/vim-sneak/pull/93
 
         For example you might want <Tab> to go to the next match _only_ while
