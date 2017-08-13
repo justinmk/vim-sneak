@@ -408,19 +408,18 @@ sneak#wrap(op, inputlen, reverse, inclusive, label)             *sneak#wrap()*
           onoremap <silent> S :<C-U>call sneak#wrap(v:operator,   3, 1, 2, 1)<CR>
 <
 sneak#is_sneaking()                                       *sneak#is_sneaking()*
-        Returns 1 if Sneak is active (matches are highlighted).
-        Returns 0 after the user does anything (which deactivates Sneak and
-        removes the highlight). Useful for changing the behavior of a mapping
-        based on whether Sneak is active.
-            https://github.com/justinmk/vim-sneak/pull/93
+        Returns 1 if Sneak is active, else 0. Sneak deactivates when the user
+        chooses a target or moves the cursor. Useful for changing the behavior
+        of a mapping.
 
-        For example you might want <Tab> to go to the next match _only_ while
-        Sneak is active: >
+        Example: <Tab> goes to the next match _only_ while Sneak is active: >
             nmap <expr> <Tab> sneak#is_sneaking() ? '<Plug>Sneak_;' : '<Tab>'
 <
-        You can also use this to change the statusline: >
+        Example: change the statusline: >
             set statusline=%{sneak#is_sneaking()?'SNEAKING':'RELAXING'}
 <
+            https://github.com/justinmk/vim-sneak/pull/93
+
 sneak#cancel()                                                 *sneak#cancel()*
         Deactivates Sneak: removes autocmds/highlighting and causes
         |sneak#is_sneaking()| to return 0.
