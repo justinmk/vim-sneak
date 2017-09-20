@@ -100,9 +100,11 @@ func! s:after() abort
   exec 'hi! link Sneak '.s:orig_hl_sneak
   let &l:synmaxcol=s:o_synmaxcol
   " Always clear before restore, in case user has `:syntax off`. #200
-  syntax clear
+  if g:sneak#opt.clear_syntax
+    syntax clear
+    silent! let &l:syntax=s:o_syntax
+  endif
   silent! let &l:foldmethod=s:o_fdm
-  silent! let &l:syntax=s:o_syntax
   " Force Vim to reapply 'spell' (must set 'spelllang'). #110
   let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
   let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
@@ -134,16 +136,22 @@ func! s:before() abort
   endfor
 
   setlocal nospell concealcursor=ncv conceallevel=2
-  " prevent highlighting in other windows showing the same buffer
-  ownsyntax sneak_label
+
+  if g:sneak#opt.clear_syntax
+    " prevent highlighting in other windows showing the same buffer
+    ownsyntax sneak_label
+  endif
+
   " highlight the cursor location (else the cursor is not visible during getchar())
   let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
   if &l:foldmethod ==# 'syntax' " Avoid broken folds when we clear syntax below.
     setlocal foldmethod=manual
   endif
 
-  syntax clear
-  syn match Comment '.*'
+  if g:sneak#opt.clear_syntax
+    syntax clear
+    syn match Comment '.*'
+  endif
 
   " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
   setlocal synmaxcol=0
