@@ -1,15 +1,21 @@
 " NOTES:
 "   problem:  cchar cannot be more than 1 character.
 "   strategy: make fg/bg the same color, then conceal the other char.
-" 
+"
 "   problem:  keyword highlighting always takes priority over conceal.
 "   strategy: syntax clear | [do the conceal] | let &syntax=s:o_syntax
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ?0")
 
+let s:current_matches = []
+
 func! s:placematch(c, pos) abort
   let s:matchmap[a:c] = a:pos
-  exec "syntax match SneakLabel '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
+
+  let pattern = "\\%".a:pos[0]."l\\%".a:pos[1]."c."
+  let m = matchadd('Conceal', pattern, 10, -1, { 'conceal': a:c })
+
+  call add(s:current_matches, m)
 endf
 
 func! sneak#label#to(s, v) abort
@@ -87,6 +93,8 @@ endf "}}}
 func! s:after() abort
   autocmd! sneak_label_cleanup
   silent! call matchdelete(w:sneak_cursor_hl)
+  call map(s:current_matches, 'matchdelete(v:val)')
+  let s:current_matches = []
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link Sneak '.s:orig_hl_sneak
@@ -135,6 +143,8 @@ func! s:before() abort
   endif
 
   syntax clear
+  syn match Comment '.*'
+
   " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
   setlocal synmaxcol=0
 
