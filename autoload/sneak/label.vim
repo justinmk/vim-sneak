@@ -1,15 +1,25 @@
 " NOTES:
 "   problem:  cchar cannot be more than 1 character.
 "   strategy: make fg/bg the same color, then conceal the other char.
-" 
-"   problem:  keyword highlighting always takes priority over conceal.
+"
+"   problem:  [before 7.4.792] keyword highlight takes priority over conceal.
 "   strategy: syntax clear | [do the conceal] | let &syntax=s:o_syntax
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ?0")
 
+let s:clear_syntax = !has('patch-7.4.792')
+let s:matchmap = {}
+let s:match_ids = []
+
 func! s:placematch(c, pos) abort
   let s:matchmap[a:c] = a:pos
-  exec "syntax match SneakLabel '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
+  let pat = '\%'.a:pos[0].'l\%'.a:pos[1].'c.'
+  if s:clear_syntax
+    exec "syntax match SneakLabel '".pat."' conceal cchar=".a:c
+  else
+    let id = matchadd('Conceal', pat, 999, -1, { 'conceal': a:c })
+    call add(s:match_ids, id)
+  endif
 endf
 
 func! sneak#label#to(s, v) abort
@@ -86,17 +96,23 @@ endf "}}}
 
 func! s:after() abort
   autocmd! sneak_label_cleanup
-  silent! call matchdelete(w:sneak_cursor_hl)
+  try | call matchdelete(s:sneak_cursor_hl) | catch | endtry
+  call map(s:match_ids, 'matchdelete(v:val)')
+  let s:match_ids = []
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link Sneak '.s:orig_hl_sneak
-  let &l:synmaxcol=s:o_synmaxcol
-  " Always clear before restore, in case user has `:syntax off`. #200
-  syntax clear
-  silent! let &l:foldmethod=s:o_fdm
-  silent! let &l:syntax=s:o_syntax
-  " Force Vim to reapply 'spell' (must set 'spelllang'). #110
-  let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
+
+  if s:clear_syntax
+    let &l:synmaxcol=s:o_synmaxcol
+    " Always clear before restore, in case user has `:syntax off`. #200
+    syntax clear
+    silent! let &l:foldmethod=s:o_fdm
+    silent! let &l:syntax=s:o_syntax
+    " Force Vim to reapply 'spell' (must set 'spelllang'). #110
+    let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
+  endif
+
   let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
   call s:restore_conceal_in_other_windows()
 endf
@@ -125,18 +141,23 @@ func! s:before() abort
     exe 'let s:o_'.o.'=&l:'.o
   endfor
 
-  setlocal nospell concealcursor=ncv conceallevel=2
-  " prevent highlighting in other windows showing the same buffer
-  ownsyntax sneak_label
-  " highlight the cursor location (else the cursor is not visible during getchar())
-  let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
-  if &l:foldmethod ==# 'syntax' " Avoid broken folds when we clear syntax below.
-    setlocal foldmethod=manual
-  endif
+  setlocal concealcursor=ncv conceallevel=2
 
-  syntax clear
-  " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
-  setlocal synmaxcol=0
+  " highlight the cursor location (else the cursor is not visible during getchar())
+  let s:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
+
+  if s:clear_syntax
+    setlocal nospell
+    " Prevent highlighting in other windows showing the same buffer.
+    ownsyntax sneak_label
+    " Avoid broken folds when we clear syntax below.
+    if &l:foldmethod ==# 'syntax'
+      setlocal foldmethod=manual
+    endif
+    syntax clear
+    " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
+    setlocal synmaxcol=0
+  endif
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
   let s:orig_hl_sneak   = sneak#hl#links_to('Sneak')
