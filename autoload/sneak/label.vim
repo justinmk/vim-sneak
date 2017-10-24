@@ -1,15 +1,21 @@
 " NOTES:
 "   problem:  cchar cannot be more than 1 character.
 "   strategy: make fg/bg the same color, then conceal the other char.
-" 
+"
 "   problem:  keyword highlighting always takes priority over conceal.
 "   strategy: syntax clear | [do the conceal] | let &syntax=s:o_syntax
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ?0")
 
+let s:current_matches = []
+
 func! s:placematch(c, pos) abort
   let s:matchmap[a:c] = a:pos
-  exec "syntax match SneakLabel '\\%".a:pos[0]."l\\%".a:pos[1]."c.' conceal cchar=".a:c
+
+  let pattern = "\\%".a:pos[0]."l\\%".a:pos[1]."c."
+  let m = matchadd('Conceal', pattern, 10, -1, { 'conceal': a:c })
+
+  call add(s:current_matches, m)
 endf
 
 func! sneak#label#to(s, v) abort
@@ -87,14 +93,18 @@ endf "}}}
 func! s:after() abort
   autocmd! sneak_label_cleanup
   silent! call matchdelete(w:sneak_cursor_hl)
+  call map(s:current_matches, 'matchdelete(v:val)')
+  let s:current_matches = []
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
   exec 'hi! link Sneak '.s:orig_hl_sneak
   let &l:synmaxcol=s:o_synmaxcol
   " Always clear before restore, in case user has `:syntax off`. #200
-  syntax clear
+  if g:sneak#opt.clear_syntax
+    syntax clear
+    silent! let &l:syntax=s:o_syntax
+  endif
   silent! let &l:foldmethod=s:o_fdm
-  silent! let &l:syntax=s:o_syntax
   " Force Vim to reapply 'spell' (must set 'spelllang'). #110
   let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
   let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
@@ -126,15 +136,23 @@ func! s:before() abort
   endfor
 
   setlocal nospell concealcursor=ncv conceallevel=2
-  " prevent highlighting in other windows showing the same buffer
-  ownsyntax sneak_label
+
+  if g:sneak#opt.clear_syntax
+    " prevent highlighting in other windows showing the same buffer
+    ownsyntax sneak_label
+  endif
+
   " highlight the cursor location (else the cursor is not visible during getchar())
   let w:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
   if &l:foldmethod ==# 'syntax' " Avoid broken folds when we clear syntax below.
     setlocal foldmethod=manual
   endif
 
-  syntax clear
+  if g:sneak#opt.clear_syntax
+    syntax clear
+    syn match Comment '.*'
+  endif
+
   " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
   setlocal synmaxcol=0
 

@@ -353,6 +353,12 @@ g:sneak#prompt = '>'
 
         Message displayed at the Sneak input prompt.
 
+
+g:sneak#clear_syntax = '0'
+
+        Controls whether the syntax highlighting is kept or not during
+        label-mode. Setting it on will produce an easymotion-like interface.
+
 ------------------------------------------------------------------------------
 Custom Highlighting                                          *sneak-highlight*
 
