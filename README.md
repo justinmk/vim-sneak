@@ -60,7 +60,7 @@ Install
 - [vim-plug](https://github.com/junegunn/vim-plug)
   - `Plug 'justinmk/vim-sneak'`
 - [Pathogen](https://github.com/tpope/vim-pathogen)
-  - `cd ~/.vim/bundle && git clone git://github.com/justinmk/vim-sneak.git`
+  - `git clone git://github.com/justinmk/vim-sneak.git ~/.vim/bundle/vim-sneak`
 - Manual installation:
   - Copy the files to your `.vim` directory.
 
