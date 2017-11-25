@@ -269,7 +269,7 @@ func! s:getnchars(n, mode)
   for i in range(1, a:n)
     if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
     let c = sneak#util#getchar()
-    if -1 != index(["\<esc>", "\<c-c>", "\<backspace>", "\<del>"], c)
+    if -1 != index(["\<esc>", "\<c-c>", "\<c-g>", "\<backspace>",  "\<del>"], c)
       return ""
     endif
     if c == "\<CR>"
