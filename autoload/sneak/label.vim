@@ -111,10 +111,10 @@ func! s:after() abort
     silent! let &l:syntax=s:o_syntax
     " Force Vim to reapply 'spell' (must set 'spelllang'). #110
     let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
+    call s:restore_conceal_in_other_windows()
   endif
 
   let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
-  call s:restore_conceal_in_other_windows()
 endf
 
 func! s:disable_conceal_in_other_windows() abort
@@ -155,8 +155,9 @@ func! s:before() abort
       setlocal foldmethod=manual
     endif
     syntax clear
-    " this is fast since we cleared syntax, and it allows sneak to work on very long wrapped lines.
+    " This is fast because we cleared syntax.  Allows Sneak to work on very long wrapped lines.
     setlocal synmaxcol=0
+    call s:disable_conceal_in_other_windows()
   endif
 
   let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
@@ -165,8 +166,6 @@ func! s:before() abort
   hi! link Conceal SneakLabel
   "set temporary link to hide the sneak search targets
   hi! link Sneak SneakLabelMask
-
-  call s:disable_conceal_in_other_windows()
 
   augroup sneak_label_cleanup
     autocmd!
