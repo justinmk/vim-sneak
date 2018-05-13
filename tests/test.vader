@@ -1,5 +1,4 @@
 # vim -N -u NONE -c "set rtp+=~/.vim/bundle/vim-sneak,~/.vim/bundle/vader.vim,~/.vim/bundle/vim-repeat" -c "runtime! plugin/sneak.vim plugin/vader.vim plugin/repeat.vim" -c "Vader ~/.vim/bundle/vim-sneak/tests/test.vader"
-# vim -N -u NONE -c 'set rtp+=~/.vim/bundle/vim-sneak,~/.vim/bundle/vader.vim,~/.vim/bundle/vim-repeat' -c 'runtime! plugin/sneak.vim plugin/vader.vim plugin/repeat.vim' -c 'Vader ~/.vim/bundle/vim-sneak/tests/test.vader'
 #
 # BUG: highlight targets are bogus if &iminsert=1
 # BUG: sneak cannot find ёе: in this text
