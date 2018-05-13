@@ -15,7 +15,7 @@ set cpo&vim
 "     opfunc    : &operatorfunc at g@ invocation.
 "     opfunc_st : State during last 'operatorfunc' (g@) invocation.
 let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0],
-      \'inclusive':0, 'opfunc':'', 'opfunc_st':{} }
+      \'inclusive':0, 'label':'', 'opfunc':'', 'opfunc_st':{} }
 
 if exists('##OptionSet')
   augroup SneakPluginOpfunc
@@ -76,8 +76,8 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
     " Repeat motion (clever-s).
     call sneak#rpt(a:op, a:reverse)
   elseif a:op ==# 'g@' && !empty(s:st.opfunc_st) && !empty(s:st.opfunc) && s:st.opfunc ==# &operatorfunc
-    " Replay state during last 'operatorfunc'.
-    call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, 0)
+    " Replay state from the last 'operatorfunc'.
+    call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
   else
     " Prompt for input.
     call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:label)
@@ -155,10 +155,6 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
 
     " Set temporary hooks on f/F/t/T so that we know when to reset Sneak.
     call s:ft_hook()
-
-    if empty(s:st.opfunc_st)
-      let s:st.opfunc_st = filter(deepcopy(s:st), 'v:key !=# "opfunc_st"')
-    endif
   endif
 
   let nextchar = searchpos('\_.', 'n'.(s.search_options_no_s))
@@ -219,16 +215,18 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
   endif
 
-  " Operators always invoke label-mode; also for 2+ on-screen matches.
-  let target = (2 == a:label || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
-        \ ? sneak#label#to(s, is_v) : ""
+  " Operators always invoke label-mode.
+  " If a:label is a string set it as the target, without prompting.
+  let label = type(a:label) == type('') && a:label !~# '[012]' ? a:label : ''
+  let target = (2 == a:label || !empty(label) || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
+        \ ? sneak#label#to(s, is_v, label) : ""
 
   if is_op && 2 != a:inclusive && !a:reverse
     " f/t operations do not apply to the current character; nudge the cursor.
     call sneak#util#nudge(1)
   endif
 
-  if is_op || "" != target
+  if is_op || '' != target
     call sneak#hl#removehl()
   endif
 
@@ -236,6 +234,11 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
     let rpt_input = a:input . (a:inputlen > sneak#util#strlen(a:input) ? "\<cr>" : "")
     silent! call repeat#set(a:op."\<Plug>SneakRepeat".a:inputlen.a:reverse.a:inclusive.(2*!empty(target)).rpt_input.target.change, a:count)
+
+    let s:st.label = target
+    if empty(s:st.opfunc_st)
+      let s:st.opfunc_st = filter(deepcopy(s:st), 'v:key !=# "opfunc_st"')
+    endif
   endif
 endf "}}}
 
