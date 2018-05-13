@@ -81,6 +81,9 @@ VISUAL-MODE~
     s                        | Go to the [count]th next match (NOTE above)
     S                        | Go to the [count]th previous match (NOTE above)
 
+    NOTE: Z goes backwards in visual-mode, because S is taken by the
+    |surround| plugin).
+
 LABEL-MODE~
     Key Sequence             | Description
     -------------------------|----------------------------------------------
@@ -179,13 +182,6 @@ and |,| were reset by |f| or |t|. This is especially useful for re-invoking
 |sneak-label-mode| (because |;| and |,| never invoke label-mode).
 
 ------------------------------------------------------------------------------
-VISUAL-MODE
-
-`s` works in visual mode the same as normal mode, however to search backwards
-use `Z` (because `S` is taken by the |surround| plugin). `;` and `,` also
-work in visual mode as they do in normal mode.
-
-------------------------------------------------------------------------------
 OPERATIONS
 
 Use `z` for operations (or map to something else: |sneak-custom-mappings|).
@@ -193,8 +189,12 @@ For example, `dzab` deletes from the cursor to the next instance of "ab".
 `dZab` deletes backwards to the previous instance. `czab` `cZab` `yzab` and
 `yZab` also work as expected.
 
-Repeat the operation with dot: |.|
-Note: Requires repeat.vim https://github.com/tpope/vim-repeat
+Repeat the operation with dot |.| (requires repeat.vim
+https://github.com/tpope/vim-repeat).
+
+Note: |.| repeat works correctly with vim-surround (requires Vim 7.4.786), but
+if you undo followed by dot-repeat again, it waits for input.  This bug is not
+related to Sneak, it happens with builtin motions also.
 
 ------------------------------------------------------------------------------
 VERTICAL SCOPE                                          *sneak-vertical-scope*
