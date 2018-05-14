@@ -11,10 +11,20 @@ let g:loaded_sneak_plugin = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
-"persist state for repeat
-let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0], 'inclusive':0 }
+" Persist state for repeat.
+"     opfunc    : &operatorfunc at g@ invocation.
+"     opfunc_st : State during last 'operatorfunc' (g@) invocation.
+let s:st = { 'rst':1, 'input':'', 'inputlen':0, 'reverse':0, 'bounds':[0,0],
+      \'inclusive':0, 'label':'', 'opfunc':'', 'opfunc_st':{} }
 
-func! sneak#init()
+if exists('##OptionSet')
+  augroup SneakPluginOpfunc
+    autocmd!
+    autocmd OptionSet operatorfunc let s:st.opfunc = &operatorfunc | let s:st.opfunc_st = {}
+  augroup END
+endif
+
+func! sneak#init() abort
   unlockvar g:sneak#opt
   "options                                 v-- for backwards-compatibility
   let g:sneak#opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
@@ -38,15 +48,15 @@ endf
 
 call sneak#init()
 
-func! sneak#state()
+func! sneak#state() abort
   return deepcopy(s:st)
 endf
 
-func! sneak#is_sneaking()
+func! sneak#is_sneaking() abort
   return exists("#SneakPlugin#CursorMoved")
 endf
 
-func! sneak#cancel()
+func! sneak#cancel() abort
   call sneak#hl#removehl()
   augroup SneakPlugin
     autocmd!
@@ -57,20 +67,24 @@ func! sneak#cancel()
   return ''
 endf
 
-" convenience wrapper for key bindings/mappings
+" Entrypoint for `s`.
 func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
   let cnt = v:count1 "get count before doing _anything_, else it gets overwritten.
-  " don't clever-repeat the last 's' search if this is an 'f' search, etc.
   let is_similar_invocation = a:inputlen == s:st.inputlen && a:inclusive == s:st.inclusive
 
   if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
-    call sneak#rpt(a:op, a:reverse) " s goes to next match
-  else " s invokes new search
+    " Repeat motion (clever-s).
+    call sneak#rpt(a:op, a:reverse)
+  elseif a:op ==# 'g@' && !empty(s:st.opfunc_st) && !empty(s:st.opfunc) && s:st.opfunc ==# &operatorfunc
+    " Replay state from the last 'operatorfunc'.
+    call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
+  else
+    " Prompt for input.
     call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:label)
   endif
 endf
 
-"repeat *motion* (not operation)
+" Repeats the last motion.
 func! sneak#rpt(op, reverse) abort
   if s:st.rst "reset by f/F/t/T
     exec "norm! ".(sneak#util#isvisualop(a:op) ? "gv" : "").v:count1.(a:reverse ? "," : ";")
@@ -139,7 +153,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     let s:st.rst = 0 | let s:st.input = a:input | let s:st.inputlen = a:inputlen
     let s:st.reverse = a:reverse | let s:st.bounds = bounds | let s:st.inclusive = a:inclusive
 
-    "set temporary hooks on f/F/t/T so that we know when to reset Sneak.
+    " Set temporary hooks on f/F/t/T so that we know when to reset Sneak.
     call s:ft_hook()
   endif
 
@@ -201,16 +215,18 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
   endif
 
-  " Operators always invoke label-mode; also for 2+ on-screen matches.
-  let target = (2 == a:label || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
-        \ ? sneak#label#to(s, is_v) : ""
+  " Operators always invoke label-mode.
+  " If a:label is a string set it as the target, without prompting.
+  let label = type(a:label) == type('') && a:label !~# '[012]' ? a:label : ''
+  let target = (2 == a:label || !empty(label) || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
+        \ ? sneak#label#to(s, is_v, label) : ""
 
   if is_op && 2 != a:inclusive && !a:reverse
     " f/t operations do not apply to the current character; nudge the cursor.
     call sneak#util#nudge(1)
   endif
 
-  if is_op || "" != target
+  if is_op || '' != target
     call sneak#hl#removehl()
   endif
 
@@ -218,10 +234,15 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
     let rpt_input = a:input . (a:inputlen > sneak#util#strlen(a:input) ? "\<cr>" : "")
     silent! call repeat#set(a:op."\<Plug>SneakRepeat".a:inputlen.a:reverse.a:inclusive.(2*!empty(target)).rpt_input.target.change, a:count)
+
+    let s:st.label = target
+    if empty(s:st.opfunc_st)
+      let s:st.opfunc_st = filter(deepcopy(s:st), 'v:key !=# "opfunc_st"')
+    endif
   endif
 endf "}}}
 
-func! s:attach_autocmds()
+func! s:attach_autocmds() abort
   augroup SneakPlugin
     autocmd!
     autocmd InsertEnter,WinLeave,BufLeave * call sneak#cancel()
@@ -231,7 +252,7 @@ func! s:attach_autocmds()
   augroup END
 endf
 
-func! sneak#reset(key)
+func! sneak#reset(key) abort
   let c = sneak#util#getchar()
 
   let s:st.rst = 1
@@ -247,11 +268,12 @@ func! sneak#reset(key)
   return a:key.c
 endf
 
-func! s:map_reset_key(key, mode)
+func! s:map_reset_key(key, mode) abort
   exec printf("%snoremap <silent> <expr> %s sneak#reset('%s')", a:mode, a:key, a:key)
 endf
 
-func! s:ft_hook() "set up temporary mappings to 'hook' into f/F/t/T
+" Sets temporary mappings to 'hook' into f/F/t/T.
+func! s:ft_hook() abort
   for k in ['f', 't']
     for m in ['n', 'x']
       "if user mapped anything to f or t, do not map over it; unfortunately this
@@ -263,7 +285,7 @@ func! s:ft_hook() "set up temporary mappings to 'hook' into f/F/t/T
   endfor
 endf
 
-func! s:getnchars(n, mode)
+func! s:getnchars(n, mode) abort
   let s = ''
   echo g:sneak#opt.prompt
   for i in range(1, a:n)
@@ -393,7 +415,7 @@ omap <Plug>SneakNext     <Plug>Sneak_;
 omap <Plug>SneakPrevious <Plug>Sneak_,
 
 if g:sneak#opt.map_netrw && -1 != stridx(maparg("s", "n"), "Sneak")
-  func! s:map_netrw_key(key)
+  func! s:map_netrw_key(key) abort
     let expanded_map = maparg(a:key,'n')
     if !strlen(expanded_map) || expanded_map =~# '_Net\|FileBeagle'
       if strlen(expanded_map) > 0 "else, mapped to <nop>

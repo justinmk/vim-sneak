@@ -22,10 +22,10 @@ func! s:placematch(c, pos) abort
   endif
 endf
 
-func! sneak#label#to(s, v) abort
+func! sneak#label#to(s, v, label) abort
   let seq = ""
   while 1
-    let choice = s:do_label(a:s, a:v, a:s._reverse)
+    let choice = s:do_label(a:s, a:v, a:s._reverse, a:label)
     let seq .= choice
     if choice =~# "^\<S-Tab>\\|\<BS>$"
       call a:s.init(a:s._input, a:s._repeatmotion, 1)
@@ -37,7 +37,7 @@ func! sneak#label#to(s, v) abort
   endwhile
 endf
 
-func! s:do_label(s, v, reverse) abort "{{{
+func! s:do_label(s, v, reverse, label) abort "{{{
   let w = winsaveview()
   call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
@@ -68,7 +68,7 @@ func! s:do_label(s, v, reverse) abort "{{{
   endwhile
 
   call winrestview(w) | redraw
-  let choice = sneak#util#getchar()
+  let choice = empty(a:label) ? sneak#util#getchar() : a:label
   call s:after()
 
   let mappedto = maparg(choice, a:v ? 'x' : 'n')

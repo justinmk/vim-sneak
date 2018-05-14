@@ -48,8 +48,8 @@ via `z` (because `s` is taken by surround.vim).
     * Type `2.` to repeat twice.
     * Type `d;` to delete up to the next match.
     * Type `4d;` to delete up to the *fourth* next match.
-* Type `ysz))]` to surround in brackets up to `))`.
-    * Type `;` to go to the next `))`.
+* Type `yszxy]` to [surround] in brackets up to `xy`.
+    * Type `.` to repeat the surround operation.
 * Type `gUz\}` to upper-case the text from the cursor until the next instance
   of the literal text `\}`
     * Type `.` to repeat the `gUz\}` operation.
