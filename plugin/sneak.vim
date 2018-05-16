@@ -74,7 +74,7 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
 
   if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
     " Repeat motion (clever-s).
-    call sneak#rpt(a:op, a:reverse)
+    call s:rpt(a:op, a:reverse)
   elseif a:op ==# 'g@' && !empty(s:st.opfunc_st) && !empty(s:st.opfunc) && s:st.opfunc ==# &operatorfunc
     " Replay state from the last 'operatorfunc'.
     call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
@@ -85,7 +85,7 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
 endf
 
 " Repeats the last motion.
-func! sneak#rpt(op, reverse) abort
+func! s:rpt(op, reverse) abort
   if s:st.rst "reset by f/F/t/T
     exec "norm! ".(sneak#util#isvisualop(a:op) ? "gv" : "").v:count1.(a:reverse ? "," : ";")
     return
@@ -326,12 +326,12 @@ onoremap <silent> <Plug>Sneak_S :<c-u>call sneak#wrap(v:operator, 2, 1, 2, 1)<cr
 onoremap <silent> <Plug>SneakRepeat :<c-u>call sneak#wrap(v:operator, sneak#util#getc(), sneak#util#getc(), sneak#util#getc(), sneak#util#getc())<cr>
 
 " repeat motion (explicit--as opposed to implicit 'clever-s')
-nnoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt('', 0)<cr>
-nnoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt('', 1)<cr>
-xnoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt(visualmode(), 0)<cr>
-xnoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt(visualmode(), 1)<cr>
-onoremap <silent> <Plug>Sneak_; :<c-u>call sneak#rpt(v:operator, 0)<cr>
-onoremap <silent> <Plug>Sneak_, :<c-u>call sneak#rpt(v:operator, 1)<cr>
+nnoremap <silent> <Plug>Sneak_; :<c-u>call <SID>rpt('', 0)<cr>
+nnoremap <silent> <Plug>Sneak_, :<c-u>call <SID>rpt('', 1)<cr>
+xnoremap <silent> <Plug>Sneak_; :<c-u>call <SID>rpt(visualmode(), 0)<cr>
+xnoremap <silent> <Plug>Sneak_, :<c-u>call <SID>rpt(visualmode(), 1)<cr>
+onoremap <silent> <Plug>Sneak_; :<c-u>call <SID>rpt(v:operator, 0)<cr>
+onoremap <silent> <Plug>Sneak_, :<c-u>call <SID>rpt(v:operator, 1)<cr>
 
 " 1-char 'enhanced f' sneak
 nnoremap <silent> <Plug>Sneak_f :<c-u>call sneak#wrap('', 1, 0, 1, 0)<cr>
