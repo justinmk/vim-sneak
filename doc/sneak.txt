@@ -474,9 +474,6 @@ CONTRIBUTING                                              *sneak-contributing*
 Bug reports, feature requests, and patches are welcome:
     https://github.com/justinmk/vim-sneak
 
-In your bug report, it is helpful to include the output of this command: >
-    :call sneak#debug#report()
-
 To narrow down the issue, run Vim with a minimal configuration: >
     vim -u NORC -N +"let g:sneak#label=1" +":set runtimepath+=~/.vim/bundle/vim-sneak/" +":runtime plugin/sneak.vim"
 
