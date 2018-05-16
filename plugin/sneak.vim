@@ -217,7 +217,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
 
   " Operators always invoke label-mode.
   " If a:label is a string set it as the target, without prompting.
-  let label = type(a:label) == type('') && a:label !~# '[012]' ? a:label : ''
+  let label = a:label !~# '[012]' ? a:label : ''
   let target = (2 == a:label || !empty(label) || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
         \ ? sneak#label#to(s, is_v, label) : ""
 
@@ -232,8 +232,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
 
   if is_op && a:op !=# 'y'
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
-    let rpt_input = a:input . (a:inputlen > sneak#util#strlen(a:input) ? "\<cr>" : "")
-    silent! call repeat#set(a:op."\<Plug>SneakRepeat".a:inputlen.a:reverse.a:inclusive.(2*!empty(target)).rpt_input.target.change, a:count)
+    silent! call repeat#set(a:op."\<Plug>SneakRepeat".sneak#util#strlen(a:input).a:reverse.a:inclusive.(2*!empty(target)).a:input.target.change, a:count)
 
     let s:st.label = target
     if empty(s:st.opfunc_st)
