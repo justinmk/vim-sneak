@@ -218,7 +218,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
   " Operators always invoke label-mode.
   " If a:label is a string set it as the target, without prompting.
   let label = a:label !~# '[012]' ? a:label : ''
-  let target = (2 == a:label || !empty(label) || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(2)))) && !max(bounds)
+  let target = (2 == a:label || !empty(label) || (a:label && g:sneak#opt.label && (is_op || s.hasmatches(1)))) && !max(bounds)
         \ ? sneak#label#to(s, is_v, label) : ""
 
   if is_op && 2 != a:inclusive && !a:reverse

@@ -134,7 +134,7 @@ Available <Plug> keys: >
     omap ? <Plug>Sneak_t
     omap ? <Plug>Sneak_T
 
-    " force label-mode
+    " label-mode
     nmap ? <Plug>SneakLabel_s
     nmap ? <Plug>SneakLabel_S
 <
@@ -219,12 +219,6 @@ vim-easymotion).
 To enable label-mode:                                         *g:sneak#label*
 >
     let g:sneak#label = 1
-
-Sneak enters label-mode if there are ≥2 visible (on-screen) matches. To force
-label-mode always (instead of passively letting Sneak decide), set a mapping
-to <Plug>SneakLabel_s. Example: >
-    nmap s <Plug>SneakLabel_s
-    nmap S <Plug>SneakLabel_S
 <
 <Tab> skips to the next set of matches (<BS> or <S-Tab> go the other way).
 These actions are preserved when repeating!
