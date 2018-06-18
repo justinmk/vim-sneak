@@ -3,7 +3,7 @@
 # BUG: highlight targets are bogus if &iminsert=1
 # BUG: sneak cannot find ёе: in this text
 # BUG: sneak cannot find е:а in this text
-# 
+#
 # ёе:а
 # ёе:а
 # ёе:а
@@ -1119,3 +1119,87 @@ Execute (cleanup):
   nmap S <Plug>Sneak_S
   call sneak#init()
 
+###########################################################
+# Fold Handling
+
+Given:
+  aaaaaaaaaa
+  aaaaabaaba
+  ababaaaaaa
+  aaaaaabaaa
+
+Do (s and ; in folds):
+  jzfjggsba;x
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaa
+  ababaaaaaa
+  aaaaaabaaa
+
+Do (s and \ in folds):
+  jzfjGsba\\x
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaba
+  aabaaaaaa
+  aaaaaabaaa
+
+Do (S and ; in folds):
+  jzfjG$Sba;x
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaba
+  abaaaaaaa
+  aaaaaabaaa
+
+Do (S and \ in folds):
+  jzfjggSba\\x
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaa
+  ababaaaaaa
+  aaaaaabaaa
+
+Execute (set foldopen-=search):
+  set foldopen-=search
+
+Do (s and ; in folds):
+  jzfjggsba;x
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaba
+  ababaaaaaa
+  aaaaaaaaa
+
+Do (s and \ in folds):
+  jzfjGsba\\x
+
+Expect:
+  aaaaaaaaaa
+  aaaaaabaaa
+
+Do (S and ; in folds):
+  jzfjG$Sba;zvx
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaba
+  abaaaaaaa
+  aaaaaabaaa
+
+Do (S and \ in folds):
+  jzfjggSba\\x
+
+Expect:
+  aaaaaaaaaa
+  aaaaabaaba
+  ababaaaaaa
+  aaaaaaaaa
+
+Execute (cleanup):
+  set foldopen+=search

@@ -163,9 +163,19 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     let nudge = sneak#util#nudge(!a:reverse) "special case for t
   endif
 
+  " detect whether folds should be opened during search according to &foldopen
+  let l:search_foldopen = !empty(matchstr(&foldopen,"search"))
+
   for i in range(1, max([1, skip])) "jump to the [count]th match
+    " if in a closed fold, jump to end of it for 'set foldopen-=search'
+    let l:winview = winsaveview()
+    if !l:search_foldopen && foldclosed('.') > -1
+      call cursor(a:reverse ? foldclosed('.') : foldclosedend('.'),
+            \ a:reverse ? 1 : col('$'))
+    endif
     let matchpos = s.dosearch()
-    if 0 == max(matchpos)
+    if 0 == max(matchpos)           " if no search results found
+      call winrestview(l:winview)   " revert jump to end of fold and break
       break
     else
       let nudge = !a:inclusive
@@ -182,6 +192,11 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
     return
   endif
   "search succeeded
+
+  " open folds when jumping to matches if necessary
+  if l:search_foldopen
+    norm! zv
+  endif
 
   call sneak#hl#removehl()
 
