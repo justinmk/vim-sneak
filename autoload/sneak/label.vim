@@ -160,8 +160,8 @@ func! s:before() abort
     call s:disable_conceal_in_other_windows()
   endif
 
-  let s:orig_hl_conceal = sneak#hl#links_to('Conceal')
-  let s:orig_hl_sneak   = sneak#hl#links_to('Sneak')
+  let s:orig_hl_conceal = sneak#util#links_to('Conceal')
+  let s:orig_hl_sneak   = sneak#util#links_to('Sneak')
   "set temporary link to our custom 'conceal' highlight
   hi! link Conceal SneakLabel
   "set temporary link to hide the sneak search targets

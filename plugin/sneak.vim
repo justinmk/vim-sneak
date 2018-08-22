@@ -57,7 +57,7 @@ func! sneak#is_sneaking() abort
 endf
 
 func! sneak#cancel() abort
-  call sneak#hl#removehl()
+  call sneak#util#removehl()
   augroup SneakPlugin
     autocmd!
   augroup END
@@ -183,7 +183,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
   endif
   "search succeeded
 
-  call sneak#hl#removehl()
+  call sneak#util#removehl()
 
   if (!is_op || a:op ==# 'y') "position _after_ search
     let curlin = string(line('.'))
@@ -227,7 +227,7 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
   endif
 
   if is_op || '' != target
-    call sneak#hl#removehl()
+    call sneak#util#removehl()
   endif
 
   if is_op && a:op !=# 'y'

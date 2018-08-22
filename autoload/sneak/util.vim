@@ -90,7 +90,7 @@ func! sneak#util#skipfold(current_line, reverse) abort
   return 0
 endf
 
-"Moves the cursor 1 char to the left or right; wraps at EOL, but _not_ EOF.
+" Moves the cursor 1 char to the left or right; wraps at EOL, but _not_ EOF.
 func! sneak#util#nudge(right) abort
   let nextchar = searchpos('\_.', 'nW'.(a:right ? '' : 'b'))
   if [0, 0] == nextchar
@@ -100,3 +100,48 @@ func! sneak#util#nudge(right) abort
   return 1
 endf
 
+" Removes highlighting.
+func! sneak#util#removehl() abort
+  silent! call matchdelete(w:sneak_hl_id)
+  silent! call matchdelete(w:sneak_sc_hl)
+endf
+
+" Gets the 'links to' value of the specified highlight group, if any.
+func! sneak#util#links_to(hlgroup) abort
+  redir => hl | exec 'silent highlight '.a:hlgroup | redir END
+  let s = substitute(matchstr(hl, 'links to \zs.*'), '\s', '', 'g')
+  return empty(s) ? 'NONE' : s
+endf
+
+func! s:default_color(hlgroup, what, mode) abort
+  let c = synIDattr(synIDtrans(hlID(a:hlgroup)), a:what, a:mode)
+  return !empty(c) && c != -1 ? c : (a:what ==# 'bg' ? 'magenta' : 'white')
+endfunc
+
+func! s:init_hl() abort
+  exec "highlight default Sneak guifg=white guibg=magenta ctermfg=white ctermbg=".(&t_Co < 256 ? "magenta" : "201")
+
+  if &background ==# 'dark'
+    highlight default SneakScope guifg=black guibg=white ctermfg=0     ctermbg=255
+  else
+    highlight default SneakScope guifg=white guibg=black ctermfg=255   ctermbg=0
+  endif
+
+  let guibg   = s:default_color('Sneak', 'bg', 'gui')
+  let guifg   = s:default_color('Sneak', 'fg', 'gui')
+  let ctermbg = s:default_color('Sneak', 'bg', 'cterm')
+  let ctermfg = s:default_color('Sneak', 'fg', 'cterm')
+  exec 'highlight default SneakLabel gui=bold cterm=bold guifg='.guifg.' guibg='.guibg.' ctermfg='.ctermfg.' ctermbg='.ctermbg
+
+  let guibg   = s:default_color('SneakLabel', 'bg', 'gui')
+  let ctermbg = s:default_color('SneakLabel', 'bg', 'cterm')
+  " fg same as bg
+  exec 'highlight default SneakLabelMask guifg='.guibg.' guibg='.guibg.' ctermfg='.ctermbg.' ctermbg='.ctermbg
+endf
+
+augroup sneak_colorscheme  " Re-init on :colorscheme change at runtime. #108
+  autocmd!
+  autocmd ColorScheme * call <sid>init_hl()
+augroup END
+
+call s:init_hl()

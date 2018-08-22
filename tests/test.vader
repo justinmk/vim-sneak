@@ -35,7 +35,6 @@ Execute (Clean up test environment):
 ###########################################################
 Execute (autoloaded functions should not exist):
   Assert !exists("*sneak#label#to")
-  Assert !exists("*sneak#hl#removehl")
   Assert !exists("*sneak#search#new")
   Assert !exists("*sneak#util#strlen")
 
@@ -59,22 +58,11 @@ Execute ('label' functions should not exist after vanilla-sneak):
 
 Execute (hl#links_to() returns linked-to highlight group):
   hi! link Conceal SneakConceal
-  Assert 'SneakConceal' ==# sneak#hl#links_to('Conceal')
+  Assert 'SneakConceal' ==# sneak#util#links_to('Conceal')
 
 Execute (hl#links_to() returns NONE if not linked):
   hi! link Conceal NONE
-  Assert "NONE" ==# sneak#hl#links_to('Conceal')
-
-Execute (hl#get() handles non-existent hl group):
-  Assert '' == sneak#hl#get('Derp')
-
-Execute (hl#get() returns text definition of highlight group):
-  hi Cursor guifg=white guibg=#0a9dff ctermfg=16 ctermbg=253
-  Assert match(sneak#hl#get('Cursor'), '\Vctermbg=253')
-
-Execute (hl#get() returns empty if highlight group is 'cleared'):
-  hi clear Cursor
-  Assert "" == sneak#hl#get('Cursor')
+  Assert "NONE" ==# sneak#util#links_to('Conceal')
 
 Execute (sneak#is_sneaking() returns 1 when activated):
   norm sab
@@ -112,7 +100,6 @@ Execute (s.hasmatches()):
 
 Execute (autoloaded functions should exist):
   Assert exists("*sneak#label#to")
-  Assert exists("*sneak#hl#removehl")
   Assert exists("*sneak#search#new")
   Assert exists("*sneak#util#strlen")
 
