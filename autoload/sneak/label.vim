@@ -143,8 +143,8 @@ func! s:before() abort
 
   setlocal concealcursor=ncv conceallevel=2
 
-  " highlight the cursor location (else the cursor is not visible during getchar())
-  let s:sneak_cursor_hl = matchadd("Cursor", '\%#', 11, -1)
+  " Highlight the cursor location (because cursor is hidden during getchar()).
+  let s:sneak_cursor_hl = matchadd("SneakScope", '\%#', 11, -1)
 
   if s:clear_syntax
     setlocal nospell

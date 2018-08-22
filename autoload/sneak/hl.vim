@@ -33,8 +33,6 @@ func! s:init() abort
     highlight default SneakScope guifg=white guibg=black ctermfg=255   ctermbg=0
   endif
 
-  highlight default link Cursor SneakScope
-
   let guibg   = s:default_color('Sneak', 'bg', 'gui')
   let guifg   = s:default_color('Sneak', 'fg', 'gui')
   let ctermbg = s:default_color('Sneak', 'bg', 'cterm')

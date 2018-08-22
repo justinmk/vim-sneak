@@ -355,6 +355,7 @@ Sneak uses these highlight groups:
     SneakScope
         Highlights the "scope" for |sneak-vertical-scope|.
         Default color is white (or black if 'background' is "light").
+        Also used to show the cursor placement during |sneak-label-mode|.
 
     SneakLabel
         Highlights |sneak-label-mode|.
