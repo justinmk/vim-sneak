@@ -464,6 +464,21 @@ sneak#state()                                                   *sneak#state()*
               \ : '<Plug>Sneak_s'
 <
 ==============================================================================
+EVENTS                                                    *sneak-events*
+
+The |User| *SneakEnter* event is triggered when Sneak is invoked (including
+dot-repeat invocations, but not motion-repeat).
+
+Example: >
+    autocmd User SneakEnter set nocursorcolumn nocursorline
+
+The |User| *SneakLeave* event is triggered when Sneak is finished (including
+dot-repeat invocations, but not motion-repeat).
+
+Example: >
+    autocmd User SneakLeave set cursorcolumn cursorline
+
+==============================================================================
 CONTRIBUTING                                              *sneak-contributing*
 
 Bug reports, feature requests, and patches are welcome:

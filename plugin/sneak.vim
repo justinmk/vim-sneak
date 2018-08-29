@@ -79,8 +79,15 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
     " Replay state from the last 'operatorfunc'.
     call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
   else
+    if exists('#User#SneakEnter')
+      doautocmd <nomodeline> User SneakEnter
+      redraw
+    endif
     " Prompt for input.
     call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:label)
+    if exists('#User#SneakLeave')
+      doautocmd <nomodeline> User SneakLeave
+    endif
   endif
 endf
 
