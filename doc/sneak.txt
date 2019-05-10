@@ -377,10 +377,22 @@ FUNCTIONS                                                    *sneak-functions*
 These functions are provided if you want more control.
 
 sneak#wrap(op, inputlen, reverse, inclusive, label)             *sneak#wrap()*
-        Sneaks with exactly {inputlen} characters. E.g. if {inputlen} is 2 the
-        match is performed when the second character is pressed, without
-        waiting for <Enter>.
-        {op} may be blank "" or any operation (even custom operations).
+        Sneaks with exactly {inputlen} characters. For example with {inputlen}
+        of 2 the search is performed when the second character is typed,
+        without waiting for <Enter>.
+
+        Parameters:
+            {op}:           operator name: empty string "" for normal-mode,
+                            otherwise |v:operator|, |visualmode()|, or custom.
+            {inputlen}:     wait for this many input keys
+            {reverse}:      0: forward motion
+                            1: backward motion
+            {inclusive}:    0: |t|-like motion
+                            1: |f|-like motion
+                            2: |exclusive| motion like |/|
+            {label}:        0: never invoke |sneak-label-mode|
+                            1: label-mode for >=2 matches
+                            2: label-mode always
 
         Example: Configure "f" to trigger label-mode: >
           nnoremap <silent> f :<C-U>call sneak#wrap('',           1, 0, 1, 1)<CR>
@@ -439,8 +451,8 @@ sneak#state()                                                   *sneak#state()*
 
         Values set at invocation (_not_ for repeat):
             KEY             VALUE~
-            bounds          [left, right] integer pair representing the current
-                            |sneak-vertical-scope| or [0, 0] if not scoped
+            bounds          [left,right] integer pair representing the current
+                            |sneak-vertical-scope| or [0,0] if not scoped
             inclusive       0: |t|-like motion
                             1: |f|-like motion
                             2: |exclusive| motion like |/|
