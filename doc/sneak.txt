@@ -360,16 +360,14 @@ Sneak uses these highlight groups:
     SneakLabel
         Highlights |sneak-label-mode|.
 
-To customize Sneak colors, handle the |ColorScheme| event: >
-    autocmd ColorScheme * hi Sneak guifg=black guibg=red ctermfg=black ctermbg=red
-    autocmd ColorScheme * hi SneakScope guifg=red guibg=yellow ctermfg=red ctermbg=yellow
+To customize colors: >
+    highlight Sneak guifg=black guibg=red ctermfg=black ctermbg=red
+    highlight SneakScope guifg=red guibg=yellow ctermfg=red ctermbg=yellow
 
-To disable Sneak highlighting, link it to the "Normal" highlight group: >
-    autocmd ColorScheme * hi! link Sneak Normal
-
-To disable Sneak highlighting but NOT |sneak-label-mode| highlighting: >
-    autocmd ColorScheme * hi! link Sneak Normal
-    autocmd ColorScheme * hi SneakLabel guifg=white guibg=magenta ctermfg=white ctermbg=magenta
+To disable highlighting: >
+    highlight link Sneak Normal
+    " Needed if a plugin sets the colorscheme dynamically:
+    autocmd User SneakLeave highlight clear Sneak
 
 ------------------------------------------------------------------------------
 FUNCTIONS                                                    *sneak-functions*
