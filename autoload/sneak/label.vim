@@ -10,6 +10,7 @@ let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ
 let s:clear_syntax = !has('patch-7.4.792')
 let s:matchmap = {}
 let s:match_ids = []
+let s:orig_conceal_matches = []
 
 func! s:placematch(c, pos) abort
   let s:matchmap[a:c] = a:pos
@@ -20,6 +21,25 @@ func! s:placematch(c, pos) abort
     let id = matchadd('Conceal', pat, 999, -1, { 'conceal': a:c })
     call add(s:match_ids, id)
   endif
+endf
+
+func! s:save_conceal_matches() abort
+  for m in getmatches()
+    if m.group ==# 'Conceal'
+      call add(s:orig_conceal_matches, m)
+      silent! call matchdelete(m.id)
+    endif
+  endfor
+endf
+
+func! s:restore_conceal_matches() abort
+  for m in s:orig_conceal_matches
+    let d = {}
+    if has_key(m, 'conceal') | let d.conceal = m.conceal | endif
+    if has_key(m, 'window') | let d.window = m.window | endif
+    silent! call matchadd(m.group, m.pattern, m.priority, m.id, d)
+  endfor
+  let s:orig_conceal_matches = []
 endf
 
 func! sneak#label#to(s, v, label) abort
@@ -101,6 +121,7 @@ func! s:after() abort
   let s:match_ids = []
   "remove temporary highlight links
   exec 'hi! link Conceal '.s:orig_hl_conceal
+  call s:restore_conceal_matches()
   exec 'hi! link Sneak '.s:orig_hl_sneak
 
   if s:clear_syntax
@@ -161,6 +182,7 @@ func! s:before() abort
   endif
 
   let s:orig_hl_conceal = sneak#util#links_to('Conceal')
+  call s:save_conceal_matches()
   let s:orig_hl_sneak   = sneak#util#links_to('Sneak')
   "set temporary link to our custom 'conceal' highlight
   hi! link Conceal SneakLabel
