@@ -148,9 +148,10 @@ NORMAL-MODE
 (previous) match. Additional matches are highlighted until the cursor is
 moved. Works across multiple lines.
 
-If a |language-mapping| is activated, Sneak waits for keymapped sequences as
-needed and searches for the keymapped result as expected. (Requires Vim 7.3+)
-'keymap' 'iminsert' |mbyte-keymap|
+If a |language-mapping| ('keymap') is active Sneak waits for keymapped
+sequences as needed and searches for the keymapped result as expected. You
+probably want to set |g:sneak#target_labels| to labels that make sense for
+your preferred 'keymap'.
 
 [count]s enters |sneak-vertical-scope| mode.
 
@@ -263,66 +264,65 @@ g:sneak#t_reset = 1
 
     Note: Defaults to 0 if you mapped f (or t) to any |sneak-mappings|.
 
-    0 : Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
-        define different maps for <Plug>Sneak_; or <Plug>Sneak_, and still
-        use ; and , for |f| and |t| as usual.
+    0: Pressing |f| (or |t|) will NOT clear the last Sneak search. So you could
+       define different maps for <Plug>Sneak_; or <Plug>Sneak_, and still
+       use ; and , for |f| and |t| as usual.
 
-    1 : Pressing |f| (or |t|) causes Sneak to "reset" so that |;| and |,| will apply
-        to the last f (or t) motion instead of the last s or S. This makes it
-        possible to use ; and , for all three motions (f, t, and s).
+    1: Pressing |f| (or |t|) causes Sneak to "reset" so that |;| and |,| will apply
+       to the last f (or t) motion instead of the last s or S. This makes it
+       possible to use ; and , for all three motions (f, t, and s).
 
-        Note: if f (or t) was already mapped by you or a plugin, Sneak will
-        not override the existing mapping unless you explicitly set f_reset
-        (or t_reset). This means Sneak will not be able to reset ; or , when
-        you invoke f or t. See the README.md FAQ regarding "f-enhancement"
-        plugins.
+       Note: if f (or t) was already mapped by you or a plugin, Sneak will
+       not override the existing mapping unless you explicitly set f_reset
+       (or t_reset). This means Sneak will not be able to reset ; or , when
+       you invoke f or t. See the README.md FAQ regarding "f-enhancement"
+       plugins.
 
 g:sneak#s_next = 0
 
-    0 : Disable |sneak-clever-s|.
+    0: Disable |sneak-clever-s|.
 
-    1 : Enable |sneak-clever-s|. It works like this: immediately after
-        invoking Sneak, press "s" _again_ to go to the next match, or "S" for
-        the previous match. This behavior persists until you move the cursor.
-        Note: You can still use |;| and |,| as usual.
+    1: Enable |sneak-clever-s|. It works like this: immediately after
+       invoking Sneak, press "s" _again_ to go to the next match, or "S" for
+       the previous match. This behavior persists until you move the cursor.
+       Note: You can still use |;| and |,| as usual.
 
 g:sneak#absolute_dir = 0
 
-    0 : Relative direction. |;| goes to the next match in the direction of the
-        initial s/S invocation and |,| goes in the opposite direction.
+    0: Relative direction. |;| goes to the next match in the direction of the
+       initial s/S invocation and |,| goes in the opposite direction.
 
-    1 : Absolute direction. Repeat via |;| or |,| always goes forwards or
-        backwards respectively.
-        Note: With |sneak-clever-s|, s and S behave the same as |;| and |,|.
+    1: Absolute direction. Repeat via |;| or |,| always goes forwards or
+       backwards respectively.
+       Note: With |sneak-clever-s|, s and S behave the same as |;| and |,|.
 
 g:sneak#use_ic_scs = 0
 
-    0 : Always case-sensitive
+    0: Always case-sensitive
 
-    1 : Case sensitivity is determined by 'ignorecase' and 'smartcase'.
+    1: Case sensitivity is determined by 'ignorecase' and 'smartcase'.
 
 g:sneak#map_netrw = 1
 
-    0 : Don't do any special handling of "file manager" buffers (such as
-        |netrw| or filebeagle).
+    0: Don't do any special handling of "file manager" buffers (such as
+       |netrw| or filebeagle).
 
-    1 : Set up Sneak mappings (s and S) in "file manager" buffers (|:Ex|,
-        |:Vex|, filebeagle) and replace the default buffer-local s and
-        S mappings with <leader>s and <leader>S.
+    1: Set up Sneak mappings (s and S) in "file manager" buffers (|:Ex|,
+       |:Vex|, filebeagle) and replace the default buffer-local s and
+       S mappings with <leader>s and <leader>S.
 
 g:sneak#label = 0
 
-    0 : Disable |sneak-label-mode|.
+    0: Disable |sneak-label-mode|.
 
-    1 : Enable |sneak-label-mode| if the Vim |+conceal| feature is available.
+    1: Enable |sneak-label-mode| if the Vim |+conceal| feature is available.
 
-                                                           *g:sneak#label_esc*
-g:sneak#label_esc = "\<Space>"
+g:sneak#label_esc = "\<Space>"                             *g:sneak#label_esc*
 
     Exit |sneak-label-mode| as if <Esc> were pressed.
         https://github.com/justinmk/vim-sneak/issues/122
 
-g:sneak#target_labels = ";sftunq/SFGHLTUNRMQZ?0"
+g:sneak#target_labels = ";sftunq/SFGHLTUNRMQZ?0"       *g:sneak#target_labels*
 
     List of characters used to label the target locations. |sneak-label-mode|
 

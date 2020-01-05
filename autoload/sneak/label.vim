@@ -12,6 +12,16 @@ let s:matchmap = {}
 let s:match_ids = []
 let s:orig_conceal_matches = []
 
+if exists('*strcharpart')
+  func! s:strchar(s, i) abort
+    return strcharpart(a:s, a:i, 1)
+  endf
+else
+  func! s:strchar(s, i) abort
+    return matchstr(a:s, '.\{'.a:i.'\}\zs.')
+  endf
+endif
+
 func! s:placematch(c, pos) abort
   let s:matchmap[a:c] = a:pos
   let pat = '\%'.a:pos[0].'l\%'.a:pos[1].'c.'
@@ -76,8 +86,7 @@ func! s:do_label(s, v, reverse, label) abort "{{{
     endif
 
     if i < s:maxmarks
-      "TODO: multibyte-aware substring: matchstr('asdfäöü', '.\{4\}\zs.') https://github.com/Lokaltog/vim-easymotion/issues/16#issuecomment-34595066
-      let c = strpart(g:sneak#target_labels, i, 1)
+      let c = s:strchar(g:sneak#target_labels, i)
       call s:placematch(c, p)
     else "we have exhausted the target labels; grab the first non-labeled match.
       let overflow = p
@@ -107,7 +116,7 @@ func! s:do_label(s, v, reverse, label) abort "{{{
     call feedkeys(choice) "exit label-mode and fall through to Vim.
     return ""
   else "valid target was selected
-    let p = mappedtoNext ? s:matchmap[strpart(g:sneak#target_labels, 0, 1)] : s:matchmap[choice]
+    let p = mappedtoNext ? s:matchmap[s:strchar(g:sneak#target_labels, 0)] : s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
 
@@ -202,23 +211,24 @@ func! s:is_special_key(key) abort
     \ || (g:sneak#opt.s_next && maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
 endf
 
-"we must do this because:
-"  - we don't know which keys the user assigned to Sneak_;/Sneak_,
-"  - we need to reserve special keys like <Esc> and <Tab>
+" We must do this because:
+"  - Don't know which keys the user assigned to Sneak_;/Sneak_,
+"  - Must reserve special keys like <Esc> and <Tab>
 func! sneak#label#sanitize_target_labels() abort
-  let nrkeys = sneak#util#strlen(g:sneak#target_labels)
+  let nrbytes = len(g:sneak#target_labels)
   let i = 0
-  while i < nrkeys
+  while i < nrbytes
+    " Intentionally using byte-index for use with substitute().
     let k = strpart(g:sneak#target_labels, i, 1)
     if s:is_special_key(k) "remove the char
       let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
-      "move ; (or s if 'clever-s' is enabled) to the front.
+      " Move ; (or s if 'clever-s' is enabled) to the front.
       if !g:sneak#opt.absolute_dir
             \ && ((!g:sneak#opt.s_next && maparg(k, 'n') =~# '<Plug>Sneak\(_;\|Next\)')
             \     || (maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)'))
         let g:sneak#target_labels = k . g:sneak#target_labels
       else
-        let nrkeys -= 1
+        let nrbytes -= 1
         continue
       endif
     endif

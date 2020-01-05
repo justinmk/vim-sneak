@@ -899,9 +899,9 @@ Expect:
   foo æfïïooæ ïoòôõïo ïïofoo fïxïooïo
 
 ###########################################################
-# test language keymap
+# 'keymap'
 
-Execute (activate language keymap):
+Execute (SETUP):
   set keymap=bulgarian-phonetic
 
 Given:
@@ -918,17 +918,37 @@ Expect:
   абцдё еёееёП ЯВЕРПО
   абцдёё еёееёП ЯВЕРПО
 
-Do (repeat search for multi-keymap):
+Do:
   se::e::;x
-Expect:
+Expect (repeat search for multi-keymap):
   abcdef abcdef abcdef
   абцдеф АБЦДЕФ абцдеф
   абцдёё еёееёП ЯВЕРПО
   абцдё еёееёП ЯВЕРПО
 
-Execute (deactivate language keymap):
+Execute (SETUP):
+  let g:sneak#target_labels = 'адсфгхйкл;'
+  let g:sneak#label = 1
+  call sneak#init()
+  call sneak#label#sanitize_target_labels()
+  Assert ';адсфгхйкл' ==# g:sneak#target_labels
+Given:
+  яверуипоо пасдфкййл;
+  яверуипоо пасдфкййл;
+  яверуипоо пасдфкййл;
+  яверуипоо пасдфкййл;
+  яверуипоо пасдфкййл;
+Do:
+  dzсдд
+Expect (keymap + label-mode + multibyte labels):
+  сдфкййл;
+  яверуипоо пасдфкййл;
+
+Execute (TEARDOWN):
   set iminsert=0
   set keymap=
+  let g:sneak#label = 0
+  call sneak#init()
 
 ###########################################################
 # Sneak_f and Sneak_t
@@ -1023,16 +1043,16 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (FIXME inclusive f-delete forward):
+Do:
   dvfe
-Expect:
+Expect (FIXME inclusive f-delete forward):
   ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do (FIXME inclusive t-delete forward):
+Do:
   dvte
-Expect:
+Expect (FIXME inclusive t-delete forward):
   def ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
@@ -1090,7 +1110,7 @@ Given:
   abcdef abcdef abcdef
 
 # issue #35
-Do (sneak 'f', then Vim default 't', then sneak 'f'):
+Do (sneak f, then Vim default t, then sneak f):
   fderxtcrx
   :\<C-U>doautocmd CursorMoved\<CR>
   :\<C-U>doautocmd CursorMoved\<CR>
