@@ -61,7 +61,7 @@ NORMAL-MODE~
     [count]S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
                              | occurrence of {char}{char}
-    {operator}Z{char}{char}  | Perform {operator} from the cursor to the 
+    {operator}Z{char}{char}  | Perform {operator} from the cursor to the
                              | previous occurrence of {char}{char}
 
     NOTE: s and S go to the next/previous match immediately after invoking
