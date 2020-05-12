@@ -69,7 +69,7 @@ endf
 
 " Entrypoint for `s`.
 func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
-  let cnt = v:count1 "get count before doing _anything_, else it gets overwritten.
+  let [cnt, reg] = [v:count1, v:register] "get count and register before doing _anything_, else they get overwritten.
   let is_similar_invocation = a:inputlen == s:st.inputlen && a:inclusive == s:st.inclusive
 
   if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
@@ -77,14 +77,14 @@ func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
     call s:rpt(a:op, a:reverse)
   elseif a:op ==# 'g@' && !empty(s:st.opfunc_st) && !empty(s:st.opfunc) && s:st.opfunc ==# &operatorfunc
     " Replay state from the last 'operatorfunc'.
-    call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
+    call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, reg, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
   else
     if exists('#User#SneakEnter')
       doautocmd <nomodeline> User SneakEnter
       redraw
     endif
     " Prompt for input.
-    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, 0, a:reverse, a:inclusive, a:label)
+    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, reg, 0, a:reverse, a:inclusive, a:label)
     if exists('#User#SneakLeave')
       doautocmd <nomodeline> User SneakLeave
     endif
@@ -99,13 +99,13 @@ func! s:rpt(op, reverse) abort
   endif
 
   let l:relative_reverse = (a:reverse && !s:st.reverse) || (!a:reverse && s:st.reverse)
-  call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, 1,
+  call sneak#to(a:op, s:st.input, s:st.inputlen, v:count1, v:register, 1,
         \ (g:sneak#opt.absolute_dir ? a:reverse : l:relative_reverse), s:st.inclusive, 0)
 endf
 
 " input:      may be shorter than inputlen if the user pressed <enter> at the prompt.
 " inclusive:  0: t-like, 1: f-like, 2: /-like
-func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, label) abort "{{{
+func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, inclusive, label) abort "{{{
   if empty(a:input) "user canceled
     if a:op ==# 'c'  " user <esc> during change-operation should return to previous mode.
       call feedkeys((col('.') > 1 && col('.') < col('$') ? "\<RIGHT>" : '') . "\<C-\>\<C-G>", 'n')
@@ -239,7 +239,9 @@ func! sneak#to(op, input, inputlen, count, repeatmotion, reverse, inclusive, lab
 
   if is_op && a:op !=# 'y'
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
-    silent! call repeat#set(a:op."\<Plug>SneakRepeat".sneak#util#strlen(a:input).a:reverse.a:inclusive.(2*!empty(target)).a:input.target.change, a:count)
+    let seq = a:op."\<Plug>SneakRepeat".sneak#util#strlen(a:input).a:reverse.a:inclusive.(2*!empty(target)).a:input.target.change
+    silent! call repeat#setreg(seq, a:register)
+    silent! call repeat#set(seq, a:count)
 
     let s:st.label = target
     if empty(s:st.opfunc_st)
