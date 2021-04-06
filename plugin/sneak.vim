@@ -123,7 +123,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     norm! gv
   endif
 
-  " [count] means 'skip this many' _only_ for operators/repeat-motion/2-char-search
+  " [count] means 'skip to this match' _only_ for operators/repeat-motion/1-char-search
   "   sanity check: max out at 999, to avoid searchpos() OOM.
   let skip = (is_op || a:repeatmotion || a:inputlen < 2) ? min([999, a:count]) : 0
 
@@ -132,7 +132,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   let l:scope_pattern = '' " pattern used to highlight the vertical 'scope'
   let l:match_bounds  = ''
 
-  "scope to a column of width 2*(v:count1) _except_ for operators/repeat-motion/1-char-search
+  "scope to a column of width 2*(v:count1)+1 _except_ for operators/repeat-motion/1-char-search
   if ((!skip && a:count > 1) || max(bounds)) && !is_op
     if !max(bounds) "derive bounds from count (_logical_ bounds highlighted in 'scope')
       let bounds[0] = max([0, (virtcol('.') - a:count - 1)])
@@ -212,7 +212,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   call s:attach_autocmds()
 
-  "highlight actual matches at or below the cursor position
+  "highlight actual matches at or beyond the cursor position
   "  - store in w: because matchadd() highlight is per-window.
   let w:sneak_hl_id = matchadd('Sneak',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
