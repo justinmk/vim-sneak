@@ -71,7 +71,7 @@ func! sneak#util#wincol1() abort
   return c
 endf
 
-"Moves the cursor to the first line after the current folded lines.
+"Moves the cursor to the outmost position in the current folded area.
 "Returns:
 "     1  if the cursor was moved
 "     0  if the cursor is not in a fold
@@ -83,8 +83,8 @@ func! sneak#util#skipfold(current_line, reverse) abort
                 \ || foldedge >= line("w$")  "fold ends at/below bottom of window.
       return -1
     endif
-    call line(foldedge)
-    call col(a:reverse ? 1 : '$')
+    call cursor(foldedge, 0)
+    call cursor(0, a:reverse ? 1 : col('$'))
     return 1
   endif
   return 0
