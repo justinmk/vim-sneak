@@ -1,4 +1,4 @@
-sneak.vim :shoe:
+sneak.vim 👟
 ================
 
 Jump to any location specified by two characters.
