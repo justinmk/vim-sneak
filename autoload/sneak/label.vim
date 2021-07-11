@@ -73,11 +73,11 @@ func! s:do_label(s, v, reverse, label) abort "{{{
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
   let i = 0
-  let overflow = [0, 0] "position of the next match (if any) after we have run out of target labels.
+  let overflow = [0, 0]  " Position of the next match (if any) after we have run out of target labels.
   while 1
     " searchpos() is faster than 'norm! /'
     let p = searchpos(search_pattern, a:s.search_options_no_s, a:s.get_stopline())
-    let skippedfold = sneak#util#skipfold(p[0], a:reverse) "Note: 'set foldopen-=search' does not affect search().
+    let skippedfold = sneak#util#skipfold(p[0], a:reverse)  " Note: 'set foldopen-=search' does not affect search().
 
     if 0 == p[0] || -1 == skippedfold
       break
@@ -88,7 +88,7 @@ func! s:do_label(s, v, reverse, label) abort "{{{
     if i < s:maxmarks
       let c = s:strchar(g:sneak#target_labels, i)
       call s:placematch(c, p)
-    else "we have exhausted the target labels; grab the first non-labeled match.
+    else  " We have exhausted the target labels; grab the first non-labeled match.
       let overflow = p
       break
     endif
@@ -111,11 +111,12 @@ func! s:do_label(s, v, reverse, label) abort "{{{
     endif  " ...else we just switched directions, do not overflow.
   elseif (strlen(g:sneak#opt.label_esc) && choice ==# g:sneak#opt.label_esc)
         \ || -1 != index(["\<Esc>", "\<C-c>"], choice)
-    return "\<Esc>" "exit label-mode.
-  elseif !mappedtoNext && !has_key(s:matchmap, choice) "press _any_ invalid key to escape.
-    call feedkeys(choice) "exit label-mode and fall through to Vim.
+    return "\<Esc>"  " Exit label-mode.
+  elseif !mappedtoNext && !has_key(s:matchmap, choice)  " Fallthrough: press _any_ invalid key to escape.
+    call sneak#util#removehl()
+    call feedkeys(choice)  " Exit label-mode, fall through to Vim.
     return ""
-  else "valid target was selected
+  else  " Valid target was selected.
     let p = mappedtoNext ? s:matchmap[s:strchar(g:sneak#target_labels, 0)] : s:matchmap[choice]
     call cursor(p[0], p[1])
   endif
@@ -128,7 +129,7 @@ func! s:after() abort
   try | call matchdelete(s:sneak_cursor_hl) | catch | endtry
   call map(s:match_ids, 'matchdelete(v:val)')
   let s:match_ids = []
-  "remove temporary highlight links
+  " Remove temporary highlight links.
   exec 'hi! link Conceal '.s:orig_hl_conceal
   call s:restore_conceal_matches()
   exec 'hi! link Sneak '.s:orig_hl_sneak
@@ -193,9 +194,9 @@ func! s:before() abort
   let s:orig_hl_conceal = sneak#util#links_to('Conceal')
   call s:save_conceal_matches()
   let s:orig_hl_sneak   = sneak#util#links_to('Sneak')
-  "set temporary link to our custom 'conceal' highlight
+  " Set temporary link to our custom 'conceal' highlight.
   hi! link Conceal SneakLabel
-  "set temporary link to hide the sneak search targets
+  " Set temporary link to hide the sneak search targets.
   hi! link Sneak SneakLabelMask
 
   augroup sneak_label_cleanup
@@ -204,7 +205,7 @@ func! s:before() abort
   augroup END
 endf
 
-"returns 1 if a:key is invisible or special.
+" Returns 1 if a:key is invisible or special.
 func! s:is_special_key(key) abort
   return -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>", "\<Tab>"], a:key)
     \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(_;\|_,\|Next\|Previous\)'
@@ -220,7 +221,7 @@ func! sneak#label#sanitize_target_labels() abort
   while i < nrbytes
     " Intentionally using byte-index for use with substitute().
     let k = strpart(g:sneak#target_labels, i, 1)
-    if s:is_special_key(k) "remove the char
+    if s:is_special_key(k)  " Remove the char.
       let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
       " Move ; (or s if 'clever-s' is enabled) to the front.
       if !g:sneak#opt.absolute_dir
