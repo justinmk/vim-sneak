@@ -104,7 +104,9 @@ endf
 func! sneak#util#removehl() abort
   silent! call matchdelete(w:sneak_hl_id)
   silent! call matchdelete(w:sneak_sc_hl)
-  silent! call VSCodeSetTextDecorations(g:vim_sneak_hl_group_target, [])
+  if (exists('g:vscode'))
+    silent! call VSCodeSetTextDecorations(g:vim_sneak_hl_group_target, [])
+  endif
 endf
 
 " Gets the 'links to' value of the specified highlight group, if any.
