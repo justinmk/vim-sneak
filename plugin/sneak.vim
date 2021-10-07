@@ -59,7 +59,9 @@ endfunction
 
 func! sneak#init() abort
   unlockvar g:sneak#opt
-  call sneak#InitHL(g:vim_sneak_hl_group_target, s:target_hl_defaults)
+  if (exists('g:vscode'))
+    call sneak#InitHL(g:vim_sneak_hl_group_target, s:target_hl_defaults)
+  endif
   "options                                 v-- for backwards-compatibility
   let g:sneak#opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))
