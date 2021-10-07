@@ -11,6 +11,13 @@ let g:loaded_sneak_plugin = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
+let g:vim_sneak_hl_group_target = "vim_sneak_target"
+let s:target_hl_defaults = {
+    \   'gui'     : ['NONE', '#ffffff' , 'bold']
+    \ , 'cterm256': ['NONE', '255'     , 'bold']
+    \ , 'cterm'   : ['NONE', 'white'     , 'bold']
+    \ }
+
 " Persist state for repeat.
 "     opfunc    : &operatorfunc at g@ invocation.
 "     opfunc_st : State during last 'operatorfunc' (g@) invocation.
@@ -24,8 +31,35 @@ if exists('##OptionSet')
   augroup END
 endif
 
+function! sneak#InitHL(group, colors)
+    let group_default = a:group . 'Default'
+
+    " Prepare highlighting variables
+    let guihl = printf('guibg=%s guifg=%s gui=%s', a:colors.gui[0], a:colors.gui[1], a:colors.gui[2])
+    let ctermhl = &t_Co == 256
+        \ ? printf('ctermbg=%s ctermfg=%s cterm=%s', a:colors.cterm256[0], a:colors.cterm256[1], a:colors.cterm256[2])
+        \ : printf('ctermbg=%s ctermfg=%s cterm=%s', a:colors.cterm[0], a:colors.cterm[1], a:colors.cterm[2])
+
+    " Create default highlighting group
+    execute printf('hi default %s %s %s', group_default, guihl, ctermhl)
+
+    " Check if the hl group exists
+    if hlexists(a:group)
+        redir => hlstatus | exec 'silent hi ' . a:group | redir END
+
+        " Return if the group isn't cleared
+        if hlstatus !~ 'cleared'
+            return
+        endif
+    endif
+
+    " No colors are defined for this group, link to defaults
+    execute printf('hi default link %s %s', a:group, group_default)
+endfunction
+
 func! sneak#init() abort
   unlockvar g:sneak#opt
+  call sneak#InitHL(g:vim_sneak_hl_group_target, s:target_hl_defaults)
   "options                                 v-- for backwards-compatibility
   let g:sneak#opt = { 'f_reset' : get(g:, 'sneak#nextprev_f', get(g:, 'sneak#f_reset', 1))
       \ ,'t_reset'      : get(g:, 'sneak#nextprev_t', get(g:, 'sneak#t_reset', 1))

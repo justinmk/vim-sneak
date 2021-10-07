@@ -28,7 +28,9 @@ func! s:placematch(c, pos) abort
   if s:clear_syntax
     exec "syntax match SneakLabel '".pat."' conceal cchar=".a:c
   else
-    let id = matchadd('Conceal', pat, 999, -1, { 'conceal': a:c })
+    " vscode-neovim does not support 'conceal' properly
+    let labelChar = exists('g:vscode') ? "" : a:c
+    let id = matchadd('Conceal', pat, 999, -1, { 'conceal': labelChar })
     call add(s:match_ids, id)
   endif
 endf
@@ -73,6 +75,8 @@ func! s:do_label(s, v, reverse, label) abort "{{{
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
 
   let i = 0
+  let rowIndexInMarksArray = -1
+  let marksPerLine = []
   let overflow = [0, 0]  " Position of the next match (if any) after we have run out of target labels.
   while 1
     " searchpos() is faster than 'norm! /'
@@ -88,6 +92,13 @@ func! s:do_label(s, v, reverse, label) abort "{{{
     if i < s:maxmarks
       let c = s:strchar(g:sneak#target_labels, i)
       call s:placematch(c, p)
+      if (exists('g:vscode'))
+        if rowIndexInMarksArray == -1 || marksPerLine[rowIndexInMarksArray][0] != p[0]
+          call add(marksPerLine, [p[0], []])
+          let rowIndexInMarksArray += 1
+        endif
+        call add(marksPerLine[rowIndexInMarksArray][1], [p[1], c])
+      endif
     else  " We have exhausted the target labels; grab the first non-labeled match.
       let overflow = p
       break
@@ -95,6 +106,10 @@ func! s:do_label(s, v, reverse, label) abort "{{{
 
     let i += 1
   endwhile
+
+  if (exists('g:vscode'))
+    call VSCodeSetTextDecorations(g:vim_sneak_hl_group_target, marksPerLine)
+  endif
 
   call winrestview(w) | redraw
   let choice = empty(a:label) ? sneak#util#getchar() : a:label
