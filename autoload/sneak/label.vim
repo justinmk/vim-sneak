@@ -97,7 +97,7 @@ func! s:do_label(s, v, reverse, label) abort "{{{
           call add(marksPerLine, [p[0], []])
           let rowIndexInMarksArray += 1
         endif
-        call add(marksPerLine[rowIndexInMarksArray][1], [p[1], c])
+        call add(marksPerLine[rowIndexInMarksArray][1], [p[1], c, "magenta"])
       endif
     else  " We have exhausted the target labels; grab the first non-labeled match.
       let overflow = p
