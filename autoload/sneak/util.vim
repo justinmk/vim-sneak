@@ -134,12 +134,16 @@ func! s:init_hl() abort
   let guifg   = s:default_color('Sneak', 'fg', 'gui')
   let ctermbg = s:default_color('Sneak', 'bg', 'cterm')
   let ctermfg = s:default_color('Sneak', 'fg', 'cterm')
-  exec 'highlight default SneakLabel gui=bold cterm=bold guifg='.guifg.' guibg='.guibg.' ctermfg='.ctermfg.' ctermbg='.ctermbg
+  if !exists('g:vscode')
+    exec 'highlight default SneakLabel gui=bold cterm=bold guifg='.guifg.' guibg='.guibg.' ctermfg='.ctermfg.' ctermbg='.ctermbg
+  endif
 
   let guibg   = s:default_color('SneakLabel', 'bg', 'gui')
   let ctermbg = s:default_color('SneakLabel', 'bg', 'cterm')
   " fg same as bg
-  exec 'highlight default SneakLabelMask guifg='.guibg.' guibg='.guibg.' ctermfg='.ctermbg.' ctermbg='.ctermbg
+  if !exists('g:vscode')
+    exec 'highlight default SneakLabelMask guifg='.guibg.' guibg='.guibg.' ctermfg='.ctermbg.' ctermbg='.ctermbg
+  endif
 endf
 
 augroup sneak_colorscheme  " Re-init on :colorscheme change at runtime. #108
