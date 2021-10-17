@@ -61,7 +61,7 @@ func! sneak#cancel() abort
   augroup sneak
     autocmd!
   augroup END
-  if maparg('<esc>', 'n') =~# 'sneak#cancel' "teardown temporary <esc> mapping
+  if maparg('<esc>', 'n') =~# "'s'\\.'neak#cancel'"  " Remove temporary mapping.
     silent! unmap <esc>
   endif
   return ''
@@ -217,9 +217,9 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   let w:sneak_hl_id = matchadd('Sneak',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
-  "Let user deactivate with <esc>
+  " Clear with <esc>. Use a funny mapping to avoid false positives. #287
   if (has('nvim') || has('gui_running')) && maparg('<esc>', 'n') ==# ""
-    nmap <expr> <silent> <esc> sneak#cancel() . "\<esc>"
+    nnoremap <expr> <silent> <esc> call('s'.'neak#cancel',[]) . "\<esc>"
   endif
 
   " Operators always invoke label-mode.
