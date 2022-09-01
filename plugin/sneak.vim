@@ -298,33 +298,43 @@ func! s:ft_hook() abort
 endf
 
 func! s:getnchars(n, mode) abort
-  let s = ''
-  echo g:sneak#opt.prompt
-  for i in range(1, a:n)
-    if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
-    let c = sneak#util#getchar()
-    if -1 != index(["\<esc>", "\<c-c>", "\<c-g>", "\<backspace>",  "\<del>"], c)
-      return ""
+  let save_cmdheight = &cmdheight
+  try
+    if &cmdheight < 1
+      set cmdheight=1
     endif
-    if c == "\<CR>"
-      if i > 1 "special case: accept the current input (#15)
-        break
-      else "special case: repeat the last search (useful for label-mode).
-        return s:st.input
-      endif
-    else
-      let s .= c
-      if 1 == &iminsert && sneak#util#strlen(s) >= a:n
-        "HACK: this can happen if the user entered multiple characters while we
-        "were waiting to resolve a multi-char keymap.
-        "example for keymap 'bulgarian-phonetic':
-        "    e:: => ё    | resolved, strwidth=1
-        "    eo  => eo   | unresolved, strwidth=2
-        break
-      endif
-    endif
-    redraw | echo g:sneak#opt.prompt . s
-  endfor
+
+    let s = ''
+    echo g:sneak#opt.prompt
+    for i in range(1, a:n)
+      if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
+        let c = sneak#util#getchar()
+        if -1 != index(["\<esc>", "\<c-c>", "\<c-g>", "\<backspace>",  "\<del>"], c)
+          return ""
+        endif
+        if c == "\<CR>"
+          if i > 1 "special case: accept the current input (#15)
+            break
+          else "special case: repeat the last search (useful for label-mode).
+            return s:st.input
+          endif
+        else
+          let s .= c
+          if 1 == &iminsert && sneak#util#strlen(s) >= a:n
+            "HACK: this can happen if the user entered multiple characters while we
+            "were waiting to resolve a multi-char keymap.
+            "example for keymap 'bulgarian-phonetic':
+            "    e:: => ё    | resolved, strwidth=1
+            "    eo  => eo   | unresolved, strwidth=2
+            break
+          endif
+        endif
+        redraw | echo g:sneak#opt.prompt . s
+      endfor
+  finally
+    let &cmdheight = save_cmdheight
+  endtry
+
   return s
 endf
 
