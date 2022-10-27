@@ -69,26 +69,35 @@ endf
 
 " Entrypoint for `s`.
 func! sneak#wrap(op, inputlen, reverse, inclusive, label) abort
-  let [cnt, reg] = [v:count1, v:register] "get count and register before doing _anything_, else they get overwritten.
-  let is_similar_invocation = a:inputlen == s:st.inputlen && a:inclusive == s:st.inclusive
+  let save_cmdheight = &cmdheight
+  try
+    if &cmdheight < 1
+      set cmdheight=1
+    endif
 
-  if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
-    " Repeat motion (clever-s).
-    call s:rpt(a:op, a:reverse)
-  elseif a:op ==# 'g@' && !empty(s:st.opfunc_st) && !empty(s:st.opfunc) && s:st.opfunc ==# &operatorfunc
-    " Replay state from the last 'operatorfunc'.
-    call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, reg, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
-  else
-    if exists('#User#SneakEnter')
-      doautocmd <nomodeline> User SneakEnter
-      redraw
+    let [cnt, reg] = [v:count1, v:register] "get count and register before doing _anything_, else they get overwritten.
+    let is_similar_invocation = a:inputlen == s:st.inputlen && a:inclusive == s:st.inclusive
+
+    if g:sneak#opt.s_next && is_similar_invocation && (sneak#util#isvisualop(a:op) || empty(a:op)) && sneak#is_sneaking()
+      " Repeat motion (clever-s).
+      call s:rpt(a:op, a:reverse)
+    elseif a:op ==# 'g@' && !empty(s:st.opfunc_st) && !empty(s:st.opfunc) && s:st.opfunc ==# &operatorfunc
+      " Replay state from the last 'operatorfunc'.
+      call sneak#to(a:op, s:st.opfunc_st.input, s:st.opfunc_st.inputlen, cnt, reg, 1, s:st.opfunc_st.reverse, s:st.opfunc_st.inclusive, s:st.opfunc_st.label)
+    else
+      if exists('#User#SneakEnter')
+        doautocmd <nomodeline> User SneakEnter
+        redraw
+      endif
+      " Prompt for input.
+      call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, reg, 0, a:reverse, a:inclusive, a:label)
+      if exists('#User#SneakLeave')
+        doautocmd <nomodeline> User SneakLeave
+      endif
     endif
-    " Prompt for input.
-    call sneak#to(a:op, s:getnchars(a:inputlen, a:op), a:inputlen, cnt, reg, 0, a:reverse, a:inclusive, a:label)
-    if exists('#User#SneakLeave')
-      doautocmd <nomodeline> User SneakLeave
-    endif
-  endif
+  finally
+    let &cmdheight = save_cmdheight
+  endtry
 endf
 
 " Repeats the last motion.
@@ -299,7 +308,7 @@ endf
 
 func! s:getnchars(n, mode) abort
   let s = ''
-  echo g:sneak#opt.prompt
+  echo g:sneak#opt.prompt | redraw
   for i in range(1, a:n)
     if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
     let c = sneak#util#getchar()
