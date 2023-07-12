@@ -1,16 +1,18 @@
 " NOTES:
 "   problem:  cchar cannot be more than 1 character.
 "   strategy: make fg/bg the same color, then conceal the other char.
-"
-"   problem:  [before 7.4.792] keyword highlight takes priority over conceal.
-"   strategy: syntax clear | [do the conceal] | let &syntax=s:o_syntax
 
 let g:sneak#target_labels = get(g:, 'sneak#target_labels', ";sftunq/SFGHLTUNRMQZ?0")
 
-let s:clear_syntax = !has('patch-7.4.792')
 let s:matchmap = {}
-let s:match_ids = []
 let s:orig_conceal_matches = []
+
+let s:use_virt_text = has('nvim-0.5')
+if s:use_virt_text
+  call luaeval('require("sneak").init()')
+else
+  let s:match_ids = []
+endif
 
 if exists('*strcharpart')
   func! s:strchar(s, i) abort
@@ -24,10 +26,10 @@ endif
 
 func! s:placematch(c, pos) abort
   let s:matchmap[a:c] = a:pos
-  let pat = '\%'.a:pos[0].'l\%'.a:pos[1].'c.'
-  if s:clear_syntax
-    exec "syntax match SneakLabel '".pat."' conceal cchar=".a:c
+  if s:use_virt_text
+    call luaeval('require("sneak").placematch(_A[1], _A[2], _A[3])', [a:c, a:pos[0] - 1, a:pos[1] - 1])
   else
+    let pat = '\%'.a:pos[0].'l\%'.a:pos[1].'c.'
     let id = matchadd('Conceal', pat, 999, -1, { 'conceal': a:c })
     call add(s:match_ids, id)
   endif
@@ -127,25 +129,17 @@ endf "}}}
 func! s:after() abort
   autocmd! sneak_label_cleanup
   try | call matchdelete(s:sneak_cursor_hl) | catch | endtry
-  call map(s:match_ids, 'matchdelete(v:val)')
-  let s:match_ids = []
-  " Remove temporary highlight links.
-  exec 'hi! link Conceal '.s:orig_hl_conceal
-  call s:restore_conceal_matches()
-  exec 'hi! link Sneak '.s:orig_hl_sneak
-
-  if s:clear_syntax
-    let &l:synmaxcol=s:o_synmaxcol
-    " Always clear before restore, in case user has `:syntax off`. #200
-    syntax clear
-    silent! let &l:foldmethod=s:o_fdm
-    silent! let &l:syntax=s:o_syntax
-    " Force Vim to reapply 'spell' (must set 'spelllang'). #110
-    let [&l:spell,&l:spelllang]=[s:o_spell,s:o_spelllang]
-    call s:restore_conceal_in_other_windows()
+  if s:use_virt_text
+    call luaeval('require("sneak").after()')
+  else
+    call map(s:match_ids, 'matchdelete(v:val)')
+    let s:match_ids = []
+    " Remove temporary highlight links.
+    exec 'hi! link Conceal '.s:orig_hl_conceal
+    call s:restore_conceal_matches()
+    let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
   endif
-
-  let [&l:concealcursor,&l:conceallevel]=[s:o_cocu,s:o_cole]
+  exec 'hi! link Sneak '.s:orig_hl_sneak
 endf
 
 func! s:disable_conceal_in_other_windows() abort
@@ -168,34 +162,25 @@ endf
 
 func! s:before() abort
   let s:matchmap = {}
-  for o in ['spell', 'spelllang', 'cocu', 'cole', 'fdm', 'synmaxcol', 'syntax']
-    exe 'let s:o_'.o.'=&l:'.o
-  endfor
-
-  setlocal concealcursor=ncv conceallevel=2
 
   " Highlight the cursor location (because cursor is hidden during getchar()).
   let s:sneak_cursor_hl = matchadd("SneakScope", '\%#', 11, -1)
 
-  if s:clear_syntax
-    setlocal nospell
-    " Prevent highlighting in other windows showing the same buffer.
-    ownsyntax sneak_label
-    " Avoid broken folds when we clear syntax below.
-    if &l:foldmethod ==# 'syntax'
-      setlocal foldmethod=manual
-    endif
-    syntax clear
-    " This is fast because we cleared syntax.  Allows Sneak to work on very long wrapped lines.
-    setlocal synmaxcol=0
-    call s:disable_conceal_in_other_windows()
+  if s:use_virt_text
+    call luaeval('require("sneak").before()')
+  else
+    for o in ['cocu', 'cole']
+      exe 'let s:o_'.o.'=&l:'.o
+    endfor
+    setlocal concealcursor=ncv conceallevel=2
+
+    let s:orig_hl_conceal = sneak#util#links_to('Conceal')
+    call s:save_conceal_matches()
+    " Set temporary link to our custom 'conceal' highlight.
+    hi! link Conceal SneakLabel
   endif
 
-  let s:orig_hl_conceal = sneak#util#links_to('Conceal')
-  call s:save_conceal_matches()
   let s:orig_hl_sneak   = sneak#util#links_to('Sneak')
-  " Set temporary link to our custom 'conceal' highlight.
-  hi! link Conceal SneakLabel
   " Set temporary link to hide the sneak search targets.
   hi! link Sneak SneakLabelMask
 
