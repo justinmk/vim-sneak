@@ -9,7 +9,7 @@ lines**, **operators** (including repeat `.` and [surround]), motion-repeat
 **macros**.
 
 Try *label-mode* for a minimalist alternative to
-[EasyMotion](https://github.com/Lokaltog/vim-easymotion):
+[EasyMotion](https://github.com/easymotion/vim-easymotion):
 
 ```vim
 let g:sneak#label = 1
@@ -56,6 +56,10 @@ via `z` (because `s` is taken by surround.vim).
 
 Install
 -------
+
+Requires Vim 7.3+ or [Nvim](https://neovim.io/). Label-mode requires Vim
+7.4.792+. With Nvim 0.5+ label-mode is driven by [virtual text](https://neovim.io/doc/user/api.html#nvim_buf_set_extmark())
+instead of the legacy "conceal" feature.
 
 - [vim-plug](https://github.com/junegunn/vim-plug)
   - `Plug 'justinmk/vim-sneak'`
@@ -124,6 +128,9 @@ Related
 * [clever-f](https://github.com/rhysd/clever-f.vim)
 * [vim-extended-ft](https://github.com/svermeulen/vim-extended-ft)
 * [Fanf,ingTastic;](https://github.com/dahu/vim-fanfingtastic)
+* [IdeaVim-Sneak](https://plugins.jetbrains.com/plugin/15348-ideavim-sneak)
+* [leap.nvim](https://github.com/ggandor/leap.nvim)
+* [flash.nvim](https://github.com/folke/flash.nvim)
 
 License
 -------

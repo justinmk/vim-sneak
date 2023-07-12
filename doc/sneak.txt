@@ -500,7 +500,7 @@ To narrow down the issue, run Vim with a minimal configuration: >
     vim -u NORC -N +"let g:sneak#label=1" +":set runtimepath+=~/.vim/bundle/vim-sneak/" +":runtime plugin/sneak.vim"
 
 or Nvim: >
-    nvim -u NORC +"let g:sneak#label=1" +":set runtimepath+=~/.local/share/nvim/bundle/vim-sneak/" +":runtime plugin/sneak.vim"
+    nvim -u NORC --cmd "let g:sneak#label=1" +":set runtimepath+=~/.local/share/nvim/bundle/vim-sneak/" +":runtime plugin/sneak.vim"
 
 ==============================================================================
 CREDITS                                                 *sneak-credits*
