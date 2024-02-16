@@ -252,7 +252,11 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   if is_op && a:op !=# 'y'
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
-    let seq = a:op."\<Plug>SneakRepeat".sneak#util#strlen(a:input).a:reverse.a:inclusive.(2*!empty(target)).a:input.target.change
+    let args = sneak#util#strlen(a:input) . a:reverse . a:inclusive . (2*!empty(target))
+    if a:op !=# 'g@'
+      let args .= a:input . target . change
+    endif
+    let seq = a:op . "\<Plug>SneakRepeat" . args
     silent! call repeat#setreg(seq, a:register)
     silent! call repeat#set(seq, a:count)
 
