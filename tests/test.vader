@@ -30,7 +30,11 @@ Execute (Clean up test environment):
   let mapleader = ','
   let g:sneak#label = 0
   let g:sneak#use_ic_scs = 0
-  call sneak#init()
+  func! SneakReset() abort
+    unlet g:loaded_sneak_plugin
+    runtime! plugin/sneak.vim
+  endfunc
+  call SneakReset()
 
 ###########################################################
 Execute (autoloaded functions should not exist):
@@ -453,7 +457,7 @@ Expect:
 
 Execute (init clever-s):
   let g:sneak#s_next = 1
-  call sneak#init()
+  call SneakReset()
 
 Given:
   abcdef abcdef abcdef
@@ -493,7 +497,7 @@ Expect:
 
 Execute (unset clever-s):
   let g:sneak#s_next = 0
-  call sneak#init()
+  call SneakReset()
 
 ###########################################################
 # g:sneak#absolute_dir
@@ -505,7 +509,7 @@ Given:
 
 Execute (absolute_dir = 0):
   let g:sneak#absolute_dir = 0
-  call sneak#init()
+  call SneakReset()
 
   norm sab
   Assert sneak#state()['reverse']    == 0
@@ -528,7 +532,7 @@ Execute (absolute_dir = 0):
 
 Execute (absolute_dir = 1):
   let g:sneak#absolute_dir = 1
-  call sneak#init()
+  call SneakReset()
 
   norm sab
   Assert sneak#state()['reverse']    == 0
@@ -551,7 +555,7 @@ Execute (absolute_dir = 1):
 
 Execute (restore g:sneak#absolute_dir default):
   let g:sneak#absolute_dir = 0
-  call sneak#init()
+  call SneakReset()
 
 ###########################################################
 
@@ -574,7 +578,7 @@ Expect:
 
 Execute (label-mode):
   let g:sneak#label = 1
-  call sneak#init()
+  call SneakReset()
 
 Given:
   abcdef ``=2Bd-a3/+ abCDef ``=2Bd-a3/+
@@ -784,7 +788,7 @@ Expect:
 
 Execute (cleanup):
   let g:sneak#label = 0
-  call sneak#init()
+  call SneakReset()
 
 ###########################################################
 # unicode, multibyte
@@ -805,7 +809,7 @@ Execute (set ignorecase):
   set ignorecase
   set nosmartcase
   let g:sneak#use_ic_scs = 1
-  call sneak#init()
+  call SneakReset()
 
 Execute (sneak#search#get_cs):
   Assert '\c' == sneak#search#get_cs('AB', 1)
@@ -842,7 +846,7 @@ Expect:
 
 Execute (set smartcase):
   set smartcase
-  call sneak#init()
+  call SneakReset()
 
 Given (ASCII):
   fooabABaB
@@ -867,7 +871,7 @@ Expect:
 
 Execute (set case-sensitive):
   let g:sneak#use_ic_scs = 0
-  call sneak#init()
+  call SneakReset()
 
 Given (ASCII):
   fooAbabaB
@@ -976,7 +980,7 @@ Expect (repeat search for multi-keymap):
 Execute (SETUP):
   let g:sneak#target_labels = 'адсфгхйкл;'
   let g:sneak#label = 1
-  call sneak#init()
+  call SneakReset()
   call sneak#label#sanitize_target_labels()
   Assert ';адсфгхйкл' ==# g:sneak#target_labels
 Given:
@@ -995,7 +999,7 @@ Execute (TEARDOWN):
   set iminsert=0
   set keymap=
   let g:sneak#label = 0
-  call sneak#init()
+  call SneakReset()
 
 ###########################################################
 # Sneak_f and Sneak_t
@@ -1027,7 +1031,7 @@ Execute (map to Sneak_f):
 
   let g:sneak#f_reset = 0
 
-  call sneak#init()
+  call SneakReset()
 
 Given:
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
@@ -1141,7 +1145,7 @@ Execute (map to f):
   nmap f <Plug>Sneak_s
   nmap F <Plug>Sneak_S
   let g:sneak#f_reset = 1
-  call sneak#init()
+  call SneakReset()
 
 Given:
   abcdef abcdef abcdef
@@ -1161,5 +1165,5 @@ Execute (cleanup):
   unmap F
   nmap s <Plug>Sneak_s
   nmap S <Plug>Sneak_S
-  call sneak#init()
+  call SneakReset()
 

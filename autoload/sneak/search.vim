@@ -6,7 +6,7 @@ func! sneak#search#new() abort
     let self._repeatmotion = a:repeatmotion
     let self._reverse = a:reverse
     " search pattern modifiers (case-sensitivity, magic)
-    let self.prefix = sneak#search#get_cs(a:input, g:sneak#opt.use_ic_scs).'\V'
+    let self.prefix = sneak#search#get_cs(a:input, g:sneak_opt.use_ic_scs).'\V'
     " the escaped user input to search for
     let self.search = substitute(escape(a:input, '"\'), '\a', '\\[[=\0=]]', 'g')
     " example: highlight string 'ab' after line 42, column 5

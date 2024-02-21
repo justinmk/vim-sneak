@@ -103,7 +103,7 @@ func! s:do_label(s, v, reverse, label) abort "{{{
   call s:after()
 
   let mappedto = maparg(choice, a:v ? 'x' : 'n')
-  let mappedtoNext = (g:sneak#opt.absolute_dir && a:reverse)
+  let mappedtoNext = (g:sneak_opt.absolute_dir && a:reverse)
         \ ? mappedto =~# '<Plug>Sneak\(_,\|Previous\)'
         \ : mappedto =~# '<Plug>Sneak\(_;\|Next\)'
 
@@ -111,7 +111,7 @@ func! s:do_label(s, v, reverse, label) abort "{{{
     if (!a:reverse && choice ==# "\<Tab>") || (a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
       call cursor(overflow[0], overflow[1])
     endif  " ...else we just switched directions, do not overflow.
-  elseif (strlen(g:sneak#opt.label_esc) && choice ==# g:sneak#opt.label_esc)
+  elseif (strlen(g:sneak_opt.label_esc) && choice ==# g:sneak_opt.label_esc)
         \ || -1 != index(["\<Esc>", "\<C-c>"], choice)
     return "\<Esc>"  " Exit label-mode.
   elseif !mappedtoNext && !has_key(s:matchmap, choice)  " Fallthrough: press _any_ invalid key to escape.
@@ -194,7 +194,7 @@ endf
 func! s:is_special_key(key) abort
   return -1 != index(["\<Esc>", "\<C-c>", "\<Space>", "\<CR>", "\<Tab>"], a:key)
     \ || maparg(a:key, 'n') =~# '<Plug>Sneak\(_;\|_,\|Next\|Previous\)'
-    \ || (g:sneak#opt.s_next && maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
+    \ || (g:sneak_opt.s_next && maparg(a:key, 'n') =~# '<Plug>Sneak\(_s\|Forward\)')
 endf
 
 " We must do this because:
@@ -209,8 +209,8 @@ func! sneak#label#sanitize_target_labels() abort
     if s:is_special_key(k)  " Remove the char.
       let g:sneak#target_labels = substitute(g:sneak#target_labels, '\%'.(i+1).'c.', '', '')
       " Move ; (or s if 'clever-s' is enabled) to the front.
-      if !g:sneak#opt.absolute_dir
-            \ && ((!g:sneak#opt.s_next && maparg(k, 'n') =~# '<Plug>Sneak\(_;\|Next\)')
+      if !g:sneak_opt.absolute_dir
+            \ && ((!g:sneak_opt.s_next && maparg(k, 'n') =~# '<Plug>Sneak\(_;\|Next\)')
             \     || (maparg(k, 'n') =~# '<Plug>Sneak\(_s\|Forward\)'))
         let g:sneak#target_labels = k . g:sneak#target_labels
       else
