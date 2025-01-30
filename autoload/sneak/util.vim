@@ -103,7 +103,8 @@ endf
 " Removes highlighting.
 func! sneak#util#removehl() abort
   silent! call matchdelete(w:sneak_hl_id)
-  silent! call matchdelete(w:sneak_sc_hl)
+  silent! call matchdelete(w:sneak_cur_hl)
+  silent! call matchdelete(w:sneak_scope_hl)
 endf
 
 " Gets the 'links to' value of the specified highlight group, if any.
@@ -120,6 +121,7 @@ endfunc
 
 func! s:init_hl() abort
   exec "highlight default Sneak guifg=white guibg=magenta ctermfg=white ctermbg=".(&t_Co < 256 ? "magenta" : "201")
+  exec "highlight default SneakCurrent guifg=black guibg=LightMagenta ctermfg=0 ctermbg=LightMagenta"
 
   if &background ==# 'dark'
     highlight default SneakScope guifg=black guibg=white ctermfg=0     ctermbg=255

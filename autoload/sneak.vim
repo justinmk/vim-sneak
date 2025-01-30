@@ -179,7 +179,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   "highlight the vertical 'tunnel' that the search is scoped-to
   if max(bounds) "perform the scoped highlight...
-    let w:sneak_sc_hl = matchadd('SneakScope', l:scope_pattern)
+    let w:sneak_scope_hl = matchadd('SneakScope', l:scope_pattern)
   endif
 
   call s:attach_autocmds()
@@ -188,6 +188,10 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   "  - store in w: because matchadd() highlight is per-window.
   let w:sneak_hl_id = matchadd('Sneak',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
+
+  if a:inputlen > 1
+      let w:sneak_cur_hl = matchadd('SneakCurrent', '\%#.\{'.a:inputlen.'}')
+  endif
 
   " Clear with <esc>. Use a funny mapping to avoid false positives. #287
   if (has('nvim') || has('gui_running')) && maparg('<esc>', 'n') ==# ""

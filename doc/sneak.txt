@@ -354,6 +354,10 @@ Sneak uses these highlight groups:
         Highlights Sneak matches. Default color is hideous magenta :)
         Also used for |sneak-label-mode| unless "SneakLabel" group exists.
 
+    SneakCurrent
+        Highlights the current Sneak match at cursor position.
+        Analogous to the |CurSearch| highlight group for the |/| command.
+
     SneakScope
         Highlights the "scope" for |sneak-vertical-scope|.
         Default color is white (or black if 'background' is "light").
@@ -363,13 +367,24 @@ Sneak uses these highlight groups:
         Highlights |sneak-label-mode|.
 
 To customize colors: >
-    highlight Sneak guifg=black guibg=red ctermfg=black ctermbg=red
-    highlight SneakScope guifg=red guibg=yellow ctermfg=red ctermbg=yellow
+    highlight! Sneak guifg=black guibg=red ctermfg=black ctermbg=red
+    highlight! SneakCurrent guifg=black guibg=cyan ctermfg=black ctermbg=cyan
+    highlight! SneakScope guifg=red guibg=yellow ctermfg=red ctermbg=yellow
+
+    " Highlight current match the same way as other matches
+    highlight! link SneakCurrent Sneak
+
+    " Highlight matches the same way as the / command
+    highlight! link Sneak Search
+    highlight! link SneakCurrent CurSearch
 
 To disable highlighting: >
-    highlight link Sneak None
+    highlight! link Sneak None
+    highlight! link SneakCurrent None
+
     " Needed if a plugin sets the colorscheme dynamically:
-    autocmd User SneakLeave highlight clear Sneak
+    autocmd User SneakLeave highlight clear Sneak |
+                          \ highlight clear SneakCurrent
 
 ------------------------------------------------------------------------------
 FUNCTIONS                                               *sneak-functions*
