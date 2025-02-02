@@ -14,7 +14,8 @@ func! sneak#util#isvisualop(op) abort
 endf
 
 func! sneak#util#getc() abort
-  let c = getchar()
+  sleep 1m
+  let c = (has('patch-9.1.1070') || has('nvim-0.11')) ? getchar(-1,{'cursor':'keep'}) : getchar()
   return type(c) == type(0) ? nr2char(c) : c
 endf
 
