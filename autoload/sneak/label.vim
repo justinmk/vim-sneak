@@ -56,20 +56,22 @@ endf
 
 func! sneak#label#to(s, v, label) abort
   let seq = ""
+  " TODO: handle g:sneak#absolute_dir=1
+  let forward = !a:s._reverse
   while 1
-    let choice = s:do_label(a:s, a:v, a:s._reverse, a:label)
+    let choice = s:do_label(a:s, a:v, a:s._reverse, forward, a:label)
     let seq .= choice
     if choice =~# "^\<S-Tab>\\|\<BS>$"
-      call a:s.init(a:s._input, a:s._repeatmotion, 1)
+      call a:s.init(a:s._input, a:s._repeatmotion, forward ? 1 : 0)
     elseif choice ==# "\<Tab>"
-      call a:s.init(a:s._input, a:s._repeatmotion, 0)
+      call a:s.init(a:s._input, a:s._repeatmotion, forward ? 0 : 1)
     else
       return seq
     endif
   endwhile
 endf
 
-func! s:do_label(s, v, reverse, label) abort "{{{
+func! s:do_label(s, v, reverse, forward, label) abort "{{{
   let w = winsaveview()
   call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
@@ -108,8 +110,15 @@ func! s:do_label(s, v, reverse, label) abort "{{{
         \ : mappedto =~# '<Plug>Sneak\(_;\|Next\)'
 
   if choice =~# "\\v^\<Tab>|\<S-Tab>|\<BS>$"  " Decorate next N matches.
-    if (!a:reverse && choice ==# "\<Tab>") || (a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
-      call cursor(overflow[0], overflow[1])
+    " TODO: handle g:sneak#absolute_dir=1
+    if a:forward
+      if (!a:reverse && choice ==# "\<Tab>") || (a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
+        call cursor(overflow[0], overflow[1])
+      endif
+    else
+      if (a:reverse && choice ==# "\<Tab>") || (!a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
+        call cursor(overflow[0], overflow[1])
+      endif
     endif  " ...else we just switched directions, do not overflow.
   elseif (strlen(g:sneak_opt.label_esc) && choice ==# g:sneak_opt.label_esc)
         \ || -1 != index(["\<Esc>", "\<C-c>"], choice)
