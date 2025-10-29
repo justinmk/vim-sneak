@@ -56,22 +56,21 @@ endf
 
 func! sneak#label#to(s, v, label) abort
   let seq = ""
-  " TODO: handle g:sneak#absolute_dir=1
-  let forward = !a:s._reverse
+  let flip_next_labels_keys = g:sneak_opt.absolute_dir ? 0 : a:s._reverse
   while 1
-    let choice = s:do_label(a:s, a:v, a:s._reverse, forward, a:label)
+    let choice = s:do_label(a:s, a:v, a:s._reverse, a:label, flip_next_labels_keys)
     let seq .= choice
     if choice =~# "^\<S-Tab>\\|\<BS>$"
-      call a:s.init(a:s._input, a:s._repeatmotion, forward ? 1 : 0)
+      call a:s.init(a:s._input, a:s._repeatmotion, flip_next_labels_keys ? 0 : 1)
     elseif choice ==# "\<Tab>"
-      call a:s.init(a:s._input, a:s._repeatmotion, forward ? 0 : 1)
+      call a:s.init(a:s._input, a:s._repeatmotion, flip_next_labels_keys ? 1 : 0)
     else
       return seq
     endif
   endwhile
 endf
 
-func! s:do_label(s, v, reverse, forward, label) abort "{{{
+func! s:do_label(s, v, reverse, label, flip_next_labels_keys) abort "{{{
   let w = winsaveview()
   call s:before()
   let search_pattern = (a:s.prefix).(a:s.search).(a:s.get_onscreen_searchpattern(w))
@@ -110,13 +109,12 @@ func! s:do_label(s, v, reverse, forward, label) abort "{{{
         \ : mappedto =~# '<Plug>Sneak\(_;\|Next\)'
 
   if choice =~# "\\v^\<Tab>|\<S-Tab>|\<BS>$"  " Decorate next N matches.
-    " TODO: handle g:sneak#absolute_dir=1
-    if a:forward
-      if (!a:reverse && choice ==# "\<Tab>") || (a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
+    if a:flip_next_labels_keys
+      if (a:reverse && choice ==# "\<Tab>") || (!a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
         call cursor(overflow[0], overflow[1])
       endif
     else
-      if (a:reverse && choice ==# "\<Tab>") || (!a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
+      if (!a:reverse && choice ==# "\<Tab>") || (a:reverse && choice =~# "^\<S-Tab>\\|\<BS>$")
         call cursor(overflow[0], overflow[1])
       endif
     endif  " ...else we just switched directions, do not overflow.
