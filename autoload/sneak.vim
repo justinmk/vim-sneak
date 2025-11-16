@@ -191,7 +191,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   let matchlen = sneak#util#strlen(a:input)
   if matchlen > 1
-      let w:sneak_cur_hl = matchadd('SneakCurrent', '\%#.\{'.matchlen.'}')
+    let w:sneak_cur_hl = matchadd('SneakCurrent', '\%#.\{'.matchlen.'}')
   endif
 
   " Clear with <esc>. Use a funny mapping to avoid false positives. #287
