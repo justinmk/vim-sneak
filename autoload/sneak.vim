@@ -189,8 +189,9 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   let w:sneak_hl_id = matchadd('Sneak',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
-  if a:inputlen > 1
-      let w:sneak_cur_hl = matchadd('SneakCurrent', '\%#.\{'.a:inputlen.'}')
+  let matchlen = sneak#util#strlen(a:input)
+  if matchlen > 1
+    let w:sneak_cur_hl = matchadd('SneakCurrent', '\%#.\{'.matchlen.'}')
   endif
 
   " Clear with <esc>. Use a funny mapping to avoid false positives. #287
@@ -219,7 +220,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   if is_op && a:op !=# 'y'
     let change = a:op !=? "c" ? "" : "\<c-r>.\<esc>"
-    let args = sneak#util#strlen(a:input) . a:reverse . a:inclusive . (2*!empty(target))
+    let args = matchlen . a:reverse . a:inclusive . (2*!empty(target))
     if a:op !=# 'g@'
       let args .= a:input . target . change
     endif
