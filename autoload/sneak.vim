@@ -82,7 +82,11 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     if a:op ==# 'c'  " user <esc> during change-operation should return to previous mode.
       call feedkeys((col('.') > 1 && col('.') < col('$') ? "\<RIGHT>" : '') . "\<C-\>\<C-G>", 'n')
     endif
-    redraw | echo '' | return
+    redraw
+    if g:sneak_opt.prompt !=# ''
+      echo ''
+    endif
+    return
   endif
 
   let is_v  = sneak#util#isvisualop(a:op)
@@ -157,7 +161,12 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     endif
 
     let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
-    call sneak#util#echo('not found'.(max(bounds) ? printf(km.' (in columns %d-%d): %s', bounds[0], bounds[1], a:input) : km.': '.a:input))
+
+    " Empty prompt option additionally makes it so Sneak never echoes any messages.
+    if g:sneak_opt.prompt !=# ''
+      call sneak#util#echo('not found'.(max(bounds) ? printf(km.' (in columns %d-%d): %s', bounds[0], bounds[1], a:input) : km.': '.a:input))
+    endif
+
     return
   endif
   "search succeeded
@@ -280,7 +289,10 @@ endf
 
 func! s:getnchars(n, mode) abort
   let s = ''
-  echo g:sneak_opt.prompt | redraw
+  if g:sneak_opt.prompt !=# ''
+    echo g:sneak_opt.prompt
+  endif
+  redraw
   for i in range(1, a:n)
     if sneak#util#isvisualop(a:mode) | exe 'norm! gv' | endif "preserve selection
     let c = sneak#util#getchar()
@@ -304,7 +316,10 @@ func! s:getnchars(n, mode) abort
         break
       endif
     endif
-    redraw | echo g:sneak_opt.prompt . s
+    redraw
+    if g:sneak_opt.prompt !=# ''
+      echo g:sneak_opt.prompt . s
+    endif
   endfor
   return s
 endf

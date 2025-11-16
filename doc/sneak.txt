@@ -342,9 +342,17 @@ g:sneak#target_labels = ";sftunq/SFGHLTUNRMQZ?0"        *g:sneak#target_labels*
         - Special keys: <Esc> <Tab> <BS>
         - Invisible keys: <Space> <Enter>
 
-g:sneak#prompt = '>'
+g:sneak#prompt = ''
 
-        Message displayed at the Sneak input prompt.
+    Prompt message shown on cmdline when inputting characters for Sneak, e.g.
+
+        `>xy`
+
+    when sneaking with `g:sneak#prompt = '>'`
+
+    An empty string disables Sneak prompt (this is default):
+        - No prompt message or input keys will be shown on cmdline
+        - No "not found: xy" message shown either when there are no matches
 
 ------------------------------------------------------------------------------
 HIGHLIGHTING                                            *sneak-highlight*
