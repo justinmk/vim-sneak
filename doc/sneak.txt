@@ -297,6 +297,7 @@ g:sneak#absolute_dir = 0
     1: Absolute direction. Repeat via |;| or |,| always goes forwards or
        backwards respectively.
        Note: With |sneak-clever-s|, s and S behave the same as |;| and |,|.
+       Note: Has the same effect on <Tab> and <BS> / <S-Tab> in label-mode.
 
 g:sneak#use_ic_scs = 0
 
