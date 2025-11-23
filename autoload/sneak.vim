@@ -155,12 +155,20 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     endif
   endfor
 
+  " This determines sneak#is_sneaking() is true
+  " It needs to be on even if there's no match,
+  " so that clever-S can still find a possible match in reverse direction
+  call s:attach_autocmds()
+
   if 0 == max(matchpos)
     if nudge
       call sneak#util#nudge(a:reverse) "undo nudge for t
     endif
 
     let km = empty(&keymap) ? '' : ' ('.&keymap.' keymap)'
+
+    " Clear SneakCurrent on the next non-sneak movement
+    doautocmd CursorMoved sneak
 
     " Empty prompt option additionally makes it so Sneak never echoes any messages.
     if g:sneak_opt.prompt !=# ''
@@ -190,8 +198,6 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   if max(bounds) "perform the scoped highlight...
     let w:sneak_scope_hl = matchadd('SneakScope', l:scope_pattern)
   endif
-
-  call s:attach_autocmds()
 
   "highlight actual matches at or beyond the cursor position
   "  - store in w: because matchadd() highlight is per-window.

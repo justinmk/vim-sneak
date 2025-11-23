@@ -500,6 +500,56 @@ Execute (unset clever-s):
   call SneakReset()
 
 ###########################################################
+# No match found, but reverse direction has matches
+
+Given:
+  abcabc abcabc abcabc
+  defdef defdef defdef
+  ghighi ghighi ghighi
+
+Do (forward no match but reverse with ,):
+  Gsab,r_
+Expect:
+  abcabc abcabc abc_bc
+  defdef defdef defdef
+  ghighi ghighi ghighi
+
+Do (backwards no match but reverse with ,):
+  WSef,r_
+Expect:
+  abcabc abcabc abcabc
+  d_fdef defdef defdef
+  ghighi ghighi ghighi
+
+Execute (init clever-s):
+  let g:sneak#s_next = 1
+  call SneakReset()
+
+Do (dummy step to work around Vim (or Vader) macro bug):
+  sab\<esc>u
+
+Do (forward no match but reverse with S):
+  GsabSr_
+Expect:
+  abcabc abcabc abc_bc
+  defdef defdef defdef
+  ghighi ghighi ghighi
+
+Do (dummy step to work around Vim (or Vader) macro bug):
+  sab\<esc>u
+
+Do (backwards no match but reverse with S):
+  WSefSr_
+Expect:
+  abcabc abcabc abcabc
+  d_fdef defdef defdef
+  ghighi ghighi ghighi
+
+Execute (unset clever-s):
+  let g:sneak#s_next = 0
+  call SneakReset()
+
+###########################################################
 # g:sneak#absolute_dir
 
 Given:
