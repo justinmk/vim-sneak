@@ -155,9 +155,8 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     endif
   endfor
 
-  " This determines sneak#is_sneaking() is true
-  " It needs to be on even if there's no match,
-  " so that clever-S can still find a possible match in reverse direction
+  " This decides sneak#is_sneaking(). It is needed even if no match,
+  " so clever-s can still find a match in reverse direction.
   call s:attach_autocmds()
 
   if 0 == max(matchpos)
