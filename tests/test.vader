@@ -1267,6 +1267,90 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
+Given:
+  1abc 1def
+  1ghi 1jkl
+  1mno 1pqr
+  2abc 2def
+  2ghi 2jkl
+  2mno 2pqr
+
+Do(df til last character in the line. #291 #228):
+  dff
+Expect:
+  
+  1ghi 1jkl
+  1mno 1pqr
+  2abc 2def
+  2ghi 2jkl
+  2mno 2pqr
+
+Do(df til last character in the last buffer line. #291 #228):
+  Gdfr
+Expect:
+  1abc 1def
+  1ghi 1jkl
+  1mno 1pqr
+  2abc 2def
+  2ghi 2jkl
+  
+
+Do(df til last character in another line. #291 #228):
+  jwdff
+Expect:
+  1abc 1def
+  1ghi 
+  2ghi 2jkl
+  2mno 2pqr
+
+Do(df til EOB from another line. #291 #228):
+  3jldfr
+Expect:
+  1abc 1def
+  1ghi 1jkl
+  1mno 1pqr
+  2
+
+Do(df til last character in the line, ;-repeat. #291 #228):
+  dffd;
+Expect:
+  
+  2ghi 2jkl
+  2mno 2pqr
+
+Do(df til last character in the line, Enter-repeat. #291 #228):
+  dffdf\<Enter>
+Expect:
+  
+  2ghi 2jkl
+  2mno 2pqr
+
+Do(df til last character in the line, dot repeat. #291 #228):
+  dff
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+Expect:
+  
+  2ghi 2jkl
+  2mno 2pqr
+
+Do(df ;-repeat reaching EOB. #291 #228):
+  Wdfrd;
+Expect:
+  1abc
+
+Do(df Enter-repeat reaching EOB. #291 #228):
+  Wdfrdf\<Enter>
+Expect:
+  1abc
+
+Do(df dot repeat reaching EOB. #291 #228):
+  Wdfr
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+Expect:
+  1abc
+
 ###########################################################
 # test sneak mapped to 'f' (instead of default 's')
 
