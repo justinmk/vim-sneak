@@ -187,10 +187,12 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   "search succeeded
 
   call sneak#util#removehl()
+  let matchlen = sneak#util#strlen(a:input)
 
   if (!is_op || a:op ==# 'y') "position _after_ search
     let curlin = string(line('.'))
-    let curcol = string(virtcol('.') + (a:reverse ? -1 : 1))
+    let offset = matchlen - 1
+    let curcol = string(max([0, virtcol('.') + (a:reverse ? -offset : offset)]))
   endif
 
   "Might as well scope to window height (+/- 99).
@@ -211,7 +213,6 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   let w:sneak_hl_id = matchadd('Sneak',
         \ (s.prefix).(s.match_pattern).(s.search).'\|'.curln_pattern.(s.search))
 
-  let matchlen = sneak#util#strlen(a:input)
   if matchlen > 1
     let w:sneak_cur_hl = matchadd('SneakCurrent', '\%#.\{'.matchlen.'}')
   endif
