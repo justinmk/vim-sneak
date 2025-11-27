@@ -1432,3 +1432,86 @@ Execute (cleanup):
   nmap S <Plug>Sneak_S
   call SneakReset()
 
+###########################################################
+# Continuous characters edge cases
+
+Given:
+  aaa aaa aaa
+  aaaaaaaaaaa
+  aaa aaa aaa
+
+# considering it's on a match at start, the next one is on the next word
+Do (forward continuous characters not divisible by match length):
+  saar_
+Expect:
+  aaa _aa aaa
+  aaaaaaaaaaa
+  aaa aaa aaa
+
+Do (forward long continuous characters not divisible by match length):
+  jsaar_
+Expect:
+  aaa aaa aaa
+  aa_aaaaaaaa
+  aaa aaa aaa
+
+Do (backwards continuous characters not divisible by match length):
+  wwSaar_
+Expect:
+  aaa a_a aaa
+  aaaaaaaaaaa
+  aaa aaa aaa
+
+# cursor is on an existing match *end*, the first backwards motion goes to this match start
+Do (backwards long continuous characters not divisible by match length):
+  j$Saar_
+Expect:
+  aaa aaa aaa
+  aaaaaaaaa_a
+  aaa aaa aaa
+
+Do (backwards long continuous characters not divisible by match length from different line):
+  GSaar_
+Expect:
+  aaa aaa aaa
+  aaaaaaaaa_a
+  aaa aaa aaa
+
+Execute (use inputlen longer than 2):
+  nnoremap <silent> s :<c-u>call sneak#wrap('', 4, 0, 2, 1)<cr>
+  nnoremap <silent> S :<c-u>call sneak#wrap('', 4, 1, 2, 1)<cr>
+  call SneakReset()
+
+Do (inputlen=4 forward continuous characters not divisible by match length):
+  jsaaaar_
+Expect:
+  aaa aaa aaa
+  aaaa_aaaaaa
+  aaa aaa aaa
+
+Do (inputlen=4 forward continuous characters not divisible by match length from different line):
+  saaaar_
+Expect:
+  aaa aaa aaa
+  _aaaaaaaaaa
+  aaa aaa aaa
+
+# cursor is on an existing match *end*, the first backwards motion goes to this match start
+Do (inputlen=4 backwards continuous characters not divisible by match length):
+  j$Saaaar_
+Expect:
+  aaa aaa aaa
+  aaaaaaa_aaa
+  aaa aaa aaa
+
+Do (inputlen=4 backwards continuous characters not divisible by match length from different line):
+  GwSaaaar_
+Expect:
+  aaa aaa aaa
+  aaaaaaa_aaa
+  aaa aaa aaa
+
+Execute (cleanup):
+  nnoremap s <Plug>Sneak_s
+  nnoremap S <Plug>Sneak_S
+  call SneakReset()
