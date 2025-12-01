@@ -1226,7 +1226,7 @@ Expect ([count]f should NOT invoke vertical-scope):
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do ([count]f):
+Do ([count]F):
   jj3Feix
 Expect ([count]F should NOT invoke vertical-scope):
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
@@ -1249,6 +1249,27 @@ Expect:
 
 Do (f-delete invalid target):
   dfZ
+Expect (should not delete current char. #177):
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (f-delete canceled with <Esc>):
+  df\<Esc>
+Expect (should not delete current char. #177):
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (FIXME f-delete invalid target with o_v):
+  dvfZ
+Expect (should not delete current char. #177):
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (FIXME f-delete canceled with <Esc> with o_v):
+  dvf\<Esc>
 Expect (should not delete current char. #177):
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
@@ -1277,14 +1298,14 @@ Expect:
 
 Do:
   dvfe
-Expect (FIXME inclusive f-delete forward):
+Expect (FIXME exclusive f-delete forward):
   ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
 Do:
   dvte
-Expect (FIXME inclusive t-delete forward):
+Expect (FIXME exclusive t-delete forward):
   def ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
