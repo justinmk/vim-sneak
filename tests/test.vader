@@ -1346,8 +1346,10 @@ Given:
   2ghi 2jkl
   2mno 2pqr
 
+# Extra doautocmds for when virtualedit=onemore is restored #321
 Do(df til last character in the line. #291 #228):
   dff
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   
   1ghi 1jkl
@@ -1358,6 +1360,7 @@ Expect:
 
 Do(df til last character in the last buffer line. #291 #228):
   Gdfr
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc 1def
   1ghi 1jkl
@@ -1366,16 +1369,19 @@ Expect:
   2ghi 2jkl
   
 
+" Here it deletes as linewise because of :h d-special
+" (Help tag only exists in Vim)
 Do(df til last character in another line. #291 #228):
-  jwdff
+  jdff
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc 1def
-  1ghi 
   2ghi 2jkl
   2mno 2pqr
 
 Do(df til EOB from another line. #291 #228):
   3jldfr
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc 1def
   1ghi 1jkl
@@ -1383,35 +1389,48 @@ Expect:
   2
 
 Do(df til last character in the line, ;-repeat. #291 #228):
-  dffd;
+  Wdff
+  :\<C-U>doautocmd CursorMoved\<CR>
+  d;
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
-  
+  1abc
   2ghi 2jkl
   2mno 2pqr
 
 Do(df til last character in the line, Enter-repeat. #291 #228):
-  dffdf\<Enter>
+  Wdff
+  :\<C-U>doautocmd CursorMoved\<CR>
+  df\<Enter>
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
-  
+  1abc
   2ghi 2jkl
   2mno 2pqr
 
 Do(df til last character in the line, dot repeat. #291 #228):
-  dff
+  Wdff
   :\<C-U>doautocmd CursorMoved\<CR>
   .
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
-  
+  1abc
   2ghi 2jkl
   2mno 2pqr
 
 Do(df ;-repeat reaching EOB. #291 #228):
-  Wdfrd;
+  Wdfr
+  :\<C-U>doautocmd CursorMoved\<CR>
+  d;
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
 
 Do(df Enter-repeat reaching EOB. #291 #228):
-  Wdfrdf\<Enter>
+  Wdfr
+  :\<C-U>doautocmd CursorMoved\<CR>
+  df\<Enter>
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
 
@@ -1419,6 +1438,7 @@ Do(df dot repeat reaching EOB. #291 #228):
   Wdfr
   :\<C-U>doautocmd CursorMoved\<CR>
   .
+  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
 

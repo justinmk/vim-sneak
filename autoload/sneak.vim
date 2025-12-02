@@ -140,11 +140,6 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     call s:ft_hook()
   endif
 
-  let in_visual = is_op && 2 != a:inclusive && !a:reverse
-  if in_visual
-    norm! v
-  endif
-
   let nextchar = searchpos('\_.', 'n'.(s.search_options_no_s))
   let nudge = !a:inclusive && a:repeatmotion && nextchar == s.dosearch('n')
   if nudge
@@ -165,9 +160,6 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   call s:attach_autocmds()
 
   if 0 == max(matchpos)
-    if in_visual
-      exe "norm! \<esc>"
-    endif
     if nudge
       call sneak#util#nudge(a:reverse) "undo nudge for t
     endif
@@ -232,6 +224,20 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   if nudge
     call sneak#util#nudge(a:reverse) "undo nudge for t
+  endif
+
+  if is_op && 2 != a:inclusive && !a:reverse
+    " f edge case targeting EOL/EOB
+    if 1 == a:inclusive && virtcol('.') == virtcol('$') - 1
+      let s:save_virtualedit = &virtualedit
+      let &virtualedit = 'onemore'
+      augroup sneak_restore_virtualedit
+        autocmd!
+        autocmd CursorMoved * ++once let &virtualedit = s:save_virtualedit
+      augroup END
+    endif
+    " nudge right but do not wrap on EOL: go beyond EOL on virtual column if necessary
+    exec 'norm! l'
   endif
 
   if is_op || '' != target
