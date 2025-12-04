@@ -1370,7 +1370,7 @@ Expect:
   
 
 # Here it deletes as linewise because of :h d-special
-# (Help tag only exists in Vim)
+# https://github.com/vim/vim/commit/22105fd1fe0dcfe993b5c04c6ebe017a626116e3
 Do(df til last character in another line. #291 #228):
   jdff
   :\<C-U>doautocmd CursorMoved\<CR>
