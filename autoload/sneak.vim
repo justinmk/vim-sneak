@@ -228,7 +228,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
 
   if is_op && 2 != a:inclusive && !a:reverse
     " f edge case targeting EOL/EOB
-    if 1 == a:inclusive && virtcol('.') == virtcol('$') - 1
+    if 1 == a:inclusive && virtcol('.') == virtcol('$') - 1 && &virtualedit !~# 'onemore'
       let s:save_virtualedit = &virtualedit
       let &virtualedit = 'onemore'
       autocmd CursorMoved * ++once let &virtualedit = s:save_virtualedit
