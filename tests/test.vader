@@ -1369,8 +1369,8 @@ Expect:
   2ghi 2jkl
   
 
-" Here it deletes as linewise because of :h d-special
-" (Help tag only exists in Vim)
+# Here it deletes as linewise because of :h d-special
+# (Help tag only exists in Vim)
 Do(df til last character in another line. #291 #228):
   jdff
   :\<C-U>doautocmd CursorMoved\<CR>
