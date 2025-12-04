@@ -233,7 +233,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
       let &virtualedit = 'onemore'
       augroup sneak_restore_virtualedit
         autocmd!
-        autocmd CursorMoved * ++once let &virtualedit = s:save_virtualedit
+        autocmd CursorMoved,CmdlineEnter * ++once let &virtualedit = s:save_virtualedit
       augroup END
     endif
     " nudge right but do not wrap on EOL: go beyond EOL on virtual column if necessary
