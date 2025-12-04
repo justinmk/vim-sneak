@@ -231,10 +231,7 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
     if 1 == a:inclusive && virtcol('.') == virtcol('$') - 1
       let s:save_virtualedit = &virtualedit
       let &virtualedit = 'onemore'
-      augroup sneak_restore_virtualedit
-        autocmd!
-        autocmd CursorMoved,CmdlineEnter * ++once let &virtualedit = s:save_virtualedit
-      augroup END
+      autocmd CursorMoved * ++once let &virtualedit = s:save_virtualedit
     endif
     " nudge right but do not wrap on EOL: go beyond EOL on virtual column if necessary
     exec 'norm! l'
