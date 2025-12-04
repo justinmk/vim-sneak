@@ -1346,10 +1346,8 @@ Given:
   2ghi 2jkl
   2mno 2pqr
 
-# Extra doautocmds for when virtualedit=onemore is restored #321
 Do(df til last character in the line. #291 #228):
   dff
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   
   1ghi 1jkl
@@ -1360,7 +1358,6 @@ Expect:
 
 Do(df til last character in the last buffer line. #291 #228):
   Gdfr
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc 1def
   1ghi 1jkl
@@ -1373,7 +1370,6 @@ Expect:
 # https://github.com/vim/vim/commit/22105fd1fe0dcfe993b5c04c6ebe017a626116e3
 Do(df til last character in another line. #291 #228):
   jdff
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc 1def
   2ghi 2jkl
@@ -1381,7 +1377,6 @@ Expect:
 
 Do(df til EOB from another line. #291 #228):
   3jldfr
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc 1def
   1ghi 1jkl
@@ -1390,9 +1385,8 @@ Expect:
 
 Do(df til last character in the line, ;-repeat. #291 #228):
   Wdff
-  :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   d;
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
   2ghi 2jkl
@@ -1400,9 +1394,8 @@ Expect:
 
 Do(df til last character in the line, Enter-repeat. #291 #228):
   Wdff
-  :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   df\<Enter>
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
   2ghi 2jkl
@@ -1411,8 +1404,8 @@ Expect:
 Do(df til last character in the line, dot repeat. #291 #228):
   Wdff
   :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   .
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
   2ghi 2jkl
@@ -1420,25 +1413,23 @@ Expect:
 
 Do(df ;-repeat reaching EOB. #291 #228):
   Wdfr
-  :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   d;
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
 
 Do(df Enter-repeat reaching EOB. #291 #228):
   Wdfr
-  :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   df\<Enter>
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
 
 Do(df dot repeat reaching EOB. #291 #228):
   Wdfr
   :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   .
-  :\<C-U>doautocmd CursorMoved\<CR>
 Expect:
   1abc
 
