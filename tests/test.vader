@@ -1298,14 +1298,14 @@ Expect:
 
 Do:
   dvfe
-Expect (FIXME exclusive f-delete forward):
+Expect (exclusive f-delete forward):
   ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
 Do:
   dvte
-Expect (FIXME exclusive t-delete forward):
+Expect (exclusive t-delete forward):
   def ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef

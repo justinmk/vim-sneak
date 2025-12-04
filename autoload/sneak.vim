@@ -227,14 +227,18 @@ func! sneak#to(op, input, inputlen, count, register, repeatmotion, reverse, incl
   endif
 
   if is_op && 2 != a:inclusive && !a:reverse
-    " f edge case targeting EOL/EOB
-    if 1 == a:inclusive && virtcol('.') == virtcol('$') - 1 && &virtualedit !~# 'onemore'
-      let s:save_virtualedit = &virtualedit
-      let &virtualedit = 'onemore'
-      autocmd CursorMoved * ++once let &virtualedit = s:save_virtualedit
+    if mode(1) ==# 'nov'
+      call sneak#util#nudge(0)
+    else
+      " f edge case targeting EOL/EOB
+      if 1 == a:inclusive && virtcol('.') == virtcol('$') - 1 && &virtualedit !~# 'onemore'
+        let s:save_virtualedit = &virtualedit
+        let &virtualedit = 'onemore'
+        autocmd CursorMoved * ++once let &virtualedit = s:save_virtualedit
+      endif
+      " nudge right but do not wrap on EOL: go beyond EOL on virtual column if necessary
+      exec 'norm! l'
     endif
-    " nudge right but do not wrap on EOL: go beyond EOL on virtual column if necessary
-    exec 'norm! l'
   endif
 
   if is_op || '' != target
