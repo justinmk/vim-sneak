@@ -1296,17 +1296,36 @@ Expect:
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do:
+Do (exclusive f-delete forward):
   dvfe
-Expect (FIXME exclusive f-delete forward):
+Expect:
   ef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
-Do:
+Do (exclusive t-delete forward):
   dvte
-Expect (FIXME exclusive t-delete forward):
+Expect:
   def ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+# Note: o_v doesn't work in dot repeats in general
+Do (exclusive f-delete forward, dot repeat):
+  dvfe
+  :\<C-U>doautocmd CursorMoved\<CR>
+  .
+Expect (FIXME dot repeat retains v flip to exclusive):
+  ef ab3cdef ab4cdef ab5cdef ab6cdef
+  ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
+  ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
+
+Do (exclusive t-delete forward, dot repeat):
+  dvte
+  :\<C-U>doautocmd CursorMoved\<CR>
+  l.
+Expect (FIXME dot repeat retains v flip to exclusive):
+  ddef ab3cdef ab4cdef ab5cdef ab6cdef
   ab7cdef ab8cdef ab9cdef ab0cdef ab1cdef ab2cdef
   ab1cdef ab2cdef ab3cdef ab4cdef ab5cdef ab6cdef
 
@@ -1346,7 +1365,7 @@ Given:
   2ghi 2jkl
   2mno 2pqr
 
-Do(df til last character in the line. #291 #228):
+Do (df til last character in the line. #291 #228):
   dff
 Expect:
   
@@ -1356,7 +1375,7 @@ Expect:
   2ghi 2jkl
   2mno 2pqr
 
-Do(df til last character in the last buffer line. #291 #228):
+Do (df til last character in the last buffer line. #291 #228):
   Gdfr
 Expect:
   1abc 1def
@@ -1366,15 +1385,16 @@ Expect:
   2ghi 2jkl
   
 
-Do(df til last character in another line. #291 #228):
-  jwdff
+# Here it deletes as linewise because of :h d-special
+# https://github.com/vim/vim/commit/22105fd1fe0dcfe993b5c04c6ebe017a626116e3
+Do (df til last character in another line. #291 #228):
+  jdff
 Expect:
   1abc 1def
-  1ghi 
   2ghi 2jkl
   2mno 2pqr
 
-Do(df til EOB from another line. #291 #228):
+Do (df til EOB from another line. #291 #228):
   3jldfr
 Expect:
   1abc 1def
@@ -1382,42 +1402,52 @@ Expect:
   1mno 1pqr
   2
 
-Do(df til last character in the line, ;-repeat. #291 #228):
-  dffd;
+Do (df til last character in the line, ;-repeat. #291 #228):
+  Wdff
+  :sleep 1m\<cr>
+  d;
 Expect:
-  
+  1abc
   2ghi 2jkl
   2mno 2pqr
 
-Do(df til last character in the line, Enter-repeat. #291 #228):
-  dffdf\<Enter>
+Do (df til last character in the line, Enter-repeat. #291 #228):
+  Wdff
+  :sleep 1m\<cr>
+  df\<Enter>
 Expect:
-  
+  1abc
   2ghi 2jkl
   2mno 2pqr
 
-Do(df til last character in the line, dot repeat. #291 #228):
-  dff
+Do (df til last character in the line, dot repeat. #291 #228):
+  Wdff
   :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   .
 Expect:
-  
+  1abc
   2ghi 2jkl
   2mno 2pqr
 
-Do(df ;-repeat reaching EOB. #291 #228):
-  Wdfrd;
+Do (df ;-repeat reaching EOB. #291 #228):
+  Wdfr
+  :sleep 1m\<cr>
+  d;
 Expect:
   1abc
 
-Do(df Enter-repeat reaching EOB. #291 #228):
-  Wdfrdf\<Enter>
+Do (df Enter-repeat reaching EOB. #291 #228):
+  Wdfr
+  :sleep 1m\<cr>
+  df\<Enter>
 Expect:
   1abc
 
-Do(df dot repeat reaching EOB. #291 #228):
+Do (df dot repeat reaching EOB. #291 #228):
   Wdfr
   :\<C-U>doautocmd CursorMoved\<CR>
+  :sleep 1m\<cr>
   .
 Expect:
   1abc
