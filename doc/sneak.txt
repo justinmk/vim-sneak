@@ -61,7 +61,7 @@ NORMAL-MODE~
     [count]S{char}{char}     | Invoke backwards |sneak-vertical-scope|
     {operator}z{char}{char}  | Perform {operator} from the cursor to the next
                              | occurrence of {char}{char}
-    {operator}Z{char}{char}  | Perform {operator} from the cursor to the 
+    {operator}Z{char}{char}  | Perform {operator} from the cursor to the
                              | previous occurrence of {char}{char}
 
     NOTE: s and S go to the next/previous match immediately after invoking
@@ -261,6 +261,13 @@ OPTIONS                                                 *sneak-options*
 To change an option, add a |let| statement in your |vimrc|. Example: >
     let g:sneak#use_ic_scs = 0
 <
+g:sneak#no_default_mappings = 0
+
+    0: Apply all the default |sneak-mappings| that escape from the checks
+       through hasmapto() and mapcheck().
+
+    1: Disable any |sneak-mappings|. See |sneak-custom-mappings|.
+
 g:sneak#f_reset = 1
 g:sneak#t_reset = 1
 
